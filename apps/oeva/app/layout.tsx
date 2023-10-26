@@ -20,7 +20,15 @@ export const metadata: Metadata = {
     maximumScale: 1,
     viewportFit: "cover",
   },
-  themeColor: '#2b5797'
+  themeColor: '#2b5797',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: 'OeVA',
+    startupImage: [
+      { url: 'splashscreen/iphone-12-pro-max', media: 'screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)' },
+    ],
+  },
 };
 
 export default function RootLayout({

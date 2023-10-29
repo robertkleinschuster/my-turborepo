@@ -8,7 +8,7 @@ import {
     ListItem,
     Block,
 } from 'konsta/react';
-import Scroll from '../../components/scroll';
+import Scroll from '../../../components/scroll';
 const queryChanged = Symbol('queryChanged');
 
 export default function Trains(): React.JSX.Element {
@@ -32,7 +32,7 @@ export default function Trains(): React.JSX.Element {
         previousController.current = controller;
 
         if (searchQuery) {
-            fetch(`/trains/search?query=${searchQuery}`, { signal })
+            fetch(`/app/trains/search?query=${searchQuery}`, { signal })
                 .then(r => r.json())
                 .then((data: {trips: { line: { name: string } }[]}) =>{ setItems(data.trips)})
                 .catch(e => {

@@ -4,20 +4,30 @@ import dkice from "!url-loader?limit=200000!./dkice-stroke.png"
 
 // Route segment config
 export const runtime = 'edge'
- 
+
 export function generateImageMetadata() {
-  return [
-    {
-      contentType: 'image/png',
-      size: { width: 48, height: 48 },
-      id: 'small',
-    },
-    {
-      contentType: 'image/png',
-      size: { width: 72, height: 72 },
-      id: 'medium',
-    },
-  ]
+    return [
+        {
+            contentType: 'image/png',
+            size: { width: 48, height: 48 },
+            id: 'small',
+        },
+        {
+            contentType: 'image/png',
+            size: { width: 72, height: 72 },
+            id: 'medium',
+        },
+        {
+            contentType: 'image/png',
+            size: { width: 192, height: 192 },
+            id: '192x192',
+        },
+        {
+            contentType: 'image/png',
+            size: { width: 512, height: 512 },
+            id: '512x512',
+        },
+    ]
 }
 
 export const contentType = 'image/png'
@@ -37,18 +47,16 @@ export default function Icon({ id }): ImageResponse {
         (
             <div
                 style={{
-                    backgroundImage: "linear-gradient(#9CD8EB, #5598AD)",
                     width: '100%',
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
+                    justifyContent: 'center'
                 }}
             >
-                <img alt="" src={icon} width="80%"/>
+                <img alt="" src={icon} style={{filter: "drop-shadow(3px 3px 3px #222)"}}/>
             </div>
         ),
-        {...size}
+        { ...size }
     )
 }

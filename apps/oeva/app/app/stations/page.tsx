@@ -8,7 +8,7 @@ import {
     ListItem,
     Block,
 } from 'konsta/react';
-import Scroll from '../../components/scroll';
+import Scroll from '../../../components/scroll';
 
 const queryChanged = Symbol('queryChanged');
 
@@ -33,7 +33,7 @@ export default function Stations(): React.JSX.Element {
         previousController.current = controller;
 
         if (searchQuery) {
-            fetch(`/stations/search?query=${searchQuery}`, { signal })
+            fetch(`/app/stations/search?query=${searchQuery}`, { signal })
                 .then(r => r.json())
                 .then(setItems)
                 .catch(e => {

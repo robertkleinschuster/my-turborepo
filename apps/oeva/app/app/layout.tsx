@@ -1,5 +1,6 @@
-import { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from "next";
+import AppLayout from "../../components/app-layout";
+
 
 export const metadata: Metadata = {
   title: "OeVA",
@@ -33,10 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }): JSX.Element {
   return (
-    <html lang="en">
-      <body>
-        {children}
-      </body>
-    </html>
+    <AppLayout>
+      {children}
+    </AppLayout>
   );
 }

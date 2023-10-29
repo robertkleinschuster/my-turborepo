@@ -9,8 +9,6 @@ const sizes = new Map([
     ['iphone-12-pro-max', { width: 428, height: 926 }]
 ])
 
-export const contentType = 'image/png'
-
 const icon = dkice as unknown as string
 
 export function GET(request, context: {params: {id: string}}): ImageResponse {

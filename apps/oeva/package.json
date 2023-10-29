@@ -14,6 +14,7 @@
     "@types/body-scroll-lock": "^3.1.1",
     "@types/hafas-client": "^6.1.4",
     "body-scroll-lock": "4.0.0-beta.0",
+    "encoding": "^0.1.13",
     "file-loader": "^6.2.0",
     "framer-motion": "^10.16.4",
     "framework7-icons": "^5.0.5",

@@ -14,7 +14,7 @@ export default async function Layout({ children, params}: {children: React.React
     const trip = await client.trip(decodeURIComponent(params.id), undefined)
 
     return <>
-        <TripNavbar title={trip.trip.line?.name ?? params.id}/>
+        <TripNavbar title={trip.trip.line?.name ?? params.id} subtitle={trip.trip.direction ?? ''}/>
         <Scroll>
             {children}
         </Scroll>

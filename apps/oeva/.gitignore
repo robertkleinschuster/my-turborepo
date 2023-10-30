@@ -37,4 +37,4 @@ yarn-error.log*
 **/public/workbox-*.js.map
 **/public/sw.js
 **/public/sw.js.map
-**/public/swe-worker-development.js
+**/public/swe-worker-*.js

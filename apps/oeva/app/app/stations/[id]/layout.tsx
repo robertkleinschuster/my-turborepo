@@ -1,16 +1,10 @@
 import React from "react"
-import { createClient } from 'hafas-client'
-import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js'
 import Scroll from "../../../../components/scroll"
-import StationNavbar from "./navbar"
+import StationNavbarData from "./navbar-data"
 
-const client = createClient(oebbProfile, 'OeVA')
-
-export default async function Layout({ children, params}: {children: React.ReactNode, params: {id: string}}) {
-    const station = await client.stop(params.id, undefined)
-
+export default function Layout({ children, params }: { children: React.ReactNode, params: { id: string } }) {
     return <>
-        <StationNavbar id={params.id} title={station.name ?? params.id}/>
+        <StationNavbarData id={params.id} />
         <Scroll>
             {children}
         </Scroll>

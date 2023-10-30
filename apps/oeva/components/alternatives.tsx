@@ -13,7 +13,14 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
             <Block className="text-center">Nothing found</Block>
         ) : (
             <List inset strong>
-                {alternatives.map(alternative => <ListItem key={alternative.tripId} link onClick={() => { router.push(`/app/trip/${encodeURIComponent(alternative.tripId)}`) }} title={alternative.line?.name} />)}
+                {alternatives.map(alternative => <ListItem 
+                after={alternative.when ? (new Date(alternative.when)).toLocaleString() : ''} 
+                key={alternative.tripId} 
+                link 
+                onClick={() => { router.push(`/app/trip/${encodeURIComponent(alternative.tripId)}`) }}
+                subtitle={alternative.destination?.name ?? ''}
+                title={alternative.line?.name}
+                />)}
             </List>
         )}
     </>

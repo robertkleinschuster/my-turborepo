@@ -4,7 +4,7 @@ import { Navbar, Searchbar } from "konsta/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react";
 
-export default function NavSearchbar() {
+export default function NavSearchbar({title}: {title: string}) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const pathname = usePathname()
@@ -34,7 +34,7 @@ export default function NavSearchbar() {
             value={searchQuery}
         />
     }
-    title="Stationen"
+    title={title}
 
 />
 }

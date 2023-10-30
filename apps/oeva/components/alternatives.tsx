@@ -17,7 +17,7 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
                 after={alternative.when ? (new Date(alternative.when)).toLocaleString() : ''} 
                 key={alternative.tripId} 
                 link 
-                onClick={() => { router.push(`/app/trip/${encodeURIComponent(alternative.tripId)}`) }}
+                onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}
                 subtitle={alternative.destination?.name ?? ''}
                 title={alternative.line?.name}
                 />)}

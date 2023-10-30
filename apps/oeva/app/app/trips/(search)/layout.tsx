@@ -3,7 +3,7 @@ import Scroll from "../../../../components/scroll";
 
 export default function Layout({ children }) {
     return <>
-        <NavSearchbar title="Stationen" />
+        <NavSearchbar title="Fahrten" />
         <Scroll>
             {children}
         </Scroll>

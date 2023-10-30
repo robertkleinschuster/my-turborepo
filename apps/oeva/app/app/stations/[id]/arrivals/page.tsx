@@ -6,6 +6,6 @@ import Alternatives from '../../../../../components/alternatives'
 const client = createClient(oebbProfile, 'OeVA')
 
 export default async function Arrivals({ params, searchParams }: { params: { id: string } , searchParams: {when?: string}}): Promise<React.JSX.Element> {
-    const arrivals = await client.arrivals(params.id, { duration: 1440, when: searchParams.when ? new Date(decodeURIComponent(searchParams.when)) : undefined })
+    const arrivals = await client.arrivals(params.id, { duration: 1440, results: 50, when: searchParams.when ? new Date(decodeURIComponent(searchParams.when)) : undefined })
     return <Alternatives alternatives={arrivals.arrivals} />
 }

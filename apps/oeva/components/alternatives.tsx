@@ -14,7 +14,7 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
         ) : (
             <List inset strong>
                 {alternatives.map(alternative => <ListItem 
-                after={alternative.when ? (new Date(alternative.when)).toLocaleString() : ''} 
+                after={alternative.when ? (new Date(alternative.when)).toLocaleTimeString(['de'], {timeStyle: 'short'}) : ''} 
                 key={alternative.tripId} 
                 link 
                 onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}

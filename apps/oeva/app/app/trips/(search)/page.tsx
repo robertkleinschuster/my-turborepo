@@ -4,7 +4,20 @@ import React from 'react';
 import Trips from '../../../../components/trips';
 
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
-    if (!searchParams.query || searchParams.query.length < 2) {
+    if (!searchParams.query 
+        || searchParams.query.trim().length < 2
+        || searchParams.query.trim() === 'ICE'
+        || searchParams.query.trim() === 'RJ'
+        || searchParams.query.trim() === 'IC'
+        || searchParams.query.trim() === 'EC'
+        || searchParams.query.trim() === 'RB'
+        || searchParams.query.trim() === 'RE'
+        || searchParams.query.trim() === 'REX'
+        || searchParams.query.trim() === 'IR'
+        || searchParams.query.trim() === 'ER'
+        || searchParams.query.trim() === 'Tram'
+        || searchParams.query.trim() === 'Bus'
+        ) {
         return <></>
     }
     const userAgent = 'OeVA-App'

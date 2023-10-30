@@ -1,75 +1,23 @@
-"use client"
+import { createClient } from 'hafas-client'
+import { profile as stvProfile } from 'hafas-client/p/stv/index.js'
+import React from 'react';
+import Locations from '../../../components/locations';
+import NavSearchbar from '../../../components/nav-searchbar';
 
-import React, { useEffect, useRef, useState } from 'react';
-import {
-    Navbar,
-    Searchbar,
-    List,
-    ListItem,
-    Block,
-} from 'konsta/react';
-import Scroll from '../../../components/scroll';
+export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
+    if (!searchParams.query) {
+        return <>
+            <NavSearchbar />
+        </>;
+    }
+    const userAgent = 'OeVA-App'
 
-const queryChanged = Symbol('queryChanged');
+    const client = createClient(stvProfile, userAgent)
 
-export default function Stations(): React.JSX.Element {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [items, setItems] = useState<{ name: string }[]>([])
-    const previousController = useRef<AbortController>();
+    const locations = await client.locations(searchParams.query, undefined)
+    return <>
+        <NavSearchbar />
+        <Locations locations={locations} />;
+    </>
 
-    const handleSearch = (e: Event) => {
-        setSearchQuery((e.target as HTMLInputElement).value);
-    };
-    const handleClear = () => {
-        setSearchQuery('');
-    };
-
-    useEffect(() => {
-        if (previousController.current) {
-            previousController.current.abort(queryChanged);
-        }
-        const controller = new AbortController()
-        const signal = controller.signal
-        previousController.current = controller;
-
-        if (searchQuery) {
-            fetch(`/app/stations/search?query=${searchQuery}`, { signal })
-                .then(r => r.json())
-                .then(setItems)
-                .catch(e => {
-                    if (signal.reason !== queryChanged) {
-                        throw e
-                    }
-                })
-        } else {
-            setItems([])
-        }
-    }, [searchQuery])
-
-    return (
-        <>
-            <Navbar
-                subnavbar={
-                    <Searchbar
-                        disableButton
-                        disableButtonText="Cancel"
-                        onClear={handleClear}
-                        onInput={handleSearch}
-                        value={searchQuery}
-                    />
-                }
-                title="Stations"
-
-            />
-            <Scroll>
-                {items.length === 0 ? (
-                    <Block className="text-center">Nothing found</Block>
-                ) : (
-                    <List inset strong>
-                        {items.map(item => <ListItem key={item.name} title={item.name} />)}
-                    </List>
-                )}
-            </Scroll>
-        </>
-    );
 }

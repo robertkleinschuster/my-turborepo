@@ -1,8 +1,11 @@
 import NavSearchbar from "../../../../components/nav-searchbar";
+import Scroll from "../../../../components/scroll";
 
 export default function Layout({ children }) {
     return <>
         <NavSearchbar />
-        {children}
+        <Scroll>
+            {children}
+        </Scroll>
     </>
 }

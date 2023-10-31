@@ -19,7 +19,7 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
                 key={alternative.tripId + alternative.when} 
                 link 
                 onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}
-                subtitle={alternative.destination?.name ?? ''}
+                subtitle={alternative.destination?.name ?? alternative.origin?.name}
                 title={alternative.line?.name}
                 />)}
             </List>

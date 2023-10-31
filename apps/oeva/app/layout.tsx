@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,15 +8,6 @@ export const metadata: Metadata = {
     index: false,
     follow: false
   },
-  viewport: {
-    width: "device-width",
-    userScalable: false,
-    initialScale: 1,
-    minimumScale: 1,
-    maximumScale: 1,
-    viewportFit: "cover",
-  },
-  themeColor: '#000000',
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -26,6 +17,16 @@ export const metadata: Metadata = {
     ],
   },
 };
+
+export const viewport: Viewport = {
+  width: "device-width",
+  userScalable: false,
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: '#000000',
+}
 
 export default function RootLayout({
   children,

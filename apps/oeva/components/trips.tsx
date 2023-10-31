@@ -4,6 +4,7 @@ import type { Trip } from "hafas-client";
 import { Block, List, ListItem } from 'konsta/react'
 import { useRouter } from "next/navigation";
 import React from "react";
+import Time from "./time";
 
 export default function Trips({ trips }: { trips: readonly Trip[] }): React.JSX.Element {
     const router = useRouter()
@@ -14,8 +15,8 @@ export default function Trips({ trips }: { trips: readonly Trip[] }): React.JSX.
         ) : (
             <List inset strong>
                 {trips.map(trip => <ListItem
-                    after={trip.departure ? (new Date(trip.departure)).toLocaleTimeString(['de'], {timeStyle: 'short'}) : ''}
-                    key={trip.id}
+                    after={<Time time={trip.departure ? new Date(trip.departure) : null}/>}
+                    key={trip.id + trip.departure}
                     link
                     onClick={() => { router.push(`/app/trips/${encodeURIComponent(trip.id)}`) }}
                     subtitle={trip.destination?.name ?? ''}

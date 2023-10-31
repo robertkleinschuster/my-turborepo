@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element -- must be img for vercel/satori */
-import { ImageResponse } from 'next/server'
+import { ImageResponse } from 'next/og'
 import dkice from "!url-loader?limit=200000!./dkice-stroke.png"
 
 // Route segment config

@@ -3,6 +3,7 @@
 import { Button, Chip, Navbar, NavbarBackLink, Segmented, SegmentedButton, Toolbar } from "konsta/react"
 import { usePathname, useSearchParams, useSelectedLayoutSegment } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Time from "../../../../components/time";
 
 export default function StationNavbar({ id, title }: { id: string, title: string }) {
@@ -10,8 +11,13 @@ export default function StationNavbar({ id, title }: { id: string, title: string
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const segment = useSelectedLayoutSegment();
+    const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
 
-    const date = searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date()
+    useEffect(() => {
+        const newSearchParams = new URLSearchParams(searchParams)
+        newSearchParams.set('when', when.toISOString())
+        router.replace(`${pathname}?${newSearchParams.toString()}`)
+    }, [pathname, router, searchParams, when])
 
     return <><Navbar
         left={
@@ -32,20 +38,18 @@ export default function StationNavbar({ id, title }: { id: string, title: string
     />
         <Toolbar top>
             <Chip>
-                ab&nbsp;<Time time={date}/>
+                ab&nbsp;<Time time={when} />
             </Chip>
-            <Button small clear rounded onClick={() => {
-                const newSearchParams = new URLSearchParams(searchParams)
-                const newDate = new Date(date.getTime() - 60 * 60000)
-                newSearchParams.set('when', newDate.toISOString())
-                router.replace(`${pathname}?${newSearchParams.toString()}`)
-            }}>- 1 Stunde</Button>
-            <Button small clear rounded onClick={() => {
-                const newSearchParams = new URLSearchParams(searchParams)
-                const newDate = new Date(date.getTime() + 60 * 60000)
-                newSearchParams.set('when', newDate.toISOString())
-                router.replace(`${pathname}?${newSearchParams.toString()}`)
-            }}>+ 1 Stunde</Button>
+            <Button clear onClick={() => {
+                setWhen(new Date())
+            }} rounded small>Jetzt</Button>
+            <Button clear onClick={() => {
+                setWhen(new Date(when.getTime() - 60 * 60000))
+
+            }} rounded small>- 1 Stunde</Button>
+            <Button clear onClick={() => {
+                setWhen(new Date(when.getTime() + 60 * 60000))
+            }} rounded small>+ 1 Stunde</Button>
         </Toolbar>
     </>
 }

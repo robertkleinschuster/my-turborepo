@@ -1,10 +1,9 @@
-import { createClient } from 'hafas-client'
-import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js'
 import React from 'react';
 import Trips from '../../../../components/trips';
+import { ClientCode, getClient } from '../../../../client/hafas/client';
 
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
-    if (!searchParams.query 
+    if (!searchParams.query
         || searchParams.query.trim().length < 2
         || searchParams.query.trim() === 'ICE'
         || searchParams.query.trim() === 'RJ'
@@ -17,16 +16,11 @@ export default async function Stations({ searchParams }: { searchParams: { query
         || searchParams.query.trim() === 'ER'
         || searchParams.query.trim() === 'Tram'
         || searchParams.query.trim() === 'Bus'
-        ) {
+    ) {
         return <></>
     }
-    const userAgent = 'OeVA-App'
 
-    const client = createClient(oebbProfile, userAgent)
-
-    if (!client.tripsByName) {
-        throw new Error('Invalid hafas client')
-    }
+    const client = getClient(ClientCode.OEBB)
 
     const from = new Date();
     from.setHours(0, 0, 0, 0)

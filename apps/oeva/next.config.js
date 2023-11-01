@@ -7,7 +7,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 module.exports = withPWA({
   reactStrictMode: true,
-  transpilePackages: ["ui", "konsta"],
+  transpilePackages: ["ui", "konsta", "hafas-client"],
   experimental: {
     serverComponentsExternalPackages: ["hafas-client"]
   },

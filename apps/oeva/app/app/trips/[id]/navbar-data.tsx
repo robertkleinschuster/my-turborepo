@@ -1,5 +1,5 @@
 import TripNavbar from './navbar'
-import { ClientCode, getClient } from '../../../../client/hafas/client'
+import { ClientCode, getClient } from '../../client'
 
 export default async function TripNavbarData({ id }: { id: string }) {
     const client = getClient(ClientCode.OEBB)

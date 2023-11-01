@@ -1,5 +1,5 @@
 import StationNavbar from "./navbar";
-import { ClientCode, getClient } from "../../../../client/hafas/client";
+import { ClientCode, getClient } from "../../client";
 
 
 export default async function StationNavbarData({ id }: { id: string }) {

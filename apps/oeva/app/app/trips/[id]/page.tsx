@@ -1,5 +1,5 @@
 import Stopovers from '../../../../components/stopovers'
-import { ClientCode, getClient } from '../../../../client/hafas/client'
+import { ClientCode, getClient } from '../../client'
 
 export default async function Trip({params}: {params: {id: string}}) {
     const client = getClient(ClientCode.OEBB)

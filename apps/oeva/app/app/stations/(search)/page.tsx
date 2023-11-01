@@ -1,6 +1,6 @@
 import React from 'react';
 import Locations from '../../../../components/locations';
-import { ClientCode, getClient } from '../../../../client/hafas/client';
+import { ClientCode, getClient } from '../../client';
 
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
     if (!searchParams.query) {

@@ -1,6 +1,7 @@
 "use client"
 
-import { Button, Chip, Navbar, NavbarBackLink, Segmented, SegmentedButton, Toolbar } from "konsta/react"
+import { Button, Chip, Icon, Navbar, NavbarBackLink, Segmented, SegmentedButton, Toolbar } from "konsta/react"
+import { Clock, PlusCircle, MinusCircle } from "framework7-icons/react"
 import { usePathname, useSearchParams, useSelectedLayoutSegment } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -38,18 +39,26 @@ export default function StationNavbar({ id, title }: { id: string, title: string
     />
         <Toolbar top>
             <Chip>
-                ab&nbsp;<Time time={when} />
+            <Icon
+              ios={<Clock/>}
+            />&nbsp;<Time time={when} />
             </Chip>
             <Button clear onClick={() => {
                 setWhen(new Date())
-            }} rounded small>Jetzt</Button>
+            }} rounded>Jetzt</Button>
             <Button clear onClick={() => {
                 setWhen(new Date(when.getTime() - 60 * 60000))
 
-            }} rounded small>- 1 Stunde</Button>
+            }} rounded>
+                <Icon
+              ios={<MinusCircle/>}
+            />&nbsp;1 Stunde</Button>
             <Button clear onClick={() => {
                 setWhen(new Date(when.getTime() + 60 * 60000))
-            }} rounded small>+ 1 Stunde</Button>
+            }} rounded>
+            <Icon
+              ios={<PlusCircle/>}
+            />&nbsp;1 Stunde</Button>
         </Toolbar>
     </>
 }

@@ -1,10 +1,10 @@
 "use client"
 
-import { Button, Chip, Icon, Navbar, NavbarBackLink, Segmented, SegmentedButton, Toolbar } from "konsta/react"
+import { Block, Chip, Icon, List, ListButton, ListItem, Navbar, NavbarBackLink, Popover, Segmented, SegmentedButton, Toolbar } from "konsta/react"
 import { Clock, PlusCircle, MinusCircle } from "framework7-icons/react"
 import { usePathname, useSearchParams, useSelectedLayoutSegment } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Time from "../../../../components/time";
 
 export default function StationNavbar({ id, title }: { id: string, title: string }) {
@@ -19,6 +19,15 @@ export default function StationNavbar({ id, title }: { id: string, title: string
         newSearchParams.set('when', when.toISOString())
         router.replace(`${pathname}?${newSearchParams.toString()}`)
     }, [pathname, router, searchParams, when])
+
+    const [popoverOpened, setPopoverOpened] = useState(false);
+    const popoverTargetRef = useRef(null);
+
+    const openPopover = (targetRef) => {
+        popoverTargetRef.current = targetRef;
+        setPopoverOpened(true);
+    };
+
 
     return <><Navbar
         left={
@@ -38,27 +47,34 @@ export default function StationNavbar({ id, title }: { id: string, title: string
         title={title}
     />
         <Toolbar top>
-            <Chip>
-            <Icon
-              ios={<Clock/>}
-            />&nbsp;<Time time={when} />
+            <Chip className="filter-when" onClick={() => {openPopover('.filter-when')}}>
+                <Icon ios={<Clock />}/>&nbsp;<Time time={when} />
             </Chip>
-            <Button clear onClick={() => {
-                setWhen(new Date())
-            }} rounded>Jetzt</Button>
-            <Button clear onClick={() => {
-                setWhen(new Date(when.getTime() - 60 * 60000))
-
-            }} rounded>
-                <Icon
-              ios={<MinusCircle/>}
-            />&nbsp;1 Stunde</Button>
-            <Button clear onClick={() => {
-                setWhen(new Date(when.getTime() + 60 * 60000))
-            }} rounded>
-            <Icon
-              ios={<PlusCircle/>}
-            />&nbsp;1 Stunde</Button>
         </Toolbar>
+
+        <Popover
+            opened={popoverOpened}
+            target={popoverTargetRef.current}
+            onBackdropClick={() => { setPopoverOpened(false) }}
+        >
+            <List nested>
+                <ListButton onClick={() => {
+                    setWhen(new Date())
+                }} >Jetzt</ListButton>
+                <ListButton onClick={() => {
+                    setWhen(new Date(when.getTime() - 60 * 60000))
+
+                }} >
+                    <Icon
+                        ios={<MinusCircle />}
+                    />&nbsp;1 Stunde</ListButton>
+                <ListButton onClick={() => {
+                    setWhen(new Date(when.getTime() + 60 * 60000))
+                }} >
+                    <Icon
+                        ios={<PlusCircle />}
+                    />&nbsp;1 Stunde</ListButton>
+            </List>
+        </Popover>
     </>
 }

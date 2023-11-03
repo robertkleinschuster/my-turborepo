@@ -80,7 +80,7 @@ export class BusBahnBim extends BaseClient {
 export enum ClientCode {
     OEBB,
     DB,
-    STV,
+    STV
 }
 
 export const clients = new Map<ClientCode, Client>([
@@ -90,9 +90,9 @@ export const clients = new Map<ClientCode, Client>([
 ])
 
 
-export const defaultClient = ClientCode.OEBB
+export const defaultClient = ClientCode.STV
 
-export function getClient(code: ClientCode): Client {
+export function getClient(code: ClientCode = defaultClient): Client {
     const client = clients.get(code);
     if (!client) {
         throw new Error(`No client with code: ${code}`);

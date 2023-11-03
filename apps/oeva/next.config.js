@@ -9,6 +9,6 @@ module.exports = withPWA({
   reactStrictMode: true,
   transpilePackages: ["ui", "konsta"],
   experimental: {
-    serverComponentsExternalPackages: ["hafas-client"]
+    serverComponentsExternalPackages: ["hafas-client"],
   },
 });

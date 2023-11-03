@@ -1,6 +1,6 @@
 import React from 'react';
 import Trips from '../../../../components/trips';
-import { ClientCode, getClient } from '../../client';
+import { getClient } from '../../../../client/client';
 
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
     if (!searchParams.query
@@ -20,7 +20,7 @@ export default async function Stations({ searchParams }: { searchParams: { query
         return <></>
     }
 
-    const client = getClient(ClientCode.OEBB)
+    const client = getClient()
 
     const from = new Date();
     from.setHours(0, 0, 0, 0)

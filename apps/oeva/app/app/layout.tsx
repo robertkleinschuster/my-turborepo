@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import AppLayout from "../../components/app-layout";
-import "hafas-client"
 
 export const metadata: Metadata = {
   title: "OeVA",

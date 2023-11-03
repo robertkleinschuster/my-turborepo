@@ -1,13 +1,13 @@
 import React from 'react';
 import Locations from '../../../../components/locations';
-import { ClientCode, getClient } from '../../client';
+import { getClient } from '../../../../client/client';
 
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
     if (!searchParams.query) {
         return <></>
     }
 
-    const client = getClient(ClientCode.OEBB);
+    const client = getClient();
 
     const locations = await client.locations(searchParams.query, {
         results: 20,

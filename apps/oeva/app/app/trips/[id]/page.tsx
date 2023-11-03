@@ -1,8 +1,8 @@
 import Stopovers from '../../../../components/stopovers'
-import { ClientCode, getClient } from '../../client'
+import { getClient } from '../../../../client/client'
 
 export default async function Trip({params}: {params: {id: string}}) {
-    const client = getClient(ClientCode.OEBB)
+    const client = getClient()
 
     const trip = await client.trip(decodeURIComponent(params.id), undefined)
 

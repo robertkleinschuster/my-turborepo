@@ -1,11 +1,15 @@
-import TripNavbar from './navbar'
 import { getClient } from '../../../../client/client'
+import TripNavbar from './navbar'
 
 export default async function TripNavbarData({ id }: { id: string }) {
     const client = getClient()
 
     const trip = await client.trip(decodeURIComponent(id), undefined)
 
-    return <TripNavbar title={trip.trip.line?.name ?? id} subtitle={trip.trip.direction ?? ''} />
+    const lineName = trip.trip.line?.name ?? id;
+
+    const direction = trip.trip.direction ?? '';
+
+    return <TripNavbar subtitle={trip.trip.line?.fahrtNr ?? ''} title={`${lineName} ${direction}`} />
 
 }

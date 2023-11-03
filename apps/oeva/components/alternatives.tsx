@@ -15,12 +15,11 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
             <List inset strong>
                 {alternatives.map(alternative => <ListItem 
                 after={<Time time={alternative.when ? new Date(alternative.when) : null}/>} 
-                header={alternative.line?.fahrtNr} 
                 key={alternative.tripId + alternative.when} 
                 link
                 onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}
-                subtitle={alternative.direction ?? alternative.provenance}
-                title={alternative.line?.name}
+                footer={alternative.line?.fahrtNr}
+                title={`${alternative.line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`}
                 />)}
             </List>
         )}

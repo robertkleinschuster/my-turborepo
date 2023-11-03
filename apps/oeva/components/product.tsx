@@ -31,13 +31,14 @@ export default function Product({ line }: { line: Line }): React.JSX.Element {
             return <span className="class-a-d" />
         }
 
-        if (line.productName === 'R') {
+        if (line.productName === 'REX' || line.name?.startsWith('REX')) {
+            return <span className="class-a-rex" />
+        }
+
+        if (line.productName === 'R' || line.name?.startsWith('R')) {
             return <span className="class-a-r" />
         }
 
-        if (line.productName === 'REX') {
-            return <span className="class-a-rex" />
-        }
 
         if (line.name?.startsWith('S')) {
             return <span className="class-a-sbahn" />
@@ -48,6 +49,10 @@ export default function Product({ line }: { line: Line }): React.JSX.Element {
 
     if (line.product === 'tram') {
         return <span className="class-a-tram" />
+    }
+
+    if (line.product === 'u-bahn') {
+        return <span className="class-a-ubahn" />
     }
 
     if (line.product === 'city-bus') {

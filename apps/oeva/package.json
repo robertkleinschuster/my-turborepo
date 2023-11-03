@@ -20,7 +20,7 @@
     "file-loader": "^6.2.0",
     "framer-motion": "^10.16.4",
     "framework7-icons": "^5.0.5",
-    "hafas-client": "^6.1.1",
+    "hafas-client": "git+https://github.com/robertkleinschuster/hafas-client.git",
     "konsta": "^3.1.1",
     "next": "^14.0.1",
     "qs": "^6.11.2",

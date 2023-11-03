@@ -1,11 +1,25 @@
 "use client"
 
-import { Block, Chip, Icon, List, ListButton, ListItem, Navbar, NavbarBackLink, Popover, Segmented, SegmentedButton, Toolbar } from "konsta/react"
+import { Chip, Icon, List, ListButton, ListInput, Navbar, NavbarBackLink, Popover, Segmented, SegmentedButton, Toolbar } from "konsta/react"
 import { Clock, PlusCircle, MinusCircle } from "framework7-icons/react"
 import { usePathname, useSearchParams, useSelectedLayoutSegment } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Time from "../../../../components/time";
+
+function toDatetimeLocal(date: Date) {
+    const ten = function (i) {
+        return (i < 10 ? '0' : '') + i;
+    };
+    const YYYY = date.getFullYear(),
+        MM = ten(date.getMonth() + 1),
+        DD = ten(date.getDate()),
+        HH = ten(date.getHours()),
+        II = ten(date.getMinutes());
+    return YYYY + '-' + MM + '-' + DD + 'T' + HH + ':' + II;
+};
+
+
 
 export default function StationNavbar({ id, title }: { id: string, title: string }) {
     const router = useRouter()
@@ -20,14 +34,7 @@ export default function StationNavbar({ id, title }: { id: string, title: string
         router.replace(`${pathname}?${newSearchParams.toString()}`)
     }, [pathname, router, searchParams, when])
 
-    const [popoverOpened, setPopoverOpened] = useState(false);
-    const popoverTargetRef = useRef(null);
-
-    const openPopover = (targetRef) => {
-        popoverTargetRef.current = targetRef;
-        setPopoverOpened(true);
-    };
-
+    const [whenOpen, setWhenOpen] = useState(false);
 
     return <><Navbar
         left={
@@ -47,17 +54,23 @@ export default function StationNavbar({ id, title }: { id: string, title: string
         title={title}
     />
         <Toolbar top>
-            <Chip className="filter-when" onClick={() => {openPopover('.filter-when')}}>
-                <Icon ios={<Clock />}/>&nbsp;<Time time={when} />
+            <Chip className="filter-when" onClick={() => { setWhenOpen(true) }}>
+                <Icon ios={<Clock />} />&nbsp;<Time time={when} />
             </Chip>
         </Toolbar>
 
         <Popover
-            opened={popoverOpened}
-            target={popoverTargetRef.current}
-            onBackdropClick={() => { setPopoverOpened(false) }}
+            opened={whenOpen}
+            target=".filter-when"
+            onBackdropClick={() => { setWhenOpen(false) }}
         >
             <List nested>
+                <ListInput
+                    outline
+                    type="datetime-local"
+                    value={toDatetimeLocal(when)}
+                    onChange={(e: Event) => {setWhen(new Date((e.target as HTMLInputElement).value))}}
+                />
                 <ListButton onClick={() => {
                     setWhen(new Date())
                 }} >Jetzt</ListButton>

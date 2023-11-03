@@ -8,7 +8,6 @@ import Time from "./time";
 
 export default function Alternatives({ alternatives }: { alternatives: readonly Alternative[] }): React.JSX.Element {
     const router = useRouter()
-
     return <>
         {alternatives.length === 0 ? (
             <Block className="text-center">Nothing found</Block>
@@ -16,10 +15,11 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
             <List inset strong>
                 {alternatives.map(alternative => <ListItem 
                 after={<Time time={alternative.when ? new Date(alternative.when) : null}/>} 
+                header={alternative.line?.fahrtNr} 
                 key={alternative.tripId + alternative.when} 
-                link 
+                link
                 onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}
-                subtitle={alternative.destination?.name ?? alternative.origin?.name}
+                subtitle={alternative.direction ?? alternative.provenance}
                 title={alternative.line?.name}
                 />)}
             </List>

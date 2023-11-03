@@ -2,12 +2,11 @@
 
 import { Chip, Icon, List, ListButton, ListInput, Navbar, NavbarBackLink, Popover, Segmented, SegmentedButton, Toolbar } from "konsta/react"
 import { Clock, PlusCircle, MinusCircle } from "framework7-icons/react"
-import { usePathname, useSearchParams, useSelectedLayoutSegment } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useSearchParams, useSelectedLayoutSegment, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import Time from "../../../../components/time";
 
-function toDatetimeLocal(date: Date) {
+function toDatetimeLocal(date: Date): string {
     const ten = function (i) {
         return (i < 10 ? '0' : '') + i;
     };
@@ -16,12 +15,10 @@ function toDatetimeLocal(date: Date) {
         DD = ten(date.getDate()),
         HH = ten(date.getHours()),
         II = ten(date.getMinutes());
-    return YYYY + '-' + MM + '-' + DD + 'T' + HH + ':' + II;
+    return `${YYYY}-${MM}-${DD}T${HH}:${II}`;
 };
 
-
-
-export default function StationNavbar({ id, title }: { id: string, title: string }) {
+export default function StationNavbar({ id, title }: { id: string, title: string }): React.JSX.Element {
     const router = useRouter()
     const searchParams = useSearchParams()
     const pathname = usePathname()
@@ -60,16 +57,16 @@ export default function StationNavbar({ id, title }: { id: string, title: string
         </Toolbar>
 
         <Popover
+            onBackdropClick={() => { setWhenOpen(false) }}
             opened={whenOpen}
             target=".filter-when"
-            onBackdropClick={() => { setWhenOpen(false) }}
         >
             <List nested>
                 <ListInput
+                    onChange={(e: Event) => { setWhen(new Date((e.target as HTMLInputElement).value)) }}
                     outline
                     type="datetime-local"
                     value={toDatetimeLocal(when)}
-                    onChange={(e: Event) => {setWhen(new Date((e.target as HTMLInputElement).value))}}
                 />
                 <ListButton onClick={() => {
                     setWhen(new Date())

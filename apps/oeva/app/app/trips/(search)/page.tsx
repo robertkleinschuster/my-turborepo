@@ -26,5 +26,5 @@ export default async function Stations({ searchParams }: { searchParams: { query
         }
     }
 
-    return <Trips trips={[]} />
+    return <Trips trips={[]} error={!searchParams.products?.length ? 'Kein Angebot gewählt' : undefined} />
 }

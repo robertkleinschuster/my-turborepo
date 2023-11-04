@@ -57,10 +57,10 @@ export default function StationNavbar({ id, title, products }: { id: string, tit
         title={title}
     />
         <Toolbar innerClassName="gap-2 !justify-start" top>
-            <Button className="filter-when -w-full !w-auto" onClick={() => { setWhenOpen(true) }} rounded tonal>
+            <Button className="filter-when !w-auto" onClick={() => { setWhenOpen(true) }} rounded tonal>
                 <Icon ios={<Clock />} />&nbsp;<Time time={when} />
             </Button>
-            <Button className="filter-products -w-full !w-auto gap-1" onClick={() => { setProductsOpen(true) }} rounded tonal>
+            <Button className="filter-products !w-auto gap-1" onClick={() => { setProductsOpen(true) }} rounded tonal>
                 <span>{productsFilter.size ? 'Angebot:' : 'Angebot wählen'}</span>
                 {products.filter(product => productsFilter.has(product.id)).map(product =>
                     <Product key={product.id} product={product} />

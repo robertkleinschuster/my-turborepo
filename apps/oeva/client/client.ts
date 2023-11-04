@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- needed to normalize hafas client */
-import type { HafasClient } from "hafas-client";
+import type { HafasClient, Profile } from "hafas-client";
 import { createClient } from "hafas-client"
 import { profile as oebb } from "hafas-client/p/oebb/index"
 import { profile as db } from "hafas-client/p/db/index"
@@ -9,6 +9,7 @@ const userAgent = 'OeVA';
 
 export interface Client {
     readonly name: string
+    get profile(): Profile
     locations: HafasClient['locations']
     stop: HafasClient['stop']
     departures: HafasClient['departures']
@@ -25,9 +26,12 @@ export class InvalidHafasClientError extends Error {
 }
 
 abstract class BaseClient implements Client {
-    protected abstract createHafas(): HafasClient
+    private createHafas(): HafasClient {
+        return createClient(this.profile, userAgent)
+    }
     private hafas = this.createHafas()
     abstract name: string
+    abstract get profile(): Profile
 
     constructor() {
         if (undefined === this.hafas.tripsByName) {
@@ -58,22 +62,23 @@ abstract class BaseClient implements Client {
 
 export class OebbScotty extends BaseClient {
     readonly name: string = 'ÖBB Scotty'
-    protected createHafas(): HafasClient {
-        return createClient(oebb, userAgent)
+
+    get profile(): Profile {
+        return oebb;
     }
 }
 
 export class DbNavigator extends BaseClient {
     readonly name: string = 'DB Navigator'
-    protected createHafas(): HafasClient {
-        return createClient(db, userAgent)
+    get profile(): Profile {
+        return db;
     }
 }
 
 export class BusBahnBim extends BaseClient {
     readonly name: string = 'BusBahnBim'
-    protected createHafas(): HafasClient {
-        return createClient(stv, userAgent)
+    get profile(): Profile {
+        return stv;
     }
 }
 

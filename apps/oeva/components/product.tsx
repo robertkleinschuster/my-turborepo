@@ -7,15 +7,15 @@ export default function Product({ product }: { product: ProductType }): React.JS
     }
 
     if (product.id === 'tram') {
-        return <span className="class-a-tram" />
+        return <span className="class-a-haf-prod-tram" />
     }
 
     if (product.id === 'u-bahn') {
-        return <span className="class-a-ubahn" />
+        return <span className="class-a-haf-prod-ubahn" />
     }
 
     if (product.id === 'city-bus') {
-        return <span className="class-a-bus" />
+        return <span className="class-a-haf-prod-bus" />
     }
 
     if (product.id === 'regional-bus') {
@@ -23,11 +23,11 @@ export default function Product({ product }: { product: ProductType }): React.JS
     }
 
     if (product.id === 'long-distance-bus') {
-        return <span className="class-a-bus" />
+        return <span className="class-m-ic-bus" />
     }
 
     if (product.id === 'other-bus') {
-        return <span className="class-a-bus" />
+        return <span className="class-m-bus" />
     }
 
     if (product.id === 'aerial-lift') {

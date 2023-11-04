@@ -1,7 +1,7 @@
 import { Metadata, Viewport } from "next";
 import "./globals.css";
-import "../fonts/betreiber-logos/css/Betreiber-Logos-2.1.css"
-import "../fonts/zuggattungen/css/Zuggattungen-1.1.css"
+import "../fonts/betreiber-logos/css/betreiber-logos.css"
+import "../fonts/zuggattungen/css/zuggattungen.css"
 
 export const metadata: Metadata = {
   title: "OeVA",

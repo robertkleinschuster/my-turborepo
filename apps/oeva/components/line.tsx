@@ -1,7 +1,8 @@
-import type { Line } from "hafas-client";
+import type { Line, ProductType } from "hafas-client";
 import React from "react";
+import Product from "./product";
 
-export default function Line({ line }: { line: Line }): React.JSX.Element {
+export default function Line({ line, products }: { line: Line, products: readonly ProductType[] }): React.JSX.Element {
     if (line.product === 'train-and-s-bahn') {
         if (line.productName === 'RJ') {
             return <span className="class-a-rj" />
@@ -39,7 +40,6 @@ export default function Line({ line }: { line: Line }): React.JSX.Element {
             return <span className="class-a-r" />
         }
 
-
         if (line.name?.startsWith('S')) {
             return <span className="class-a-sbahn" />
         }
@@ -47,20 +47,10 @@ export default function Line({ line }: { line: Line }): React.JSX.Element {
         return <span>{line.productName}</span>
     }
 
-    if (line.product === 'tram') {
-        return <span className="class-a-tram" />
-    }
-
-    if (line.product === 'u-bahn') {
-        return <span className="class-a-ubahn" />
-    }
-
-    if (line.product === 'city-bus') {
-        return <span className="class-a-bus" />
-    }
-
-    if (line.product === 'regional-bus') {
-        return <span className="class-a-bus" />
+    for (const product of products) {
+        if (product.id === line.product) {
+            return <Product product={product} />
+        }
     }
 
     return <span>-</span>

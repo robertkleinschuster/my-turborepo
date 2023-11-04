@@ -1,13 +1,13 @@
 "use client"
 
-import type { Alternative } from "hafas-client";
+import type { Alternative, ProductType } from "hafas-client";
 import { Block, List, ListItem } from 'konsta/react'
 import { useRouter } from "next/navigation";
 import React from "react";
 import Time from "./time";
 import Line from "./line";
 
-export default function Alternatives({ alternatives }: { alternatives: readonly Alternative[] }): React.JSX.Element {
+export default function Alternatives({ alternatives, products }: { alternatives: readonly Alternative[], products: readonly ProductType[] }): React.JSX.Element {
     const router = useRouter()
     return <>
         {alternatives.length === 0 ? (
@@ -16,11 +16,11 @@ export default function Alternatives({ alternatives }: { alternatives: readonly 
             <List inset strong>
                 {alternatives.map(alternative => <ListItem 
                 after={<Time time={alternative.when ? new Date(alternative.when) : null}/>} 
-                key={alternative.tripId + alternative.when} 
+                footer={alternative.line?.fahrtNr} 
+                key={alternative.tripId + alternative.when}
                 link
-                media={alternative.line ? <Line line={alternative.line}/> : '-'}
+                media={alternative.line ? <Line line={alternative.line} products={products}/> : '-'}
                 onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}
-                footer={alternative.line?.fahrtNr}
                 title={`${alternative.line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`}
                 />)}
             </List>

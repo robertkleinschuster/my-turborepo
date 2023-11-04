@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Time from "./time";
 
-export default function Trips({ trips }: { trips: readonly Trip[] }): React.JSX.Element {
+export default function Trips({ trips, error }: { trips: readonly Trip[], error?: string }): React.JSX.Element {
     const router = useRouter()
 
     return <>
         {trips.length === 0 ? (
-            <Block className="text-center">Nothing found</Block>
+            <Block className="text-center">Keine Ergebnisse{error ? <p>{error}</p> : null}</Block>
         ) : (
             <List inset strong>
                 {trips.map(trip => <ListItem

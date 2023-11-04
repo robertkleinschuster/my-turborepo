@@ -5,7 +5,7 @@ import type { ProductType, StopOver } from "hafas-client"
 import { useRouter } from "next/navigation"
 import React from "react"
 import TimeRange from "./time-range"
-import Product from "./product"
+import StopProducts from "./stop-products"
 
 export default function Stopovers({ stopovers, products }: { stopovers: readonly StopOver[], products: readonly ProductType[] }): React.JSX.Element {
     const router = useRouter()
@@ -24,18 +24,9 @@ export default function Stopovers({ stopovers, products }: { stopovers: readonly
             const to = stopover.departure ? new Date(stopover.departure) : null;
 
             return <ListItem
+                after={stopover.stop ? <StopProducts products={products} stop={stopover.stop}/> : null}
                 header={<TimeRange from={from} to={to} />}
                 key={(stopover.stop?.id ?? '') + (stopover.arrival ?? stopover.departure)}
-                after={
-                    <span className="flex gap-1">
-                        {products.filter(product => {
-                            if (stopover.stop?.products) {
-                                return stopover.stop.products[product.id];
-                            }
-                            return false;
-                        }).map(product => <Product key={product.id} product={product} />)}
-                    </span>
-                }
                 link
                 onClick={() => { navigateToLocation(stopover.stop?.id, stopover.arrival ?? stopover.departure ?? '') }}
                 title={stopover.stop?.name}

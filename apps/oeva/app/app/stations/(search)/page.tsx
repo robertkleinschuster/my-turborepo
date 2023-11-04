@@ -21,5 +21,5 @@ export default async function Stations({ searchParams }: { searchParams: { query
         entrances: false
     })
 
-    return <Locations locations={locations.filter(location => location.type === 'station' || location.type === 'stop')} />
+    return <Locations locations={locations.filter(location => location.type === 'station' || location.type === 'stop')} products={client.profile.products} />
 }

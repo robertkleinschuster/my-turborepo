@@ -10,6 +10,6 @@ export default async function TripNavbarData({ id }: { id: string }) {
 
     const direction = trip.trip.direction ?? '';
 
-    return <TripNavbar subtitle={trip.trip.line?.fahrtNr ?? ''} title={`${lineName} ${direction}`} />
+    return <TripNavbar operator={trip.trip.line?.operator} subtitle={trip.trip.line?.fahrtNr ?? ''} title={`${lineName} ${direction}`} />
 
 }

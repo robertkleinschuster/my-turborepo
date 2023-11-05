@@ -4,8 +4,9 @@ import { Block, List, ListItem } from "konsta/react"
 import type { ProductType, StopOver } from "hafas-client"
 import { useRouter } from "next/navigation"
 import React from "react"
-import TimeRange from "./time-range"
 import StopProducts from "./stop-products"
+import { StopoverDeparture } from "./stopover-departure"
+import { StopoverArrival } from "./stopover-arrival"
 
 export default function Stopovers({ stopovers, products }: { stopovers: readonly StopOver[], products: readonly ProductType[] }): React.JSX.Element {
     const router = useRouter()
@@ -20,12 +21,11 @@ export default function Stopovers({ stopovers, products }: { stopovers: readonly
 
     return <List inset strong>
         {stopovers.map(stopover => {
-            const from = stopover.arrival ? new Date(stopover.arrival) : null;
-            const to = stopover.departure ? new Date(stopover.departure) : null;
 
             return <ListItem
-                after={stopover.stop ? <StopProducts products={products} stop={stopover.stop}/> : null}
-                header={<TimeRange from={from} to={to} />}
+                after={stopover.stop ? <StopProducts products={products} stop={stopover.stop} /> : null}
+                footer={<StopoverDeparture stopover={stopover} />}
+                header={<StopoverArrival stopover={stopover} />}
                 key={(stopover.stop?.id ?? '') + (stopover.arrival ?? stopover.departure)}
                 link
                 onClick={() => { navigateToLocation(stopover.stop?.id, stopover.arrival ?? stopover.departure ?? '') }}

@@ -10,5 +10,5 @@ export default async function Trip({params}: {params: {id: string}}) {
         return <>Kein Daten</>
     }
 
-    return <Stopovers stopovers={trip.trip.stopovers} products={client.profile.products}/>
+    return <Stopovers products={client.profile.products} stopovers={trip.trip.stopovers}/>
 }

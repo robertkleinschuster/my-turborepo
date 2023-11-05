@@ -111,12 +111,16 @@ export default function Filter({ products, showTime = false }: { products: reado
                         setWhen(new Date())
                     }} >Heute</ListButton>
                     <ListButton onClick={() => {
+                        when.setHours(0, 0, 0, 0)
+
                         setWhen(new Date(when.getTime() - 1440 * 60000))
                     }} >
                         <Icon
                             ios={<MinusCircle />}
                         />&nbsp;1 Tag</ListButton>
                     <ListButton onClick={() => {
+                        when.setHours(0, 0, 0, 0)
+
                         setWhen(new Date(when.getTime() + 1440 * 60000))
                     }} >
                         <Icon

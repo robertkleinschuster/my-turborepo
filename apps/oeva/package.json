@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^9.7.2",
-    "@nextui-org/react": "^2.1.13",
+    "@nextui-org/react": "^2.2.3",
     "@types/body-scroll-lock": "^3.1.1",
     "@types/hafas-client": "^6.1.4",
     "body-scroll-lock": "4.0.0-beta.0",
@@ -21,7 +21,7 @@
     "file-loader": "^6.2.0",
     "framer-motion": "^10.16.4",
     "framework7-icons": "^5.0.5",
-    "hafas-client": "git+https://github.com/robertkleinschuster/hafas-client.git",
+    "hafas-client": "github:robertkleinschuster/hafas-client",
     "konsta": "^3.1.1",
     "next": "^14.0.1",
     "qs": "^6.11.2",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.1",
     "@types/node": "^20.8.10",
-    "@types/react": "^18.2.34",
+    "@types/react": "^18.2.35",
     "@types/react-dom": "^18.2.14",
     "autoprefixer": "^10.4.16",
     "eslint-config-custom": "workspace:*",

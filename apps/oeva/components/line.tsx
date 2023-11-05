@@ -40,6 +40,10 @@ export default function Line({ line, products }: { line: Line, products: readonl
             return <span className="class-a-rex" />
         }
 
+        if (line.productName === 'RGJ' || line.name?.startsWith('RGJ')) {
+            return <></>
+        }
+
         if (line.productName === 'R' || line.name?.startsWith('R')) {
             return <span className="class-a-r" />
         }

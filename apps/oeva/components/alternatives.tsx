@@ -5,9 +5,10 @@ import { Block, List, ListItem } from 'konsta/react'
 import { useRouter } from "next/navigation";
 import React from "react";
 import { parseISO } from "date-fns";
-import Line from "./line";
+import Operator from "./operator";
 import TimeDelay from "./time-delay";
 import { Platform } from "./platform";
+import AlternativeTitle from "./alternative-title";
 
 export default function Alternatives({ alternatives, products }: { alternatives: readonly Alternative[], products: readonly ProductType[] }): React.JSX.Element {
     const router = useRouter()
@@ -30,9 +31,9 @@ export default function Alternatives({ alternatives, products }: { alternatives:
                     </>}
                     key={alternative.tripId + alternative.when}
                     link
-                    media={alternative.line ? <Line line={alternative.line} products={products} /> : '-'}
+                    media={<span className="text-3xl">{alternative.line?.operator ? <Operator operator={alternative.line.operator} /> : '-'}</span>}
                     onClick={() => { router.push(`/app/trips/${encodeURIComponent(alternative.tripId)}`) }}
-                    title={`${alternative.line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`}
+                    title={<AlternativeTitle alternative={alternative} products={products}/>}
                 />)}
             </List>
         )}

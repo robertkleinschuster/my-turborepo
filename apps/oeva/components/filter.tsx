@@ -14,6 +14,18 @@ function toDatetimeLocal(date: Date): string {
     };
     const YYYY = date.getFullYear(),
         MM = ten(date.getMonth() + 1),
+        DD = ten(date.getDate()),
+        HH = ten(date.getHours()),
+        II = ten(date.getMinutes());
+    return `${YYYY}-${MM}-${DD}T${HH}:${II}`;
+};
+
+function toDateLocal(date: Date): string {
+    const ten = function (i) {
+        return (i < 10 ? '0' : '') + i;
+    };
+    const YYYY = date.getFullYear(),
+        MM = ten(date.getMonth() + 1),
         DD = ten(date.getDate());
     return `${YYYY}-${MM}-${DD}`;
 };
@@ -93,7 +105,7 @@ export default function Filter({ products, showTime = false }: { products: reado
                         onChange={(e: Event) => { setWhen(new Date((e.target as HTMLInputElement).value)) }}
                         outline
                         type="date"
-                        value={toDatetimeLocal(when)}
+                        value={toDateLocal(when)}
                     />
                     <ListButton onClick={() => {
                         setWhen(new Date())

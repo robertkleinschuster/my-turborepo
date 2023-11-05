@@ -8,7 +8,7 @@ export default function TimeDelay({ planned, prognosed, label, delay }: { planne
         }
         if (delay !== undefined) {
 
-            return <span>{label}<span className="line-through"><Time time={planned} /></span> <Time time={prognosed} /> (+{delay / 60})</span>
+            return <span>{label}<span className="line-through"><Time time={planned} /></span> <span className="font-bold"><Time time={prognosed} /> (+{delay / 60})</span></span>
         }
 
         return <span>{label}<span className="line-through"><Time time={planned} /></span> <Time time={prognosed} /></span>

@@ -6,7 +6,7 @@ export function Platform({ planned, prognosed }: { planned: string | undefined, 
             return <span>Steig {planned}</span>
         }
 
-        return <span>Steig <span className="line-through">{planned}</span> {prognosed}</span>
+        return <span>Steig <span className="line-through">{planned}</span> <span className="font-bold">{prognosed}</span></span>
     }
 
     if (planned) {

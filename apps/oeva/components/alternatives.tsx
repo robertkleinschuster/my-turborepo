@@ -26,7 +26,7 @@ export default function Alternatives({ alternatives, products }: { alternatives:
                     header={<>
                         <TimeDelay delay={alternative.delay} label="" planned={parseTime(alternative.plannedWhen)} prognosed={parseTime(alternative.when)} />
                         {' '}
-                        <Platform planned={alternative.plannedPlatform} prognosed={alternative.prognosedPlatform} />
+                        <Platform planned={alternative.plannedPlatform} prognosed={alternative.platform} />
                     </>}
                     key={alternative.tripId + alternative.when}
                     link

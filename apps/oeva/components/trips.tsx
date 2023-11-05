@@ -28,7 +28,7 @@ export default function Trips({ trips, error }: { trips: readonly Trip[], error?
                     link
                     onClick={() => { router.push(`/app/trips/${encodeURIComponent(trip.id)}`) }}
                     subtitle={trip.destination?.name ?? ''}
-                    title={<span className={trip.cancelled ? 'line-through' : undefined}>trip.line?.name</span>}
+                    title={<span className={trip.cancelled ? 'line-through' : undefined}>{trip.line?.name}</span>}
                 />)}
             </List>
         )}

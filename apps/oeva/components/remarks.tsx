@@ -7,25 +7,37 @@ import { ExclamationmarkTriangleFill, InfoCircleFill } from "framework7-icons/re
 
 
 export default function Remarks({ remarks, type }: { remarks: readonly (Hint | Status | Warning)[] | undefined, type: Hint['type'] | Warning['type'] }): React.JSX.Element {
+    if (!remarks?.filter(remark => remark.type === type).length) {
+        return <></>
+    }
     return <List inset outline>
-        {remarks?.map(remark => {
+        {remarks.map((remark, i) => {
             if (remark.type === 'warning' && type === 'warning') {
-                return <ListItem key={remark.id}
+                return <ListItem key={i}
+                    media={<Icon className="text-amber-300" ios={<ExclamationmarkTriangleFill />} />}
+                    title={remark.summary}
+                    text={remark.text}
+                />
+            }
+            if (remark.type === 'status' && type === 'status') {
+                return <ListItem key={i}
                     media={<Icon className="text-amber-300" ios={<ExclamationmarkTriangleFill />} />}
                     title={remark.summary}
                     text={remark.text}
                 />
             }
             if (remark.type === 'hint' && type === 'hint') {
-                return <ListItem key={remark.code}
+                return <ListItem key={i}
                     media={<Icon ios={<InfoCircleFill />} />}
+                    title={remark.summary}
                     text={remark.text}
                 />
             }
 
             if (remark.type === type) {
-                return <ListItem key={remark.text}
+                return <ListItem key={i}
                     media={<Icon ios={<InfoCircleFill />} />}
+                    title={remark.summary}
                     text={remark.text}
                 />
             }

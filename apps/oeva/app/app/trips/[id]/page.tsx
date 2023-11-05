@@ -5,7 +5,7 @@ import Remarks from '../../../../components/remarks'
 export default async function Trip({ params }: { params: { id: string } }) {
     const client = getClient()
 
-    const trip = await client.trip(decodeURIComponent(params.id), undefined)
+    const trip = await client.trip(decodeURIComponent(params.id), {remarks: true})
 
     if (!trip.trip.stopovers) {
         return <>Kein Daten</>
@@ -13,6 +13,7 @@ export default async function Trip({ params }: { params: { id: string } }) {
 
     return <>
         <Remarks remarks={trip.trip.remarks} type='warning' />
+        <Remarks remarks={trip.trip.remarks} type='status' />
         <Stopovers products={client.profile.products} stopovers={trip.trip.stopovers} />
         <Remarks remarks={trip.trip.remarks} type='hint' />
     </>

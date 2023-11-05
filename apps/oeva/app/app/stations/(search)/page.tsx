@@ -11,7 +11,6 @@ export default async function Stations({ searchParams }: { searchParams: { query
 
     const locations = await client.locations(searchParams.query, {
         results: 20,
-        language: 'de',
         linesOfStops: false,
         subStops: false,
         fuzzy: true,

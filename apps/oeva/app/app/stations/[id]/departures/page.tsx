@@ -7,6 +7,6 @@ export default async function Departures({ params, searchParams }: { params: { i
     const when = searchParams.when ? new Date(decodeURIComponent(searchParams.when)) : undefined
     const client = getClient()
 
-    const departures = await client.departures(params.id, { duration: 1440, results: 40, when: when, products: buildProductsFilter(client, searchParams.products) })
+    const departures = await client.departures(params.id, { duration: 1440, results: 40, when: when, products: buildProductsFilter(client, searchParams.products), remarks: true })
     return <Alternatives alternatives={departures.departures} products={client.profile.products} />
 }

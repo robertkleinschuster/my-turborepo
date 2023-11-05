@@ -24,8 +24,10 @@ export default function Alternatives({ alternatives, products }: { alternatives:
         ) : (
             <List inset strong>
                 {alternatives.map(alternative => <ListItem
-                    className={alternative.delay ? "dark:bg-amber-950 bg-red-100" : undefined}
-                    after={<RemarkSummary remarks={alternative.remarks}/>}
+                    className={
+                       alternative.delay ? "dark:bg-amber-950 bg-red-100" : undefined
+                    }
+                    after={<RemarkSummary cancelled={alternative.cancelled} remarks={alternative.remarks}/>}
                     footer={alternative.line?.fahrtNr}
                     header={<>
                         <TimeDelay delay={alternative.delay} label="" planned={parseTime(alternative.plannedWhen)} prognosed={parseTime(alternative.when)} />

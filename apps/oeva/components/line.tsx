@@ -8,6 +8,10 @@ export default function Line({ line, products }: { line: Line, products: readonl
             return <span className="class-a-rj" />
         }
 
+        if (line.productName === 'WB') {
+            return <span className="class-a-west" />
+        }
+
         if (line.productName === 'NJ') {
             return <span className="class-a-nj" />
         }
@@ -44,7 +48,7 @@ export default function Line({ line, products }: { line: Line, products: readonl
             return <span className="class-a-sbahn" />
         }
 
-        return <span>{line.productName}</span>
+        return <span className="class-a-modern-train" />
     }
 
     for (const product of products) {
@@ -53,5 +57,5 @@ export default function Line({ line, products }: { line: Line, products: readonl
         }
     }
 
-    return <span>-</span>
+    return <span title={`${line.product}:${line.productName}`}>-</span>
 }

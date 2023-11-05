@@ -1,4 +1,5 @@
 import React from 'react';
+import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import Trips from '../../../../components/trips';
 import { getClient } from '../../../../client/client';
 import { buildProductsFilter } from '../../../../client/products-filter';
@@ -6,11 +7,9 @@ import { buildProductsFilter } from '../../../../client/products-filter';
 export default async function Stations({ searchParams }: { searchParams: { query: string, when?: string, products?: string[] } }): Promise<React.JSX.Element> {
     const client = getClient()
 
-    const from = searchParams.when ? new Date(searchParams.when) : new Date();
-    from.setHours(0, 0, 0, 0)
+    const from = startOfDay(searchParams.when ? parseISO(searchParams.when) : new Date())
 
-    const to = searchParams.when ? new Date(searchParams.when) : new Date();
-    to.setHours(23, 59, 0, 0)
+    const to = endOfDay(searchParams.when ? parseISO(searchParams.when) : new Date())
 
     if (searchParams.products && searchParams.query) {
         try {
@@ -22,9 +21,9 @@ export default async function Stations({ searchParams }: { searchParams: { query
             })
             return <Trips trips={trips.trips} />
         } catch (e) {
-            return <Trips trips={[]} error={String(e)} />
+            return <Trips error={String(e)} trips={[]} />
         }
     }
 
-    return <Trips trips={[]} error={!searchParams.products?.length ? 'Kein Angebot gewählt' : undefined} />
+    return <Trips error={!searchParams.products?.length ? 'Kein Angebot gewählt' : undefined} trips={[]} />
 }

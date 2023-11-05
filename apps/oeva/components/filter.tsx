@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Time from "./time";
 import Product from "./product";
+import { addDays, addHours, subDays, subHours } from "date-fns";
 
 function toDatetimeLocal(date: Date): string {
     const ten = function (i) {
@@ -86,14 +87,13 @@ export default function Filter({ products, showTime = false }: { products: reado
                         setWhen(new Date())
                     }} >Jetzt</ListButton>
                     <ListButton onClick={() => {
-                        setWhen(new Date(when.getTime() - 60 * 60000))
-
+                        setWhen(subHours(when, 1))
                     }} >
                         <Icon
                             ios={<MinusCircle />}
                         />&nbsp;1 Stunde</ListButton>
                     <ListButton onClick={() => {
-                        setWhen(new Date(when.getTime() + 60 * 60000))
+                        setWhen(addHours(when, 1))
                     }} >
                         <Icon
                             ios={<PlusCircle />}
@@ -111,17 +111,13 @@ export default function Filter({ products, showTime = false }: { products: reado
                         setWhen(new Date())
                     }} >Heute</ListButton>
                     <ListButton onClick={() => {
-                        when.setHours(0, 0, 0, 0)
-
-                        setWhen(new Date(when.getTime() - 1440 * 60000))
+                        setWhen(subDays(when, 1))
                     }} >
                         <Icon
                             ios={<MinusCircle />}
                         />&nbsp;1 Tag</ListButton>
                     <ListButton onClick={() => {
-                        when.setHours(0, 0, 0, 0)
-
-                        setWhen(new Date(when.getTime() + 1440 * 60000))
+                        setWhen(addDays(when, 1))
                     }} >
                         <Icon
                             ios={<PlusCircle />}

@@ -3,6 +3,7 @@ import "./globals.css";
 import "../fonts/Betreiber-Logos/css/Betreiber-Logos.css"
 import "../fonts/Zuggattungen/css/Zuggattungen.css"
 import React from "react";
+import {generateStartupImages} from "./splashscreen/[id]/route";
 
 export const metadata: Metadata = {
     title: "OeVA",
@@ -15,12 +16,7 @@ export const metadata: Metadata = {
         capable: true,
         statusBarStyle: "black-translucent",
         title: 'OeVA',
-        startupImage: [
-            {
-                url: 'splashscreen/iphone-12-pro-max',
-                media: 'screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)'
-            },
-        ],
+        startupImage: generateStartupImages()
     },
 };
 

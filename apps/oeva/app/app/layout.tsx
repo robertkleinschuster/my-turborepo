@@ -1,6 +1,7 @@
 import type {Metadata, Viewport} from "next";
 import React from "react";
 import AppLayout from "../../components/app-layout";
+import {generateStartupImages} from "../splashscreen/[id]/route";
 
 export const metadata: Metadata = {
     title: "OeVA",
@@ -13,12 +14,7 @@ export const metadata: Metadata = {
         capable: true,
         statusBarStyle: "black-translucent",
         title: 'OeVA',
-        startupImage: [
-            {
-                url: 'splashscreen/iphone-12-pro-max',
-                media: 'screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)'
-            },
-        ],
+        startupImage: generateStartupImages()
     },
 };
 

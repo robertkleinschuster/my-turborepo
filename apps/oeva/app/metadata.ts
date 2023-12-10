@@ -1,5 +1,5 @@
 import type {Metadata} from "next";
-import {generateStartupImages} from "./splashscreen/[id]/route";
+import {generateStartupImages} from "./splashscreen/[id]/sizes";
 
 const metadata: Metadata = {
     title: "OeVA",

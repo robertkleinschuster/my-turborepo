@@ -2,6 +2,7 @@
 
 import { List, ListItem, Navbar } from "konsta/react";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function Favorites(): React.JSX.Element {
     const router = useRouter()

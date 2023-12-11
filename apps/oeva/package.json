@@ -28,7 +28,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ui": "workspace:*",
-    "url-loader": "^4.1.1"
+    "url-loader": "^4.1.1",
+    "vao-typescript": "^1.4.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",

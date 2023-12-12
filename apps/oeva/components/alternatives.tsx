@@ -1,6 +1,6 @@
 "use client"
 
-import {Alternative, Line as LineType, ProductType} from "hafas-client";
+import {Alternative, ProductType} from "hafas-client";
 import {Block, List, ListItem} from 'konsta/react'
 import React from "react";
 import {parseISO} from "date-fns";

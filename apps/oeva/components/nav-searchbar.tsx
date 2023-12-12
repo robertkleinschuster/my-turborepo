@@ -28,7 +28,8 @@ export default function NavSearchbar({title}: {title: string}) {
     subnavbar={
         <Searchbar
             disableButton
-            disableButtonText="Cancel"
+            disableButtonText="Abbrechen"
+            placeholder="Suchen..."
             onClear={handleClear}
             onChange={handleSearch}
             value={searchQuery}

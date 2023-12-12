@@ -1,16 +1,16 @@
 "use client"
 
-import type { Trip } from "hafas-client";
-import { Block, List, ListItem } from 'konsta/react'
-import { useRouter } from "next/navigation";
+import {Line as LineType, Trip} from "hafas-client";
+import {Block, List, ListItem} from 'konsta/react'
+import {useRouter} from "next/navigation";
 import React from "react";
-import { parseISO } from "date-fns";
+import {parseISO} from "date-fns";
 import TimeDelay from "./time-delay";
 import RemarkSummary from "./remark-summary";
+import {useNavigation} from "../hooks/use-navigation";
 
-export default function Trips({ trips, error }: { trips: readonly Trip[], error?: string }): React.JSX.Element {
-    const router = useRouter()
-
+export default function Trips({trips, error}: { trips: readonly Trip[], error?: string }): React.JSX.Element {
+    const nav = useNavigation()
     const parseTime = (time: string | undefined): Date | null => {
         return time ? parseISO(time) : null;
     }
@@ -21,12 +21,17 @@ export default function Trips({ trips, error }: { trips: readonly Trip[], error?
         ) : (
             <List inset strong>
                 {trips.map(trip => <ListItem
-                    after={<RemarkSummary cancelled={trip.cancelled} remarks={trip.remarks} />}
+                    after={<RemarkSummary cancelled={trip.cancelled} remarks={trip.remarks}/>}
                     footer={trip.line?.fahrtNr}
-                    header={<TimeDelay delay={trip.departureDelay} label="" planned={parseTime(trip.plannedDeparture)} prognosed={parseTime(trip.departure)} />}
+                    header={<TimeDelay delay={trip.departureDelay} label="" planned={parseTime(trip.plannedDeparture)}
+                                       prognosed={parseTime(trip.departure)}/>}
                     key={trip.id + trip.departure}
                     link
-                    onClick={() => { router.push(`/app/trips/${encodeURIComponent(trip.id)}`) }}
+                    onClick={() => {
+                        const line = trip.line;
+                        const title = `${line?.name ?? ''} ${trip.direction ?? ''}`
+                        nav.trip(trip.id, title)
+                    }}
                     subtitle={trip.destination?.name ?? ''}
                     title={<span className={trip.cancelled ? 'line-through' : undefined}>{trip.line?.name}</span>}
                 />)}

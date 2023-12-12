@@ -2,18 +2,14 @@
 
 import { Block, List, ListItem } from "konsta/react"
 import type { ProductType, StopOver } from "hafas-client"
-import { useRouter } from "next/navigation"
 import React from "react"
 import StopProducts from "./stop-products"
 import { StopoverDeparture } from "./stopover-departure"
 import { StopoverArrival } from "./stopover-arrival"
+import {useNavigation} from "../hooks/use-navigation";
 
 export default function Stopovers({ stopovers, products }: { stopovers: readonly StopOver[], products: readonly ProductType[] }): React.JSX.Element {
-    const router = useRouter()
-
-    const navigateToLocation = (id: string | undefined, when: string): void => {
-        router.push(`/app/stations/${id}/departures?when=${encodeURIComponent(when)}`)
-    }
+    const nav = useNavigation()
 
     if (stopovers.length === 0) {
         return <Block className="text-center">Keine Ergebnisse</Block>
@@ -28,7 +24,7 @@ export default function Stopovers({ stopovers, products }: { stopovers: readonly
                 header={<StopoverArrival stopover={stopover} />}
                 key={(stopover.stop?.id ?? '') + (stopover.arrival ?? stopover.departure)}
                 link
-                onClick={() => { navigateToLocation(stopover.stop?.id, stopover.arrival ?? stopover.departure ?? '') }}
+                onClick={() => { stopover.stop?.id && nav.station(stopover.stop.id, stopover.arrival ?? stopover.departure ?? '', stopover.stop.name ?? '') }}
                 title={stopover.stop?.name}
             />
         })}

@@ -4,7 +4,7 @@ import {Block, Preloader} from "konsta/react"
 import type {JSX} from "react";
 
 export default function Loading(): JSX.Element {
-    return <Block className="text-center">
+    return <Block className="h-full flex justify-center items-center">
         <Preloader/>
     </Block>
 }

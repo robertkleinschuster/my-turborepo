@@ -7,5 +7,5 @@ export default function Scroll({ children }: { children: React.ReactNode }): Rea
     const ref = useRef<HTMLDivElement>(null)
 
     useEffect(() => {ref.current && disableBodyScroll(ref.current) })
-    return <div className="overflow-auto" ref={ref}>{children}</div>
+    return <div className="overflow-auto h-full" ref={ref}>{children}</div>
 }

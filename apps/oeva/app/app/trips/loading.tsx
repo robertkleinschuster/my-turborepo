@@ -1,11 +1,5 @@
 "use client"
 
-import { Block, Preloader } from "konsta/react"
-import type {JSX} from "react";
+import Loading from "../loading";
 
-export default function Loading(): JSX.Element {
-
-  return <Block className="text-center">
-    <Preloader />
-  </Block>
-}
+export default Loading

@@ -52,7 +52,8 @@ export const useHistory = create(
             },
             clear: () => {
                 set(() => ({
-                    items: []
+                    items: [],
+                    recents: []
                 }))
             }
         }),

@@ -51,6 +51,7 @@ describe('History', () => {
     })
     it('should clear all items', () => {
         const items = renderHook(() => useHistory(state => state.items))
+        const recents = renderHook(() => useHistory(state => state.recents))
         const push = renderHook(() => useHistory(state => state.push))
         const clear = renderHook(() => useHistory(state => state.clear))
 
@@ -62,6 +63,7 @@ describe('History', () => {
         })
 
         expect(items.result.current).toHaveLength(0)
+        expect(recents.result.current).toHaveLength(0)
     })
     it('should hide all items with a specific id in recents', () => {
         const recents = renderHook(() => useHistory(state => state.recents))

@@ -37,7 +37,7 @@ describe('History', () => {
             push.result.current('stations', '1', '')
         })
 
-        expect(recents.result.current().map(item => item.id)).toEqual(['1', '2', 'A'])
+        expect(recents.result.current.map(item => item.id)).toEqual(['1', '2', 'A'])
     })
     it('should contain the given title in its items', () => {
         const items = renderHook(() => useHistory(state => state.items))
@@ -62,5 +62,25 @@ describe('History', () => {
         })
 
         expect(items.result.current).toHaveLength(0)
+    })
+    it('should hide all items with a specific id in recents', () => {
+        const recents = renderHook(() => useHistory(state => state.recents))
+        const push = renderHook(() => useHistory(state => state.push))
+        const hideInRecents = renderHook(() => useHistory(state => state.hideInRecents))
+
+        act(() => {
+            push.result.current('stations', '1', '')
+            push.result.current('stations', '1', '')
+            push.result.current('trips', 'A', '')
+            push.result.current('stations', '1', '')
+            push.result.current('trips', 'B', '')
+            push.result.current('stations', '2', '')
+            push.result.current('trips', 'B', '')
+
+            hideInRecents.result.current('1')
+            hideInRecents.result.current('B')
+        })
+
+        expect(recents.result.current.map(item => item.id)).toEqual(['2', 'A'])
     })
 })

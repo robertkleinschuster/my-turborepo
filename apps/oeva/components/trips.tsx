@@ -1,8 +1,7 @@
 "use client"
 
-import {Line as LineType, Trip} from "hafas-client";
+import {Trip} from "hafas-client";
 import {Block, List, ListItem} from 'konsta/react'
-import {useRouter} from "next/navigation";
 import React from "react";
 import {parseISO} from "date-fns";
 import TimeDelay from "./time-delay";

@@ -1,33 +1,14 @@
 "use client"
 
 import type {JSX} from "react";
-import {List, ListItem} from "konsta/react";
 import dynamic from "next/dynamic";
 import {useHistory} from "../../../store/history";
-import {useNavigation} from "../../../hooks/use-navigation";
+import {HistoryList} from "../../../components/history-list";
 
 function History(): JSX.Element {
     const recents = useHistory(state => state.recents)
 
-    const nav = useNavigation()
-
-    return <List inset strong>
-        {recents().map(item => <ListItem
-                key={item.id + item.added}
-                link={item.type === 'station' || item.type === 'trip'}
-                onClick={() => {
-                    if (item.type === 'station') {
-                        nav.station(item.id, '', item.title)
-                    }
-                    if (item.type === 'trip') {
-                        nav.trip(item.id, item.title)
-                    }
-                }}
-                text={new Date(item.added).toLocaleString()}
-                title={item.title}
-            />
-        )}
-    </List>
+    return <HistoryList items={recents()}/>
 }
 
 export default dynamic(() => Promise.resolve(History), {ssr: false})

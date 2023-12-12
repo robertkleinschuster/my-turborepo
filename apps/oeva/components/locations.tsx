@@ -3,8 +3,8 @@
 import {Block, List, ListItem} from "konsta/react"
 import type {Location, ProductType, Station, Stop} from "hafas-client"
 import React from "react"
-import StopProducts from "./stop-products"
 import {useNavigation} from "../hooks/use-navigation";
+import StopProducts from "./stop-products"
 
 export default function Locations({locations, products}: {
     locations: readonly (Location | Stop | Station)[],

@@ -7,11 +7,12 @@ import {useHistory} from "../../../store/history";
 import {useNavigation} from "../../../hooks/use-navigation";
 
 function History(): JSX.Element {
-    const historyItems = useHistory(state => state.items).toReversed()
+    const recents = useHistory(state => state.recents)
+
     const nav = useNavigation()
 
     return <List inset strong>
-        {historyItems.map(item => <ListItem
+        {recents().map(item => <ListItem
                 key={item.id + item.added}
                 link={item.type === 'station' || item.type === 'trip'}
                 onClick={() => {

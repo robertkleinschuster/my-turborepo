@@ -24,7 +24,20 @@ describe('History', () => {
             push.result.current('stations', '1', '')
         })
 
-        expect(items.result.current[0].added.getTime()).toBeGreaterThanOrEqual(check)
+        expect(new Date(items.result.current[0].added).getTime()).toBeGreaterThanOrEqual(check)
+    })
+    it('should expose recents only showing the latest entry for each id', () => {
+        const recents = renderHook(() => useHistory(state => state.recents))
+        const push = renderHook(() => useHistory(state => state.push))
+
+        act(() => {
+            push.result.current('stations', '1', '')
+            push.result.current('trips', 'A', '')
+            push.result.current('stations', '2', '')
+            push.result.current('stations', '1', '')
+        })
+
+        expect(recents.result.current().map(item => item.id)).toEqual(['1', '2', 'A'])
     })
     it('should contain the given title in its items', () => {
         const items = renderHook(() => useHistory(state => state.items))

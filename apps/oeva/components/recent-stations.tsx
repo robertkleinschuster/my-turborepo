@@ -7,7 +7,7 @@ import {useHistory} from "../store/history";
 import {HistoryList} from "./history-list";
 import {BlockTitle} from "konsta/react";
 
-const StationRecents = dynamic(() => Promise.resolve((): JSX.Element => {
+const RecentStations = dynamic(() => Promise.resolve((): JSX.Element => {
     const recents = useHistory(state => state.recents)
     return <>
         <BlockTitle>Zuletzt verwendet</BlockTitle>
@@ -15,4 +15,4 @@ const StationRecents = dynamic(() => Promise.resolve((): JSX.Element => {
     </>
 }), {ssr: false})
 
-export {StationRecents};
+export {RecentStations};

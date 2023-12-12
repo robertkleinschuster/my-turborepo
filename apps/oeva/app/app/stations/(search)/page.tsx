@@ -1,11 +1,11 @@
 import React from 'react';
 import Locations from '../../../../components/locations';
 import { getClient } from '../../../../client/client';
-import {StationRecents} from "../../../../components/station-recents";
+import {RecentStations} from "../../../../components/recent-stations";
 
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
     if (!searchParams.query) {
-        return <StationRecents/>
+        return <RecentStations/>
     }
 
     const client = getClient();

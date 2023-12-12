@@ -17,5 +17,4 @@ export default function Navigation(): React.JSX.Element {
         <TabbarLink active={segment === 'history'} label="Verlauf"
                     linkProps={{href: '/app/history', component: Link}}/>
     </Tabbar>
-
 }

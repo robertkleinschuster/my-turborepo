@@ -1,21 +1,33 @@
 "use client"
 
-import {Alternative, ProductType} from "hafas-client";
+import type {Alternative, ProductType} from "hafas-client";
 import {Block, List, ListItem} from 'konsta/react'
-import React from "react";
+import React, {useState} from "react";
 import {parseISO} from "date-fns";
+import {useNavigation} from "../hooks/use-navigation";
 import Operator from "./operator";
 import TimeDelay from "./time-delay";
 import {Platform} from "./platform";
 import AlternativeTitle from "./alternative-title";
 import RemarkSummary from "./remark-summary";
-import {useNavigation} from "../hooks/use-navigation";
+import {useLongPress} from "use-long-press";
+import {RemarksPanel} from "./remarks-panel";
 
 export default function Alternatives({alternatives, products}: {
     alternatives: readonly Alternative[],
     products: readonly ProductType[]
 }): React.JSX.Element {
     const nav = useNavigation()
+
+    const [showPanel, setShowPanel] = useState(false)
+    const [subject, setSubject] = useState<Alternative|null>(null)
+    const longPress = useLongPress<Element, Alternative>((event, meta) => {
+        if (meta.context?.remarks?.length) {
+            setSubject(meta.context)
+            setShowPanel(true)
+        }
+    })
+
     const parseTime = (time: string | undefined): Date | null => {
         return time ? parseISO(time) : null;
     }
@@ -26,10 +38,10 @@ export default function Alternatives({alternatives, products}: {
         ) : (
             <List inset strong>
                 {alternatives.map(alternative => <ListItem
+                    {...longPress(alternative)}
                     className={
                         alternative.delay ? "dark:bg-amber-950 bg-red-100" : undefined
                     }
-                    after={<RemarkSummary cancelled={alternative.cancelled} remarks={alternative.remarks}/>}
                     footer={alternative.line?.fahrtNr}
                     header={<>
                         <TimeDelay delay={alternative.delay} label="" planned={parseTime(alternative.plannedWhen)}
@@ -46,9 +58,13 @@ export default function Alternatives({alternatives, products}: {
                         const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''} ${parseTime(alternative.plannedWhen)?.toLocaleString()}`
                         nav.trip(alternative.tripId, title)
                     }}
+                    subtitle={<RemarkSummary cancelled={alternative.cancelled} remarks={alternative.remarks}/>}
                     title={<AlternativeTitle alternative={alternative} products={products}/>}
                 />)}
             </List>
         )}
+        <RemarksPanel onDismiss={() => {
+            setShowPanel(false)
+        }} remarks={subject?.remarks ?? []} show={showPanel}/>
     </>
 }

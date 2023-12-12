@@ -29,7 +29,7 @@ export default function Trips({trips, error}: { trips: readonly Trip[], error?: 
                     link
                     onClick={() => {
                         const line = trip.line;
-                        const title = `${line?.name ?? ''} ${trip.direction ?? ''}`
+                        const title = `${line?.name ?? ''} ${trip.direction ?? ''} ${parseTime(trip.plannedDeparture)?.toLocaleString()}`
                         nav.trip(trip.id, title)
                     }}
                     subtitle={trip.destination?.name ?? ''}

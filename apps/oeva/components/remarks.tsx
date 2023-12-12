@@ -1,47 +1,68 @@
 "use client"
 
-import { Hint, Status, Warning } from "hafas-client";
-import { Icon, List, ListItem } from "konsta/react";
+import type {Hint, Status, Warning} from "hafas-client";
+import {Block, Icon} from "konsta/react";
+import type {ReactNode} from "react";
 import React from "react";
-import { ExclamationmarkTriangleFill, InfoCircleFill } from "framework7-icons/react"
+import {ExclamationmarkTriangleFill, InfoCircleFill} from "framework7-icons/react"
+
+function Remark({title, text, icon}: { title?: string, text?: string, icon: ReactNode }) {
+    if (title && text) {
+        return <>
+            <Block inset margin="my-4" outline padding="py-2">
+                <p className="font-bold">{icon} {title}</p>
+                {text}
+            </Block>
+        </>
+    } else {
+        return <Block inset margin="my-4" outline padding="py-2">{icon} {title ?? text}</Block>
+    }
+}
 
 
-export default function Remarks({ remarks, type }: { remarks: readonly (Hint | Status | Warning)[] | undefined, type: Hint['type'] | Warning['type'] }): React.JSX.Element {
+export default function Remarks({remarks, type}: {
+    remarks: readonly (Hint | Status | Warning)[] | undefined,
+    type: Hint['type'] | Warning['type']
+}): React.JSX.Element {
     if (!remarks?.filter(remark => remark.type === type).length) {
         return <></>
     }
-    return <List inset outline>
-        {remarks.map((remark, i) => {
+    return <>
+        {remarks.map(remark => {
             if (remark.type === 'warning' && type === 'warning') {
-                return <ListItem key={i}
-                    media={<Icon className="text-amber-300" ios={<ExclamationmarkTriangleFill />} />}
-                    title={remark.summary}
-                    text={remark.text}
+                return <Remark icon={<Icon className="text-amber-300" ios={<ExclamationmarkTriangleFill/>}/>}
+                               key={remark.type + remark.id}
+                               text={remark.text}
+                               title={remark.summary}
+
                 />
             }
             if (remark.type === 'status' && type === 'status') {
-                return <ListItem key={i}
-                    media={<Icon className="text-amber-300" ios={<ExclamationmarkTriangleFill />} />}
-                    title={remark.summary}
-                    text={remark.text}
+                return <Remark icon={<Icon className="text-amber-300" ios={<ExclamationmarkTriangleFill/>}/>}
+                               key={remark.type + remark.text}
+                               text={remark.text}
+                               title={remark.summary}
+
                 />
             }
             if (remark.type === 'hint' && type === 'hint') {
-                return <ListItem key={i}
-                    media={<Icon ios={<InfoCircleFill />} />}
-                    title={remark.summary}
-                    text={remark.text}
+                return <Remark icon={<Icon ios={<InfoCircleFill/>}/>}
+                               key={remark.type + remark.text}
+                               text={remark.text}
+                               title={remark.summary}
+
                 />
             }
 
             if (remark.type === type) {
-                return <ListItem key={i}
-                    media={<Icon ios={<InfoCircleFill />} />}
-                    title={remark.summary}
-                    text={remark.text}
+                return <Remark icon={<Icon ios={<InfoCircleFill/>}/>}
+                               key={remark.type + remark.text}
+                               text={remark.text}
+                               title={remark.summary}
+
                 />
             }
             return null;
         })}
-    </List>
+    </>
 }

@@ -12,7 +12,7 @@ function History(): JSX.Element {
 
     return <List inset strong>
         {historyItems.map(item => <ListItem
-                key={item.id}
+                key={item.id + item.added}
                 link={item.type === 'station' || item.type === 'trip'}
                 onClick={() => {
                     if (item.type === 'station') {
@@ -22,7 +22,7 @@ function History(): JSX.Element {
                         nav.trip(item.id, item.title)
                     }
                 }}
-                text={item.added.toLocaleString()}
+                text={new Date(item.added).toLocaleString()}
                 title={item.title}
             />
         )}

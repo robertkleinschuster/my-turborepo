@@ -43,7 +43,7 @@ export default function Alternatives({alternatives, products}: {
                         <Operator operator={alternative.line.operator}/> : '-'}</span>}
                     onClick={() => {
                         const line = alternative.line;
-                        const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`
+                        const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''} ${parseTime(alternative.plannedWhen)?.toLocaleString()}`
                         nav.trip(alternative.tripId, title)
                     }}
                     title={<AlternativeTitle alternative={alternative} products={products}/>}

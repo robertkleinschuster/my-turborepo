@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import {persist} from 'zustand/middleware'
+import {persist, createJSONStorage} from 'zustand/middleware'
 
 interface History {
     items: readonly HistoryItem[],
@@ -11,7 +11,7 @@ interface HistoryItem {
     id: string,
     type: string,
     title: string,
-    added: Date
+    added: string
 }
 
 export const useHistory = create(
@@ -20,7 +20,7 @@ export const useHistory = create(
             items: [],
             push: (type: string, id: string, title: string) => {
                 set(state => ({
-                    items: [...state.items, {id, type, added: new Date, title}]
+                    items: [...state.items, {id, type, added: (new Date).toISOString(), title}]
                 }))
             },
             clear: () => {

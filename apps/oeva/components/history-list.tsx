@@ -13,13 +13,11 @@ export function HistoryList({items}: {
     const dispatchEdit = useEditHistoryDispatch()
     const edit = useEditHistory()
     const selectedIds = edit?.map(item => item.id)
-    const changedMode = useRef<boolean>(false)
 
     const nav = useNavigation()
     const longPress = useLongPress<Element, HistoryItem>((event, meta) => {
         if (meta.context) {
-            dispatchEdit(meta.context)
-            changedMode.current = true
+            dispatchEdit(true)
         }
     })
     return <List inset strong>
@@ -33,10 +31,6 @@ export function HistoryList({items}: {
                     component="div"
                 /> : null}
                 onClick={() => {
-                    if (changedMode.current) {
-                        changedMode.current = false
-                        return
-                    }
                     if (edit) {
                         dispatchEdit(item)
                         return

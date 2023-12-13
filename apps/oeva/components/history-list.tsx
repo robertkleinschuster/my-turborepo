@@ -1,6 +1,6 @@
 "use client"
 
-import {JSX} from "react";
+import type {JSX} from "react";
 import {Checkbox, List, ListItem} from "konsta/react";
 import type {HistoryItem} from "../store/history";
 import {useNavigation} from "../hooks/use-navigation";

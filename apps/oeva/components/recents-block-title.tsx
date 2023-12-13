@@ -14,9 +14,9 @@ export function RecentsBlockTitle(): JSX.Element {
     return <><BlockTitle>
         Zuletzt verwendet
         {edit ? <span className="flex gap-1">
-                {edit.length ? <Button className="bg-red-700 flex gap-1" onClick={() => {
-                    setConfirmDelete(true)
-                }}><Icon ios={<Trash/>}/>Löschen</Button> : null}
+            <Button className="bg-red-700 text-red-500 flex gap-1" disabled={edit.length === 0} onClick={() => {
+                setConfirmDelete(true)
+            }} tonal><Icon ios={<Trash/>}/>Löschen</Button>
             <Button clear onClick={() => {
                 dispatchEdit(false)
             }}>Abbrechen</Button>

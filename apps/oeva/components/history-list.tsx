@@ -15,14 +15,12 @@ export function HistoryList({items}: {
     const selectedIds = edit?.map(item => item.id)
 
     const nav = useNavigation()
-    const longPress = useLongPress<Element, HistoryItem>((event, meta) => {
-        if (meta.context) {
-            dispatchEdit(true)
-        }
+    const longPress = useLongPress<Element, HistoryItem>(() => {
+        dispatchEdit(true)
     })
     return <List inset strong>
         {items.map(item => <ListItem
-                {...longPress(item)}
+                {...longPress()}
                 chevron={!edit}
                 key={item.id + item.added}
                 link={item.type === 'station' || item.type === 'trip'}

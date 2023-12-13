@@ -15,22 +15,26 @@ export function HistoryList({items}: {
     const selectedIds = edit?.map(item => item.id)
 
     const nav = useNavigation()
-    const longPress = useLongPress<Element, HistoryItem>(() => {
-        dispatchEdit(true)
+    const longPress = useLongPress<Element, HistoryItem>((event, meta) => {
+        if (meta.context) {
+            dispatchEdit(meta.context)
+        }
     })
     return <List inset strong>
         {items.map(item => <ListItem
-                {...longPress()}
-                chevron={!edit}
+                {...longPress(item)}
                 key={item.id + item.added}
-                link={item.type === 'station' || item.type === 'trip'}
-                media={selectedIds ?  <Checkbox
+                label={Boolean(edit)}
+                link={!edit && (item.type === 'station' || item.type === 'trip')}
+                media={selectedIds ? <Checkbox
                     checked={selectedIds.includes(item.id)}
                     component="div"
+                    onChange={() => {
+                        dispatchEdit(item)
+                    }}
                 /> : null}
                 onClick={() => {
                     if (edit) {
-                        dispatchEdit(item)
                         return
                     }
                     if (item.type === 'station') {

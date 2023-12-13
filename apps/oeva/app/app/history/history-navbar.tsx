@@ -1,20 +1,27 @@
 "use client"
 
-import {Button, Icon, Navbar, Toolbar} from "konsta/react";
+import {Button, Icon, Navbar, NavbarBackLink, Toolbar} from "konsta/react";
 import type {JSX} from "react";
-import {useState} from "react";
+import React, {useState} from "react";
 import {Trash} from "framework7-icons/react"
+import {useRouter} from "next/navigation";
 import {useHistory} from "../../../store/history";
 import {ConfirmDialog} from "../../../components/confirm-dialog";
 import {useEditHistory, useEditHistoryDispatch} from "./context";
 
 export function HistoryNavbar(): JSX.Element {
     const hideInRecents = useHistory(state => state.hideInRecents)
+    const router = useRouter()
     const edit = useEditHistory()
     const dispatchEdit = useEditHistoryDispatch()
     const [confirmDelete, setConfirmDelete] = useState(false)
     return <>
         <Navbar
+            left={
+                <NavbarBackLink onClick={() => {
+                    router.push('/app/home')
+                }} text="Zurück"/>
+            }
             right={edit ?
                 <Button clear onClick={() => {
                     dispatchEdit(false)

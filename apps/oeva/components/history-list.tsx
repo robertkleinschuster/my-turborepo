@@ -25,6 +25,7 @@ export function HistoryList({items}: {
     return <List inset strong>
         {items.map(item => <ListItem
                 {...longPress(item)}
+                chevron={!edit}
                 key={item.id + item.added}
                 link={item.type === 'station' || item.type === 'trip'}
                 media={selectedIds ?  <Checkbox

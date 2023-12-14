@@ -3,18 +3,22 @@ import {persist} from 'zustand/middleware'
 
 interface History {
     items: readonly HistoryItem[],
+    parent: HistoryItem | null,
     recents: readonly HistoryItem[]
-    push: (type: string, id: string, title: string) => void,
+    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => void,
     hideInRecents: (id: string) => void,
     clear: () => void
 }
 
 export interface HistoryItem {
     id: string,
-    type: string,
+    sequence: number,
+    type: 'trip'|'station',
     title: string,
     added: string,
-    recents: boolean|undefined
+    when: string | null,
+    recents: boolean | undefined,
+    parent: HistoryItem | null
 }
 
 function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
@@ -32,18 +36,33 @@ export const useHistory = create(
         (set) => ({
             items: [],
             recents: [],
-            push: (type: string, id: string, title: string) => {
+            parent: null,
+            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => {
                 set(state => {
-                    const items = [...state.items, {id, type, added: (new Date).toISOString(), title, recents: true}];
+                    const item = {
+                        id,
+                        type,
+                        when,
+                        title,
+                        sequence: state.parent ? state.parent.sequence + 1 : 0,
+                        added: (new Date).toISOString(),
+                        recents: true,
+                        parent: typeof parent === 'string' ? state.recents.find(i => i.id === parent) ?? null : parent ?? null
+                    }
+                    const items = [...state.items, item];
                     return {
                         items,
+                        parent: item,
                         recents: updateRecents(items)
                     }
                 })
             },
             hideInRecents: (id: string) => {
                 set(state => {
-                    const items = state.items.map(item => ({...item, recents: (item.recents ?? true) && item.id !== id}))
+                    const items = state.items.map(item => ({
+                        ...item,
+                        recents: (item.recents ?? true) && item.id !== id
+                    }))
                     return {
                         items,
                         recents: updateRecents(items)

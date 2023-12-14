@@ -1,11 +1,24 @@
 "use client"
 
 import type {JSX} from "react";
-import {Checkbox, List, ListItem} from "konsta/react";
+import {Checkbox, Icon, List, ListItem} from "konsta/react";
+import {Clock, Eye} from "framework7-icons/react"
+import {useLongPress} from "use-long-press";
 import type {HistoryItem} from "../store/history";
 import {useNavigation} from "../hooks/use-navigation";
-import {useLongPress} from "use-long-press";
 import {useEditHistory, useEditHistoryDispatch} from "../app/app/history/context";
+import Time from "./time";
+
+function Info({item}: { item: HistoryItem }): JSX.Element {
+    if (item.type === 'station') {
+        return <span className="flex gap-1 items-center"><Icon ios={<Clock/>}/><Time
+            time={item.when ? new Date(item.when) : null}/></span>
+    }
+    if (item.type === 'trip') {
+        return <>Ab. <Time time={item.when ? new Date(item.when) : null}/> {item.parent?.title}</>
+    }
+    return <></>
+}
 
 export function HistoryList({items}: {
     items: readonly HistoryItem[],
@@ -23,7 +36,10 @@ export function HistoryList({items}: {
     return <List inset strong>
         {items.map(item => <ListItem
                 {...longPress(item)}
-                key={item.id + item.added}
+                footer={<span className="flex gap-1 items-center"><Icon ios={<Eye/>}/><Time
+                    time={new Date(item.added)}/></span>}
+                header={<Info item={item}/>}
+                key={item.sequence}
                 label={Boolean(edit)}
                 link={!edit && (item.type === 'station' || item.type === 'trip')}
                 media={selectedIds ? <Checkbox
@@ -37,14 +53,8 @@ export function HistoryList({items}: {
                     if (edit) {
                         return
                     }
-                    if (item.type === 'station') {
-                        nav.station(item.id, '', item.title)
-                    }
-                    if (item.type === 'trip') {
-                        nav.trip(item.id, item.title)
-                    }
+                    nav.history(item)
                 }}
-                text={new Date(item.added).toLocaleString()}
                 title={item.title}
             />
         )}

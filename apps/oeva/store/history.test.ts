@@ -8,12 +8,36 @@ describe('History', () => {
         const push = renderHook(() => useHistory(state => state.push))
 
         act(() => {
-            push.result.current('stations', '1', '')
-            push.result.current('trips', 'A', '')
-            push.result.current('stations', '2', '')
+            push.result.current('station', '1', null, '')
+            push.result.current('trip', 'A',  null, '')
+            push.result.current('station', '2',  null, '')
         })
 
         expect(items.result.current.map(item => item.id)).toEqual(['1', 'A', '2'])
+    })
+    it('should set the most recent item matching the given parent id as the parent for the new item', () => {
+        const items = renderHook(() => useHistory(state => state.items))
+        const push = renderHook(() => useHistory(state => state.push))
+
+        act(() => {
+            push.result.current('station', '1',  null, '')
+            push.result.current('trip', 'A',  null, '')
+            push.result.current('station', '2',  null, '', '1')
+        })
+
+        expect(items.result.current.map(item => item.parent?.id)).toEqual([undefined, undefined, '1'])
+    })
+    it ('should increment the sequence number for each added item', () =>{
+        const items = renderHook(() => useHistory(state => state.items))
+        const push = renderHook(() => useHistory(state => state.push))
+
+        act(() => {
+            push.result.current('station', '1',  null, '')
+            push.result.current('trip', 'A',  null, '')
+            push.result.current('station', '2',  null, '')
+        })
+
+        expect(items.result.current.map(item => item.sequence)).toEqual([0, 1, 2])
     })
     it('should save the date when an item is added', () => {
         const items = renderHook(() => useHistory(state => state.items))
@@ -21,7 +45,7 @@ describe('History', () => {
 
         const check = (new Date()).getTime()
         act(() => {
-            push.result.current('stations', '1', '')
+            push.result.current('station', '1',  null, '')
         })
 
         expect(new Date(items.result.current[0].added).getTime()).toBeGreaterThanOrEqual(check)
@@ -31,10 +55,10 @@ describe('History', () => {
         const push = renderHook(() => useHistory(state => state.push))
 
         act(() => {
-            push.result.current('stations', '1', '')
-            push.result.current('trips', 'A', '')
-            push.result.current('stations', '2', '')
-            push.result.current('stations', '1', '')
+            push.result.current('station', '1',  null, '')
+            push.result.current('trip', 'A',  null, '')
+            push.result.current('station', '2',  null, '')
+            push.result.current('station', '1',  null, '')
         })
 
         expect(recents.result.current.map(item => item.id)).toEqual(['1', '2', 'A'])
@@ -44,7 +68,7 @@ describe('History', () => {
         const push = renderHook(() => useHistory(state => state.push))
 
         act(() => {
-            push.result.current('stations', '1', 'the title')
+            push.result.current('station', '1', null, 'the title')
         })
 
         expect(items.result.current[0].title).toEqual('the title')
@@ -56,9 +80,9 @@ describe('History', () => {
         const clear = renderHook(() => useHistory(state => state.clear))
 
         act(() => {
-            push.result.current('stations', '1', '')
-            push.result.current('trips', 'A', '')
-            push.result.current('stations', '2', '')
+            push.result.current('station', '1',  null, '')
+            push.result.current('trip', 'A',  null, '')
+            push.result.current('station', '2',  null, '')
             clear.result.current()
         })
 
@@ -71,13 +95,13 @@ describe('History', () => {
         const hideInRecents = renderHook(() => useHistory(state => state.hideInRecents))
 
         act(() => {
-            push.result.current('stations', '1', '')
-            push.result.current('stations', '1', '')
-            push.result.current('trips', 'A', '')
-            push.result.current('stations', '1', '')
-            push.result.current('trips', 'B', '')
-            push.result.current('stations', '2', '')
-            push.result.current('trips', 'B', '')
+            push.result.current('station', '1',  null, '')
+            push.result.current('station', '1',  null, '')
+            push.result.current('trip', 'A',  null, '')
+            push.result.current('station', '1',  null, '')
+            push.result.current('trip', 'B',  null, '')
+            push.result.current('station', '2',  null, '')
+            push.result.current('trip', 'B',  null, '')
 
             hideInRecents.result.current('1')
             hideInRecents.result.current('B')

@@ -55,8 +55,8 @@ export default function Alternatives({alternatives, products}: {
                         <Operator operator={alternative.line.operator}/> : '-'}</span>}
                     onClick={() => {
                         const line = alternative.line;
-                        const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''} ${parseTime(alternative.plannedWhen)?.toLocaleString()}`
-                        nav.trip(alternative.tripId, title)
+                        const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`
+                        nav.trip(alternative.tripId, alternative.plannedWhen ?? null, title)
                     }}
                     subtitle={<RemarkSummary cancelled={alternative.cancelled} remarks={alternative.remarks}/>}
                     title={<AlternativeTitle alternative={alternative} products={products}/>}

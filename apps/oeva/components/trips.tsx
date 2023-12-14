@@ -1,12 +1,12 @@
 "use client"
 
-import {Trip} from "hafas-client";
+import type {Trip} from "hafas-client";
 import {Block, List, ListItem} from 'konsta/react'
 import React from "react";
 import {parseISO} from "date-fns";
+import {useNavigation} from "../hooks/use-navigation";
 import TimeDelay from "./time-delay";
 import RemarkSummary from "./remark-summary";
-import {useNavigation} from "../hooks/use-navigation";
 
 export default function Trips({trips, error}: { trips: readonly Trip[], error?: string }): React.JSX.Element {
     const nav = useNavigation()
@@ -28,11 +28,10 @@ export default function Trips({trips, error}: { trips: readonly Trip[], error?: 
                     link
                     onClick={() => {
                         const line = trip.line;
-                        const title = `${line?.name ?? ''} ${trip.direction ?? ''} ${parseTime(trip.plannedDeparture)?.toLocaleString()}`
-                        nav.trip(trip.id, title)
+                        const title = `${line?.name ?? ''} ${trip.destination?.name ?? ''}`
+                        nav.trip(trip.id, trip.plannedDeparture ?? null, title)
                     }}
-                    subtitle={trip.destination?.name ?? ''}
-                    title={<span className={trip.cancelled ? 'line-through' : undefined}>{trip.line?.name}</span>}
+                    title={<span className={trip.cancelled ? 'line-through' : undefined}>{trip.line?.name} {trip.destination?.name ?? ''}</span>}
                 />)}
             </List>
         )}

@@ -1,10 +1,15 @@
 import type { MetadataRoute } from 'next'
 
+export const APP_NAME = "OeVA";
+export const APP_DEFAULT_TITLE = "OeVA";
+export const APP_TITLE_TEMPLATE = "%s - OeVA";
+export const APP_DESCRIPTION = "OeVA";
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'OeVA',
-    short_name: 'OeVA',
-    description: 'OeVA',
+    name: APP_NAME,
+    short_name: APP_NAME,
+    description: APP_DESCRIPTION,
     start_url: '/app',
     scope: '/app',
     display: 'standalone',

@@ -14,10 +14,7 @@ function Info({item}: { item: HistoryItem }): JSX.Element {
         return <span className="flex gap-1 items-center"><Icon ios={<Clock/>}/><Time
             time={item.when ? new Date(item.when) : null}/></span>
     }
-    if (item.type === 'trip') {
-        return <>Ab. <Time time={item.when ? new Date(item.when) : null}/> {item.parent?.title}</>
-    }
-    return <></>
+    return <>Ab. <Time time={item.when ? new Date(item.when) : null}/> {item.parent?.title}</>
 }
 
 export function HistoryList({items}: {
@@ -41,7 +38,7 @@ export function HistoryList({items}: {
                 header={<Info item={item}/>}
                 key={item.sequence}
                 label={Boolean(edit)}
-                link={!edit && (item.type === 'station' || item.type === 'trip')}
+                link={!edit}
                 media={selectedIds ? <Checkbox
                     checked={selectedIds.includes(item.id)}
                     component="div"

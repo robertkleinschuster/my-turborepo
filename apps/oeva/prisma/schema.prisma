@@ -1,0 +1,97 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model JourneyLeg {
+  id             String        @id @default(cuid())
+  type           LegType       @default(TRIP)
+  status         JourneyStatus @default(DRAFT)
+  extId          String?
+  extType        ExternalType?
+  name           String
+  notice         String?
+  comment        String?
+  time_start     DateTime?
+  time_end       DateTime?
+  vehicle        String?
+  trainNr        Int?
+  trainType      String?
+  trainName      String?
+  loc_start_name String?
+  loc_start_lon  Float?
+  loc_start_lat  Float?
+  loc_end_name   String?
+  loc_end_lon    Float?
+  loc_end_lat    Float?
+  journey        Journey?      @relation(fields: [journeyId], references: [id])
+  journeyId      String?
+  createdAt      DateTime      @default(now()) @map(name: "created_at")
+  updatedAt      DateTime      @updatedAt @map(name: "updated_at")
+}
+
+model Journey {
+  id             String        @id @default(cuid())
+  appId          String
+  status         JourneyStatus @default(DRAFT)
+  name           String
+  time_start     DateTime?
+  time_end       DateTime?
+  loc_start_name String?
+  loc_start_lon  Float?
+  loc_start_lat  Float?
+  loc_end_name   String?
+  loc_end_lon    Float?
+  loc_end_lat    Float?
+  legs           JourneyLeg[]
+  createdAt      DateTime      @default(now()) @map(name: "created_at")
+  updatedAt      DateTime      @updatedAt @map(name: "updated_at")
+
+  @@index([appId])
+}
+
+enum ExternalType {
+  TRIP
+  STATION
+}
+
+enum JourneyStatus {
+  DRAFT
+  SCHEDULED
+  CANCELLED
+}
+
+enum LegType {
+  TRIP
+  TRIP_WALK
+  TRIP_TRAIN
+  TRIP_EXPRESS_TRAIN
+  TRIP_LOCAL_TRAIN
+  TRIP_SUBURBAN_TRAIN
+  TRIP_BUS
+  TRIP_CITY_BUS
+  TRIP_REGIONAL_BUS
+  TRIP_INTERCITY_BUS
+  TRIP_TRAM
+  TRIP_LIGHT_RAIL
+  TRIP_SUBWAY
+  TRIP_FERRY
+  TRIP_CABLECAR
+  TRIP_FUNICULAR
+  TRIP_COG_RAILWAY
+  TRIP_TAXI
+  TRIP_TROLLEYBUS
+  STAY
+  STAY_LOUNGE
+  STAY_SHORT
+  STAY_LONG
+  STAY_OVERNIGHT
+  STAY_HOTEL
+}

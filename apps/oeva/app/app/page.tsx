@@ -1,6 +1,7 @@
 "use client"
 
-import {JSX, useRef, useEffect} from "react";
+import type {JSX} from "react";
+import { useRef, useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {useSettings} from "../../store/settings";
 

@@ -9,14 +9,20 @@ import {addLeg} from "./actions";
 export function JourneyList({journeys}: { journeys: Journey<WithLegs>[] }): JSX.Element {
     const nav = useNavigation()
 
+    const onClick = (journeyId: string): void => {
+        void addLeg(journeyId)
+            .then(() => {
+            nav.refresh()
+        })
+    }
+
     return <List>
         {journeys.map(journey => <ListItem
             after={<>Legs: {journey.legs.length}</>}
             key={journey.id}
             label
-            onClick={async () => {
-                await addLeg(journey.id)
-                nav.refresh()
+            onClick={() => {
+                onClick(journey.id)
             }}
             title={journey.name}
         />)}

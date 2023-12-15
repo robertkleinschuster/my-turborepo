@@ -11,6 +11,7 @@ interface Navigation {
     back: () => void
     home: () => void,
     journeys: () => void
+    journey: (id: string) => void
 }
 
 export function useNavigation(): Navigation {
@@ -30,6 +31,9 @@ export function useNavigation(): Navigation {
         },
         journeys: () => {
             router.push(`/app/journeys?appId=${encodeURIComponent(appId)}`)
+        },
+        journey:(id: string) => {
+            router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
         history: (item: HistoryItem) => {
             historyPush(item.type, item.id, item.when, item.title, item.parent)

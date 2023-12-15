@@ -31,8 +31,8 @@ model JourneyLeg {
   loc_end_name   String?
   loc_end_lon    Float?
   loc_end_lat    Float?
-  journey        Journey?      @relation(fields: [journeyId], references: [id])
-  journeyId      String?
+  journey        Journey      @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  journeyId      String
   createdAt      DateTime      @default(now()) @map(name: "created_at")
   updatedAt      DateTime      @updatedAt @map(name: "updated_at")
 }

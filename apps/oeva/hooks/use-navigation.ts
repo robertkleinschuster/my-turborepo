@@ -32,7 +32,7 @@ export function useNavigation(): Navigation {
         journeys: () => {
             router.push(`/app/journeys?appId=${encodeURIComponent(appId)}`)
         },
-        journey:(id: string) => {
+        journey: (id: string) => {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
         history: (item: HistoryItem) => {

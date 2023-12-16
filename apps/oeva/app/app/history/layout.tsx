@@ -3,13 +3,13 @@
 import type {JSX, ReactNode} from "react";
 import Scroll from "../../../components/scroll";
 import {HistoryNavbar} from "./history-navbar";
-import {EditHistoryProvider} from "./context";
+import {HistorySelectionProvider} from "./history-selection-context";
 
 export default function Layout({children}: { children: ReactNode }): JSX.Element {
-    return <EditHistoryProvider>
+    return <HistorySelectionProvider>
         <HistoryNavbar/>
         <Scroll>
             {children}
         </Scroll>
-    </EditHistoryProvider>
+    </HistorySelectionProvider>
 }

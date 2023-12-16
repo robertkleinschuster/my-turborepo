@@ -1,26 +1,39 @@
 "use client"
 
 import type {JSX, ReactNode} from "react";
-import { useState} from "react";
-import {ListSelectionProvider} from "../../../../context/list-selection";
-import {ListSelectionToolbar} from "../../../../components/list-selection-toolbar";
+import React, {useState} from "react";
 import {deleteLeg} from "../actions";
 import {useNavigation} from "../../../../hooks/use-navigation";
+import type {JourneyLeg} from "../../../../lib/prisma";
+import type {ListSelection} from "../../../../context/list-selection";
 import Loading from "./loading";
+import {JourneyLegSelectionProvider, JourneyLegSelectionToolbar} from "./journey-leg-selection-context";
+
+function DeleteSummary(selection: ListSelection<JourneyLeg>): JSX.Element {
+    if (!selection) {
+        return <></>
+    }
+    if (selection.length === 1) {
+        return <>Abschnitt &bdquo;{selection[0]?.name}&ldquo; löschen?</>
+    }
+    return <>{selection.length} Abschnitte löschen?</>
+}
 
 export default function Layout({children}: { children: ReactNode }): JSX.Element {
     const [loading, setLoading] = useState(false)
     const nav = useNavigation()
-    return <ListSelectionProvider>
+    return <JourneyLegSelectionProvider>
         {loading ? <Loading showCancel={false}/> : children}
-        <ListSelectionToolbar onDelete={(selection) => {
-            if (selection) {
-                setLoading(true)
-                void deleteLeg(selection).then(() => {
-                    nav.refresh()
-                    setLoading(false)
-                })
-            }
-        }}/>
-    </ListSelectionProvider>
+        <JourneyLegSelectionToolbar
+            buildSummary={DeleteSummary}
+            onDelete={(selection) => {
+                if (selection) {
+                    setLoading(true)
+                    void deleteLeg(selection.map(item => item.id)).then(() => {
+                        nav.refresh()
+                        setLoading(false)
+                    })
+                }
+            }}/>
+    </JourneyLegSelectionProvider>
 }

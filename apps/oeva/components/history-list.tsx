@@ -1,12 +1,11 @@
 "use client"
 
 import type {JSX} from "react";
-import {Checkbox, Icon, List, ListItem} from "konsta/react";
+import {Icon, List} from "konsta/react";
 import {Clock, Eye} from "framework7-icons/react"
-import {useLongPress} from "use-long-press";
 import type {HistoryItem} from "../store/history";
 import {useNavigation} from "../hooks/use-navigation";
-import {useEditHistory, useEditHistoryDispatch} from "../app/app/history/context";
+import {HistoryListItem} from "../app/app/history/history-selection-context";
 import Time from "./time";
 
 function Info({item}: { item: HistoryItem }): JSX.Element {
@@ -20,36 +19,17 @@ function Info({item}: { item: HistoryItem }): JSX.Element {
 export function HistoryList({items}: {
     items: readonly HistoryItem[],
 }): JSX.Element {
-    const dispatchEdit = useEditHistoryDispatch()
-    const edit = useEditHistory()
-    const selectedIds = edit?.map(item => item.id)
-
     const nav = useNavigation()
-    const longPress = useLongPress<Element, HistoryItem>((event, meta) => {
-        if (meta.context) {
-            dispatchEdit(meta.context)
-        }
-    })
+
     return <List inset strong>
-        {items.map(item => <ListItem
-                {...longPress(item)}
+        {items.map(item => <HistoryListItem
                 footer={<span className="flex gap-1 items-center"><Icon ios={<Eye/>}/><Time
                     time={new Date(item.added)}/></span>}
                 header={<Info item={item}/>}
+                item={item}
                 key={item.sequence}
-                label={Boolean(edit)}
-                link={!edit}
-                media={selectedIds ? <Checkbox
-                    checked={selectedIds.includes(item.id)}
-                    component="div"
-                    onChange={() => {
-                        dispatchEdit(item)
-                    }}
-                /> : null}
+                link
                 onClick={() => {
-                    if (edit) {
-                        return
-                    }
                     nav.history(item)
                 }}
                 title={item.title}

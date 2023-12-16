@@ -3,12 +3,12 @@
 import type {JSX} from "react";
 import {List} from "konsta/react";
 import type {Journey, WithLegs} from "../../../../lib/prisma";
-import {SelectableListItem} from "../../../../components/selectable-list-item";
+import {JourneyLegListItem} from "./journey-leg-selection-context";
 
 export function JourneyDetails({journey}: { journey: Journey<WithLegs> }): JSX.Element {
     return <List inset strong>
-        {journey.legs.map(leg => <SelectableListItem
-            id={leg.id}
+        {journey.legs.map(leg => <JourneyLegListItem
+            item={leg}
             key={leg.id}
             title={leg.name}
         />)}

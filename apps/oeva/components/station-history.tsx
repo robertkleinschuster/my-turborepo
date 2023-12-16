@@ -4,18 +4,18 @@ import type {JSX} from "react";
 import React from "react";
 import dynamic from "next/dynamic";
 import {useHistory} from "../store/history";
-import {EditHistoryProvider} from "../app/app/history/context";
 import {HistoryList} from "./history-list";
-import {RecentsBlockTitle} from "./recents-block-title";
+import {HistoryBlockTitle} from "./history-block-title";
+import {HistorySelectionProvider} from "../app/app/history/history-selection-context";
 
-const RecentStations = dynamic(() => Promise.resolve((): JSX.Element => {
+const StationHistory = dynamic(() => Promise.resolve((): JSX.Element => {
     const recents = useHistory(state => state.recents)
     const recentItems = recents.filter(item => item.type === 'station');
 
-    return <EditHistoryProvider>
-        <RecentsBlockTitle/>
+    return <HistorySelectionProvider>
+        <HistoryBlockTitle/>
         <HistoryList items={recentItems}/>
-    </EditHistoryProvider>
+    </HistorySelectionProvider>
 }), {ssr: false})
 
-export {RecentStations};
+export {StationHistory};

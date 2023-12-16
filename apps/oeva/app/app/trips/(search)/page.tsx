@@ -3,13 +3,13 @@ import {endOfDay, parseISO, startOfDay} from 'date-fns';
 import Trips from '../../../../components/trips';
 import {getClient} from '../../../../client/client';
 import {buildProductsFilter} from '../../../../client/products-filter';
-import {RecentTrips} from "../../../../components/recent-trips";
+import {TripHistory} from "../../../../components/trip-history";
 
 export default async function Stations({searchParams}: {
     searchParams: { query: string, when?: string, products?: string[] }
 }): Promise<React.JSX.Element> {
     if (!searchParams.query) {
-        return <RecentTrips/>
+        return <TripHistory/>
     }
 
     const client = getClient()

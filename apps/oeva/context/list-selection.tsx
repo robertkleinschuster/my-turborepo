@@ -4,7 +4,17 @@ import {createContext, useContext, useReducer} from 'react';
 export type ListSelection<T> = T[] | null;
 type ListSelectionAction<T> = T | null | true | false;
 
-export function createListSelection<T>(reducer: (prevState: ListSelection<T>, action: T) => ListSelection<T>) {
+export type UseListSelection<T> = () => ListSelection<T>
+export type UseListSelectionDispatch<T> = () => Dispatch<ListSelectionAction<T>>
+export type ListSelectionProvider = ({children}: { children: ReactNode }) => JSX.Element
+
+export interface ListSelectionContext<T> {
+    useListSelection : UseListSelection<T>,
+    useListSelectionDispatch: UseListSelectionDispatch<T>,
+    ListSelectionProvider: ListSelectionProvider
+}
+
+export function createListSelection<T>(reducer: (prevState: ListSelection<T>, action: T) => ListSelection<T>): ListSelectionContext<T> {
     const ListSelectionContext = createContext<ListSelection<T>>(null);
     const ListSelectionDispatchContext = createContext<Dispatch<T>>(() => null);
 
@@ -52,7 +62,7 @@ export interface IdAware {
     id: string
 }
 
-export function IdAwareReducer(prevState: ListSelection<IdAware>, action: IdAware): ListSelection<IdAware> {
+export function IdAwareReducer<T extends IdAware>(prevState: ListSelection<T>, action: T): ListSelection<T> {
     if (prevState === null) {
         return [action]
     }
@@ -79,12 +89,4 @@ export function IdReducer(prevState: ListSelection<string>, action: string): Lis
         return [...prevState, action]
 
     }
-}
-
-const {ListSelectionProvider, useListSelection, useListSelectionDispatch} = createListSelection<string>(IdReducer)
-
-export {
-    ListSelectionProvider,
-    useListSelection,
-    useListSelectionDispatch,
 }

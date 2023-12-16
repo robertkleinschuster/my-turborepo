@@ -5,16 +5,16 @@ import React from "react";
 import dynamic from "next/dynamic";
 import {useHistory} from "../store/history";
 import {HistoryList} from "./history-list";
-import {EditHistoryProvider} from "../app/app/history/context";
-import {RecentsBlockTitle} from "./recents-block-title";
+import {HistoryBlockTitle} from "./history-block-title";
+import {HistorySelectionProvider} from "../app/app/history/history-selection-context";
 
-const RecentTrips = dynamic(() => Promise.resolve((): JSX.Element => {
+const TripHistory = dynamic(() => Promise.resolve((): JSX.Element => {
     const recents = useHistory(state => state.recents)
     const recentItems = recents.filter(item => item.type === 'trip');
-    return <EditHistoryProvider>
-        <RecentsBlockTitle/>
+    return <HistorySelectionProvider>
+        <HistoryBlockTitle/>
         <HistoryList items={recentItems}/>
-    </EditHistoryProvider>
+    </HistorySelectionProvider>
 }), {ssr: false})
 
-export {RecentTrips};
+export {TripHistory};

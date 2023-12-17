@@ -16,8 +16,13 @@ export interface JourneyListReplaceAction {
     journeys: Journey[]
 }
 
+export interface JourneyListCreateAction {
+    action: 'create'
+    journey: Journey
+}
 
-export type JourneyListAction = JourneyListDeleteAction | JourneyListReplaceAction
+
+export type JourneyListAction = JourneyListDeleteAction | JourneyListReplaceAction | JourneyListCreateAction
 
 const JourneyListContext = createContext<JourneyList>([])
 const JourneyListDispatchContext = createContext<Dispatch<JourneyListAction>>(() => null)
@@ -37,6 +42,11 @@ export function JourneyListProvider({children, journeys}: { children: ReactNode,
             if (action.action === 'delete') {
                 return prevState.filter(journey => !action.journeyIds.includes(journey.id))
             }
+
+            if (action.action === 'create') {
+                return [action.journey, ...prevState]
+            }
+
             return action.journeys
         },
         journeys

@@ -16,6 +16,9 @@ export async function loadJourneys(appId: string): Promise<Journey[]> {
     return prisma.journey.findMany({
         where: {
             appId
+        },
+        orderBy: {
+            createdAt: 'desc'
         }
     })
 }

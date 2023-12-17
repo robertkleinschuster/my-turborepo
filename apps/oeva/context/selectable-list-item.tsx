@@ -1,3 +1,5 @@
+"use client"
+
 import type {Props} from "konsta/react/types/ListItem"
 import type {HTMLAttributes, JSX} from "react";
 import {Checkbox, ListItem} from "konsta/react";

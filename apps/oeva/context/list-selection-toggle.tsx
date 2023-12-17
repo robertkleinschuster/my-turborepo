@@ -1,3 +1,5 @@
+"use client"
+
 import {Button} from "konsta/react";
 import type {JSX} from "react";
 import React from "react";

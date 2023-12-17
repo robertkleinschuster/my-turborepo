@@ -1,3 +1,5 @@
+"use client"
+
 import {Button, Icon, Toolbar} from "konsta/react";
 import type {JSX} from "react";
 import React, {useState} from "react";

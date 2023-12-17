@@ -6,12 +6,12 @@ interface AppId {
     appId: string,
 }
 
-export const useAppId = create(persist<AppId>(
+export const useAppId = (): string => create(persist<AppId>(
     () => ({
         appId: uuidv4(),
     }),
     {
         name: 'app-id',
     }
-))
+))(state => state.appId)
 

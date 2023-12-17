@@ -11,48 +11,51 @@ datasource db {
 }
 
 model JourneyLeg {
-  id             String        @id @default(cuid())
-  type           LegType       @default(TRIP)
-  status         JourneyStatus @default(DRAFT)
-  extId          String?
-  extType        ExternalType?
-  name           String
-  notice         String?
-  comment        String?
-  time_start     DateTime?
-  time_end       DateTime?
-  vehicle        String?
-  trainNr        Int?
-  trainType      String?
-  trainName      String?
-  loc_start_name String?
-  loc_start_lon  Float?
-  loc_start_lat  Float?
-  loc_end_name   String?
-  loc_end_lon    Float?
-  loc_end_lat    Float?
-  journey        Journey      @relation(fields: [journeyId], references: [id], onDelete: Cascade)
-  journeyId      String
-  createdAt      DateTime      @default(now()) @map(name: "created_at")
-  updatedAt      DateTime      @updatedAt @map(name: "updated_at")
+  id           String        @id @default(cuid())
+  journey      Journey       @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  journeyId    String
+  type         LegType       @default(TRIP)
+  status       JourneyStatus @default(DRAFT)
+  extId        String?
+  extType      ExternalType?
+  name         String
+  notice       String?
+  comment      String?
+  vehicle      String?
+  trainNr      Int?
+  trainType    String?
+  trainName    String?
+  timeStart    DateTime?
+  timeEnd      DateTime?
+  locStartName String?
+  locStartLon  Float?
+  locStartLat  Float?
+  locEndName   String?
+  locEndLon    Float?
+  locEndLat    Float?
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
 }
 
 model Journey {
-  id             String        @id @default(cuid())
-  appId          String
-  status         JourneyStatus @default(DRAFT)
-  name           String
-  time_start     DateTime?
-  time_end       DateTime?
-  loc_start_name String?
-  loc_start_lon  Float?
-  loc_start_lat  Float?
-  loc_end_name   String?
-  loc_end_lon    Float?
-  loc_end_lat    Float?
-  legs           JourneyLeg[]
-  createdAt      DateTime      @default(now()) @map(name: "created_at")
-  updatedAt      DateTime      @updatedAt @map(name: "updated_at")
+  id           String        @id @default(cuid())
+  appId        String
+  originalId   String?
+  original     Journey?      @relation(name: "parent", fields: [originalId], references: [id], onDelete: SetNull)
+  copies       Journey[]     @relation(name: "parent")
+  status       JourneyStatus @default(DRAFT)
+  legs         JourneyLeg[]
+  name         String
+  timeStart    DateTime?
+  timeEnd      DateTime?
+  locStartName String?
+  locStartLon  Float?
+  locStartLat  Float?
+  locEndName   String?
+  locEndLon    Float?
+  locEndLat    Float?
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
 
   @@index([appId])
 }

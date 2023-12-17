@@ -16,9 +16,9 @@ interface Navigation {
 
 export function useNavigation(): Navigation {
     const router = useRouter()
+    const appId = useAppId()
     const params = useParams<{ id?: string }>()
     const historyPush = useHistory(state => state.push)
-    const appId = useAppId(state => state.appId)
     return {
         refresh: () => {
             router.refresh()
@@ -30,7 +30,7 @@ export function useNavigation(): Navigation {
             router.push('/app/home')
         },
         journeys: () => {
-            router.push(`/app/journeys?appId=${encodeURIComponent(appId)}`)
+            router.push(`/app/journeys/overview/${encodeURIComponent(appId)}`)
         },
         journey: (id: string) => {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)

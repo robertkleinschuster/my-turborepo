@@ -46,6 +46,7 @@ model Journey {
   status       JourneyStatus @default(DRAFT)
   legs         JourneyLeg[]
   name         String
+  comment      String?
   timeStart    DateTime?
   timeEnd      DateTime?
   locStartName String?

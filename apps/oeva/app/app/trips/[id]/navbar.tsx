@@ -20,9 +20,12 @@ export default function TripNavbar({title, subtitle, operator}: {
                 nav.back()
             }} text="Zurück"/>
         }
-        right={<span className="flex gap-1">{operator ? <span className="text-5xl"><Operator operator={operator}/> </span> : null}<Button clear large onClick={() => {
-            nav.refresh()
-        }}><Icon ios={<ArrowClockwise/>}/></Button></span>}
+        right={<span className="flex gap-1">
+            {operator ? <span className="text-5xl"><Operator operator={operator}/> </span> : null}
+            <Button clear large onClick={() => {
+                nav.refresh()
+            }}><Icon ios={<ArrowClockwise/>}/></Button>
+    </span>}
         subtitle={subtitle}
         title={title}
     />

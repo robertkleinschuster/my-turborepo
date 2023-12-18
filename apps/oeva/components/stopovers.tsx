@@ -3,12 +3,12 @@
 import {Block, List, ListItem} from "konsta/react"
 import type {ProductType, StopOver} from "hafas-client"
 import React, {useState} from "react"
+import {useLongPress} from "use-long-press";
 import {useNavigation} from "../hooks/use-navigation";
 import StopProducts from "./stop-products"
 import {StopoverDeparture} from "./stopover-departure"
 import {StopoverArrival} from "./stopover-arrival"
 import RemarkSummary from "./remark-summary";
-import {useLongPress} from "use-long-press";
 import {RemarksPanel} from "./remarks-panel";
 
 export default function Stopovers({stopovers, products}: {
@@ -44,9 +44,9 @@ export default function Stopovers({stopovers, products}: {
                     onClick={() => {
                         stopover.stop?.id && nav.station(stopover.stop.id, stopover.arrival ?? stopover.departure ?? '', stopover.stop.name ?? '')
                     }}
-                    subtitle={<RemarkSummary cancelled={stopover.cancelled} remarks={stopover.remarks}/>}
+                    subtitle={<RemarkSummary cancelled={!stopover.departure && !stopover.arrival} remarks={stopover.remarks}/>}
                     title={<span
-                        className={stopover.cancelled ? 'line-through' : undefined}>{stopover.stop?.name}</span>}
+                        className={!stopover.departure && !stopover.arrival ? 'line-through' : undefined}>{stopover.stop?.name}</span>}
                 />
             })}
         </List>

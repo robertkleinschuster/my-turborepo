@@ -29,8 +29,8 @@ export function RemarksPanel({onDismiss, show, remarks}: {
                 title="Informationen"
             />
             <Block className="space-y-4">
-                <Remarks remarks={remarks} type='warning'/>
                 <Remarks remarks={remarks} type='status'/>
+                <Remarks remarks={remarks} type='warning'/>
                 <Remarks remarks={remarks} type='hint'/>
             </Block>
         </Page>

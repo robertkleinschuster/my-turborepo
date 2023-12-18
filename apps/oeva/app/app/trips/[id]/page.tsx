@@ -13,8 +13,8 @@ export default async function Trip({params}: { params: { id: string } }): Promis
     }
 
     return <>
-        <Remarks remarks={trip.trip.remarks} type='warning'/>
         <Remarks remarks={trip.trip.remarks} type='status'/>
+        <Remarks remarks={trip.trip.remarks} type='warning'/>
         <Stopovers products={client.profile.products} stopovers={trip.trip.stopovers}/>
         <Remarks remarks={trip.trip.remarks} type='hint'/>
     </>

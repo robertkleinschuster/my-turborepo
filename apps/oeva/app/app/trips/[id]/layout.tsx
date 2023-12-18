@@ -1,12 +1,11 @@
 import type {JSX, ReactNode} from "react";
+import type {Metadata} from "next";
 import Scroll from "../../../../components/scroll"
 import {getClient} from "../../../../client/client";
 import TripNavbarData from "./navbar-data"
-import type {Metadata, ResolvingMetadata} from "next";
 
 export async function generateMetadata(
-    {params}: { params: { id: string } },
-    parent: ResolvingMetadata
+    {params}: { params: { id: string } }
 ): Promise<Metadata> {
     const client = getClient()
 
@@ -15,9 +14,8 @@ export async function generateMetadata(
     const lineName = trip.trip.line?.name ?? params.id;
 
     const direction = trip.trip.direction ?? '';
-    const parentTitle = (await parent).title
     return {
-        title: parentTitle?.absolute ? `${lineName} ${direction} - ${parentTitle.absolute}` : `${lineName} ${direction}`
+        title: `${lineName} ${direction}`
     }
 }
 export default function Layout({children, params}: { children: ReactNode, params: { id: string } }): JSX.Element {

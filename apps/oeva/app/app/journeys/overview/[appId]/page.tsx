@@ -1,9 +1,8 @@
 "use client"
 
 import type {JSX} from "react";
-import React, { useRef,useState} from "react";
-import {Dialog, DialogButton, Icon, List, ListInput, ListItem, Navbar, NavbarBackLink} from "konsta/react";
-import {PlusSquare} from "framework7-icons/react"
+import React, {useState} from "react";
+import {List, ListInput, Navbar, NavbarBackLink, Preloader} from "konsta/react";
 import {useNavigation} from "../../../../../hooks/use-navigation";
 import {createJourney, deleteJourney} from "../../../../../lib/actions";
 import type {ListSelection} from "../../../../../context/list-selection";
@@ -27,9 +26,9 @@ export default function Journey(): JSX.Element {
     const nav = useNavigation()
     const journeys = useJourneyList()
     const dispatch = useJourneyListDispatch()
-    const [createDialog, setCreateDialog] = useState(false)
     const [createName, setCreateName] = useState<string>('')
-    const inputRef = useRef<HTMLInputElement>(null)
+    const [creating, setCreating] = useState(false)
+    const [createError, setCreateError] = useState('')
     return <>
         <Navbar
             left={<NavbarBackLink onClick={() => {
@@ -38,15 +37,40 @@ export default function Journey(): JSX.Element {
             right={<JourneySelectionToggle/>}
             title="Meine Reisen"/>
         <List inset strong>
-            <ListItem
-                label
-                media={<Icon className="text-primary" ios={<PlusSquare/>}/>}
-                onClick={() => {
-                    setCreateDialog(true)
-                    inputRef.current?.focus()
+            <ListInput
+                error={createError}
+                floatingLabel
+                info={creating ? <span className="flex gap-1"><Preloader
+                    size="h-4"/> wird erstellt...</span> : ''}
+                label={<span className="text-primary">Neue Reise</span>}
+                onBlur={() => {
+                    setCreateName('')
+                    setCreateError('')
                 }}
-                title={<span className="text-primary">Neu</span>}
+                onChange={(e: Event) => {
+                    setCreateName((e.target as HTMLInputElement).value)
+                }}
+                onKeyDown={event => {
+                    if (event.key === 'Enter') {
+                        if (!createName.length) {
+                            setCreateError('Bitte einen Namen für deie neue Reise eingeben.')
+                            return;
+                        }
+                        (event.target as HTMLInputElement).blur()
+                        setCreating(true)
+                        void createJourney(appId, createName).then(journey => {
+                            dispatch({action: 'create', journey})
+                            setCreating(false)
+                            setCreateName('')
+                            nav.refresh()
+                        })
+                    }
+                }}
+                placeholder="Name der Reise"
+                type="text"
+                value={createName}
             />
+
             {journeys.map(journey => <JourneyListItem
                 item={journey}
                 key={journey.id}
@@ -57,42 +81,6 @@ export default function Journey(): JSX.Element {
                 title={journey.name}
             />)}
         </List>
-
-        <Dialog
-            buttons={
-                <>
-                    <DialogButton onClick={() => {
-                        setCreateDialog(false)
-                    }}>
-                        Abbrechen
-                    </DialogButton>
-                    <DialogButton onClick={() => {
-                        void createJourney(appId, createName).then(journey => {
-                            dispatch({action: 'create', journey})
-                            setCreateDialog(false)
-                            nav.refresh()
-                        })
-                    }} strong>
-                        Erstellen
-                    </DialogButton>
-                </>
-            }
-            content={<List nested>
-                <ListInput
-                    label="Name"
-                    onChange={(e: Event) => {
-                        setCreateName((e.target as HTMLInputElement).value)
-                    }}
-                    outline
-                    type="text"
-                    value={createName}
-                />
-            </List>
-            }
-            opened={createDialog}
-            title="Neue Reise"
-        />
-
         <JourneySelectionToolbar buildSummary={DeleteSummary} onDelete={selection => {
             if (selection) {
                 const journeyIds = selection.map(journey => journey.id);

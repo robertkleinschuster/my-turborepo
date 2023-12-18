@@ -29,6 +29,27 @@ export default function Journey(): JSX.Element {
     const [createName, setCreateName] = useState<string>('')
     const [creating, setCreating] = useState(false)
     const [createError, setCreateError] = useState('')
+
+    function handleCreateJourney(): void
+    {
+        setCreating(true)
+        void createJourney(appId, createName).then(journey => {
+            dispatch({action: 'create', journey})
+            setCreating(false)
+            setCreateName('')
+            nav.refresh()
+        })
+    }
+
+    function validateCreateJourney(): boolean
+    {
+        if (!createName.length) {
+            setCreateError('Bitte einen Namen für deie neue Reise eingeben.')
+            return false;
+        }
+        return true;
+    }
+
     return <>
         <Navbar
             left={<NavbarBackLink onClick={() => {
@@ -40,8 +61,8 @@ export default function Journey(): JSX.Element {
             <ListInput
                 error={createError}
                 floatingLabel
-                info={creating ? <span className="flex gap-1"><Preloader
-                    size="h-4"/> wird erstellt...</span> : ''}
+                info={creating ? <span className="flex gap-1 justify-start"><Preloader className="!text-inherit"
+                    size="h-4"/>wird erstellt...</span> : null}
                 label={<span className="text-primary">Neue Reise</span>}
                 onBlur={() => {
                     setCreateName('')
@@ -52,18 +73,10 @@ export default function Journey(): JSX.Element {
                 }}
                 onKeyDown={event => {
                     if (event.key === 'Enter') {
-                        if (!createName.length) {
-                            setCreateError('Bitte einen Namen für deie neue Reise eingeben.')
-                            return;
+                        if (validateCreateJourney()) {
+                            (event.target as HTMLInputElement).blur()
+                            handleCreateJourney()
                         }
-                        (event.target as HTMLInputElement).blur()
-                        setCreating(true)
-                        void createJourney(appId, createName).then(journey => {
-                            dispatch({action: 'create', journey})
-                            setCreating(false)
-                            setCreateName('')
-                            nav.refresh()
-                        })
                     }
                 }}
                 placeholder="Name der Reise"

@@ -1,6 +1,6 @@
 "use server"
 
-import type {Journey, JourneyLeg, WithLegs} from "./prisma";
+import type {Journey, JourneyLeg, JourneyLegCreate, WithLegs} from "./prisma";
 import prisma from "./prisma";
 
 export async function createJourney(appId: string, name: string): Promise<Journey> {
@@ -17,16 +17,27 @@ export async function loadJourneys(appId: string): Promise<Journey[]> {
         where: {
             appId
         },
-        orderBy: {
-            createdAt: 'desc'
-        }
+        orderBy: [
+            {
+                createdAt: 'desc'
+            },
+        ]
     })
 }
 
 export async function loadJourney(id: string): Promise<Journey<WithLegs>> {
     return prisma.journey.findUniqueOrThrow({
         include: {
-            legs: true,
+            legs: {
+                orderBy: [
+                    {
+                        timeStart: 'asc',
+                    },
+                    {
+                        createdAt: 'asc'
+                    },
+                ]
+            },
         },
         where: {
             id
@@ -63,11 +74,8 @@ export async function deleteLeg(legIds: string[]): Promise<void> {
     })
 }
 
-export async function createLeg(journeyId: string, name: string): Promise<JourneyLeg> {
+export async function createLeg(leg: JourneyLegCreate): Promise<JourneyLeg> {
     return prisma.journeyLeg.create({
-        data: {
-            journeyId,
-            name,
-        }
+        data: leg
     })
 }

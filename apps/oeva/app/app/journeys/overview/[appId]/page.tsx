@@ -8,6 +8,7 @@ import {createJourney, deleteJourney} from "../../../../../lib/actions";
 import type {ListSelection} from "../../../../../context/list-selection";
 import type {Journey} from "../../../../../lib/prisma";
 import {useAppId} from "../../../../../store/app-id";
+import {useJourneyPlanner} from "../../../../../store/journey-planner";
 import {useJourneyList, useJourneyListDispatch} from "./context";
 import {JourneyListItem, JourneySelectionToggle, JourneySelectionToolbar} from "./selection-context";
 
@@ -29,6 +30,7 @@ export default function Journey(): JSX.Element {
     const [createName, setCreateName] = useState<string>('')
     const [creating, setCreating] = useState(false)
     const [createError, setCreateError] = useState('')
+    const planning = useJourneyPlanner(state => state.journey)
 
     function handleCreateJourney(): void
     {
@@ -85,6 +87,7 @@ export default function Journey(): JSX.Element {
             />
 
             {journeys.map(journey => <JourneyListItem
+                after={planning?.id === journey.id ? 'in Planung': null}
                 item={journey}
                 key={journey.id}
                 link

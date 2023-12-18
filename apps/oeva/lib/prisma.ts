@@ -19,6 +19,8 @@ export default prisma;
 export type Journey<T extends Prisma.JourneyDefaultArgs = Prisma.JourneyDefaultArgs> = Prisma.JourneyGetPayload<T>
 export type JourneyLeg<T extends Prisma.JourneyLegDefaultArgs = Prisma.JourneyLegDefaultArgs> = Prisma.JourneyLegGetPayload<T>
 
+export type JourneyLegCreate = Prisma.JourneyLegUncheckedCreateInput
+
 // eslint-disable-next-line -- suppress
 export type WithLegs = {
     include: {

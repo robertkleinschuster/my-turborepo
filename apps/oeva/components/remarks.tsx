@@ -1,8 +1,9 @@
 "use client"
 
 import type {Hint, Status, Warning} from "hafas-client";
-import {Block, BlockHeader, BlockTitle, Icon} from "konsta/react";
-import React, {JSX, ReactNode} from "react";
+import {Block, Icon} from "konsta/react";
+import type {JSX, ReactNode} from "react";
+import React from "react";
 import {ExclamationmarkTriangleFill, InfoCircleFill} from "framework7-icons/react"
 import sanitize from "sanitize-html";
 

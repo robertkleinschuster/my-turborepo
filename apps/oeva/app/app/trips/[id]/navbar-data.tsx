@@ -1,3 +1,5 @@
+"use server"
+
 import React from "react";
 import {getClient} from '../../../../client/client'
 import TripNavbar from './navbar'

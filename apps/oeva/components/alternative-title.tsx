@@ -1,11 +1,14 @@
-import { Alternative, Line as LineType, ProductType } from "hafas-client";
-import Line from './line';
+import type {Alternative, ProductType} from "hafas-client";
 import React from "react";
+import Line from './line';
 
-export default function AlternativeTitle({ alternative, products }: { alternative: Alternative & { line?: LineType & { number?: string } } , products: readonly ProductType[]}): React.JSX.Element {
+export default function AlternativeTitle({alternative, products}: {
+    alternative: Alternative,
+    products: readonly ProductType[]
+}): React.JSX.Element {
     return <span className={alternative.cancelled ? 'line-through' : undefined}>
-        {alternative.line ? <Line line={alternative.line} products={products} /> : '-'}
+        {alternative.line ? <Line line={alternative.line} products={products}/> : '-'}
         {' '}
-        {alternative.line?.number} {alternative.direction ?? alternative.provenance ?? ''}
+        {alternative.direction ?? alternative.provenance ?? ''}
     </span>
 }

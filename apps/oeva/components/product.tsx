@@ -15,7 +15,7 @@ export default function Product({ product }: { product: ProductType }): React.JS
     }
 
     if (product.id === 'city-bus') {
-        return <span className="class-a-haf-prod-bus" />
+        return <span className="class-haf_prod_bus" />
     }
 
     if (product.id === 'regional-bus') {
@@ -43,5 +43,5 @@ export default function Product({ product }: { product: ProductType }): React.JS
         return <span className="class-a-haf-prod-ast" />
     }
 
-    return <span>-</span>
+    return <span>{product.short}</span>
 }

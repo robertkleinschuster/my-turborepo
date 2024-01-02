@@ -4,13 +4,12 @@ import type {Alternative, ProductType} from "hafas-client";
 import {Block, List, ListItem} from 'konsta/react'
 import React, {useState} from "react";
 import {parseISO} from "date-fns";
+import {useLongPress} from "use-long-press";
 import {useNavigation} from "../hooks/use-navigation";
-import Operator from "./operator";
 import TimeDelay from "./time-delay";
 import {Platform} from "./platform";
 import AlternativeTitle from "./alternative-title";
 import RemarkSummary from "./remark-summary";
-import {useLongPress} from "use-long-press";
 import {RemarksPanel} from "./remarks-panel";
 
 export default function Alternatives({alternatives, products}: {
@@ -51,8 +50,6 @@ export default function Alternatives({alternatives, products}: {
                     </>}
                     key={alternative.tripId + alternative.when}
                     link
-                    media={<span className="text-3xl">{alternative.line?.operator ?
-                        <Operator operator={alternative.line.operator}/> : '-'}</span>}
                     onClick={() => {
                         const line = alternative.line;
                         const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`

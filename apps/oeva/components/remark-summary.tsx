@@ -12,6 +12,10 @@ export default function RemarkSummary({remarks, cancelled}: {
 
     const statuses = remarks?.filter(remark => remark.type === 'status')
 
+    if (!warnings?.length && !statuses?.length) {
+        return <></>
+    }
+
     if (cancelled) {
         return <span className="flex gap-1 flex-wrap py-1">
             {statuses?.map(status => <Badge className="gap-1 text-lg"

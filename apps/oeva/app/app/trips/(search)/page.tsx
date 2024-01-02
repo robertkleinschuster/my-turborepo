@@ -26,11 +26,12 @@ export default async function Stations({searchParams}: {
                 untilWhen: to,
                 products: buildProductsFilter(client, searchParams.products),
             })
-            return <Trips trips={trips.trips}/>
+            return <Trips products={client.profile.products} trips={trips.trips}/>
         } catch (e) {
-            return <Trips error={String(e)} trips={[]}/>
+            return <Trips error={String(e)} products={client.profile.products} trips={[]}/>
         }
     }
 
-    return <Trips error={!searchParams.products?.length ? 'Kein Angebot gewählt' : undefined} trips={[]}/>
+    return <Trips error={!searchParams.products?.length ? 'Kein Angebot gewählt' : undefined} products={client.profile.products}
+                  trips={[]}/>
 }

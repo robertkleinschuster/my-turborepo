@@ -83,9 +83,9 @@ export class BusBahnBim extends BaseClient {
 }
 
 export enum ClientCode {
-    OEBB,
-    DB,
-    STV
+    OEBB = 'oebb',
+    DB = 'db',
+    STV = 'stv'
 }
 
 export const clients = new Map<ClientCode, Client>([

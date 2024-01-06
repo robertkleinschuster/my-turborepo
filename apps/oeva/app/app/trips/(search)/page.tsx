@@ -24,7 +24,7 @@ export default async function Stations({searchParams}: {
                 onlyCurrentlyRunning: false,
                 fromWhen: from,
                 untilWhen: to,
-                products: buildProductsFilter(client, searchParams.products),
+                products: buildProductsFilter(client.profile.products, searchParams.products),
             })
             return <Trips products={client.profile.products} trips={trips.trips}/>
         } catch (e) {

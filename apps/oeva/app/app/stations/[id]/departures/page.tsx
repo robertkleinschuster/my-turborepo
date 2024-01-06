@@ -14,7 +14,7 @@ export default async function Departures({params, searchParams}: {
         duration: 1440,
         results: 40,
         when,
-        products: buildProductsFilter(client, searchParams.products),
+        products: buildProductsFilter(client.profile.products, searchParams.products),
         remarks: true
     })
     return <Alternatives alternatives={departures.departures} products={client.profile.products}/>

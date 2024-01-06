@@ -1,11 +1,10 @@
-import type { Products } from "hafas-client";
-import type { Client } from "./client";
+import type {Products, ProductType} from "hafas-client";
 
-export function buildProductsFilter(client: Client, products: string[] | undefined): Products {
+export function buildProductsFilter(available: readonly ProductType[], list: string[] | undefined | null): Products {
     const filter: Products = {};
-    if (products?.length) {
-        for (const product of client.profile.products) {
-            filter[product.id] = products.includes(product.id);
+    if (list?.length) {
+        for (const product of available) {
+            filter[product.id] = list.includes(product.id);
         }
     }
     return filter;

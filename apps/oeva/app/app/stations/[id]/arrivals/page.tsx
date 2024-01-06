@@ -13,7 +13,7 @@ export default async function Arrivals({params, searchParams}: {
         duration: 1440,
         results: 40,
         when,
-        products: buildProductsFilter(client, searchParams.products),
+        products: buildProductsFilter(client.profile.products, searchParams.products),
         remarks: true
     })
     return <Alternatives alternatives={arrivals.arrivals} products={client.profile.products}/>

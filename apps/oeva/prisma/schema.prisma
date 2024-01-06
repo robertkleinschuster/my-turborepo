@@ -11,13 +11,14 @@ datasource db {
 }
 
 model JourneyLeg {
-  id           String        @id @default(cuid())
-  journey      Journey       @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  id           String         @id @default(cuid())
+  journey      Journey        @relation(fields: [journeyId], references: [id], onDelete: Cascade)
   journeyId    String
-  type         LegType       @default(TRIP)
-  status       JourneyStatus @default(DRAFT)
+  type         LegType        @default(TRIP)
+  status       JourneyStatus  @default(DRAFT)
   extId        String?
   extType      ExternalType?
+  extClient    ExternalClient?
   name         String
   notice       String?
   comment      String?
@@ -33,8 +34,8 @@ model JourneyLeg {
   locEndName   String?
   locEndLon    Float?
   locEndLat    Float?
-  createdAt    DateTime      @default(now()) @map(name: "created_at")
-  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
+  createdAt    DateTime       @default(now()) @map(name: "created_at")
+  updatedAt    DateTime       @updatedAt @map(name: "updated_at")
 }
 
 model Journey {
@@ -64,6 +65,12 @@ model Journey {
 enum ExternalType {
   TRIP
   STATION
+}
+
+enum ExternalClient {
+  OEBB
+  STV
+  DB
 }
 
 enum JourneyStatus {

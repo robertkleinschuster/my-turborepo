@@ -5,9 +5,9 @@ import { Button, Icon, List, ListButton, ListInput, ListItem, Popover, Toggle, T
 import { Clock, Calendar, PlusCircle, MinusCircle } from "framework7-icons/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Time from "./time";
-import Product from "./product";
 import { addDays, addHours, subDays, subHours } from "date-fns";
+import Product from "./product";
+import Time from "./time";
 
 function toDatetimeLocal(date: Date): string {
     const ten = function (i) {
@@ -19,7 +19,7 @@ function toDatetimeLocal(date: Date): string {
         HH = ten(date.getHours()),
         II = ten(date.getMinutes());
     return `${YYYY}-${MM}-${DD}T${HH}:${II}`;
-};
+}
 
 function toDateLocal(date: Date): string {
     const ten = function (i) {
@@ -29,7 +29,7 @@ function toDateLocal(date: Date): string {
         MM = ten(date.getMonth() + 1),
         DD = ten(date.getDate());
     return `${YYYY}-${MM}-${DD}`;
-};
+}
 
 export default function Filter({ products, showTime = false }: { products: readonly ProductType[], showTime?: boolean }): React.JSX.Element {
     const router = useRouter()
@@ -62,7 +62,7 @@ export default function Filter({ products, showTime = false }: { products: reado
             }
 
             <Button className="filter-products !w-auto gap-1" onClick={() => { setProductsOpen(true) }} rounded tonal>
-                <span>{productsFilter.size ? 'Angebot:' : 'Angebot wählen'}</span>
+                <span>{productsFilter.size ? 'Verkehrsmittel:' : 'Verkehrsmittel wählen'}</span>
                 {products.filter(product => productsFilter.has(product.id)).map(product =>
                     <Product key={product.id} product={product} />
                 )}

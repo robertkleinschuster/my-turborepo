@@ -32,6 +32,6 @@ export default async function Stations({searchParams}: {
         }
     }
 
-    return <Trips error={!searchParams.products?.length ? 'Kein Angebot gewählt' : undefined} products={client.profile.products}
+    return <Trips error={!searchParams.products?.length ? 'Kein Verkehrsmittel gewählt' : undefined} products={client.profile.products}
                   trips={[]}/>
 }

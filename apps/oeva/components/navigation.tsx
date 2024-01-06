@@ -17,7 +17,7 @@ export default function Navigation(): React.JSX.Element {
         {planning ? <TabbarLink active={segment === 'journeys'} label="Reiseplanung"
                                 linkProps={{href: `/app/journeys/${planning.id}`, component: Link}}/> : null}
         <TabbarLink active={segment === 'trips'} label="Fahrten"
-                    linkProps={{href: '/app/trips', component: Link}}/>
+                    linkProps={{href: '/app/trips?products=train-and-s-bahn', component: Link}}/>
         <TabbarLink active={segment === 'stations'} label="Stationen"
                     linkProps={{href: '/app/stations', component: Link}}/>
     </Tabbar>

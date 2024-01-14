@@ -4,8 +4,10 @@ import {
     Breadcrumbs as KonstaBreadcrumbs,
     BreadcrumbsCollapsed,
     BreadcrumbsItem,
-    BreadcrumbsSeparator, Icon,
-    List, ListItem, Popover, Toolbar
+    BreadcrumbsSeparator,
+    Icon,
+    Popover,
+    Toolbar
 } from "konsta/react"
 import type {JSX} from "react";
 import {useState} from "react";

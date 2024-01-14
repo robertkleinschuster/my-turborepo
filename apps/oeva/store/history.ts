@@ -72,13 +72,13 @@ export const useHistory = create(
                     const item = items[i]
                     if (item.sequence <= sequence && item.root === root) {
                         breadcrumbs.push(item)
-                        if (!item.parent) {
+                        if (item.sequence === root) {
                             break;
                         }
                     } else {
                         items[i] = {
                             ...item,
-                            root: item.sequence,
+                            root: item.sequence
                         }
                     }
                 }

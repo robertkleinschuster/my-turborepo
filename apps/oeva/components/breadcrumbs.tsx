@@ -14,7 +14,7 @@ import {useSearchParams} from "next/navigation";
 import {useHistory} from "../store/history";
 import {useNavigation} from "../hooks/use-navigation";
 import Scroll from "./scroll";
-import Time from "./time";
+import {HistoryList} from "./history-list";
 
 export function Breadcrumbs(): JSX.Element {
     const [popoverOpened, setPopoverOpened] = useState(false);
@@ -64,20 +64,9 @@ export function Breadcrumbs(): JSX.Element {
             target=".breadcrumbs"
         >
             <Scroll className="max-h-[50vh]">
-                <List nested>
-                    {items.map(item =>
-                        <ListItem
-                            header={<Time time={item.when ? new Date(item.when) : null}/>}
-                            key={item.sequence}
-                            link
-                            onClick={() => {
-                                setPopoverOpened(false)
-                                navigation.history(item)
-                            }}
-                            title={item.title}
-                        />
-                    )}
-                </List>
+                <HistoryList items={items} nested onClick={() => {
+                    setPopoverOpened(false)
+                }}/>
             </Scroll>
         </Popover>
     </Toolbar>

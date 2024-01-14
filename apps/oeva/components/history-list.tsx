@@ -16,12 +16,14 @@ function Info({item}: { item: HistoryItem }): JSX.Element {
     return <>Ab. <Time time={item.when ? new Date(item.when) : null}/> {item.parent?.title}</>
 }
 
-export function HistoryList({items}: {
+export function HistoryList({items, nested, onClick}: {
     items: readonly HistoryItem[],
+    nested?: boolean,
+    onClick?: (item: HistoryItem) => void
 }): JSX.Element {
     const nav = useNavigation()
 
-    return <List inset strong>
+    return <List inset={!nested} nested={nested} strong={!nested}>
         {items.map(item => <HistoryListItem
                 footer={<span className="flex gap-1 items-center"><Icon ios={<Eye/>}/><Time
                     time={new Date(item.added)}/></span>}
@@ -30,6 +32,9 @@ export function HistoryList({items}: {
                 key={item.sequence}
                 link
                 onClick={() => {
+                    if (onClick) {
+                        onClick(item)
+                    }
                     nav.history(item)
                 }}
                 title={item.title}

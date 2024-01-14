@@ -4,30 +4,38 @@ import {
     Breadcrumbs as KonstaBreadcrumbs,
     BreadcrumbsCollapsed,
     BreadcrumbsItem,
-    BreadcrumbsSeparator,
-    Link, List, ListItem, Popover, Toolbar
+    BreadcrumbsSeparator, Icon,
+    List, ListItem, Popover, Toolbar
 } from "konsta/react"
 import type {JSX} from "react";
-import { useState} from "react";
+import {useState} from "react";
+import {House} from "framework7-icons/react"
+import {useSearchParams} from "next/navigation";
 import {useHistory} from "../store/history";
 import {useNavigation} from "../hooks/use-navigation";
-import useStore from "../hooks/use-store";
 import Scroll from "./scroll";
 import Time from "./time";
 
 export function Breadcrumbs(): JSX.Element {
     const [popoverOpened, setPopoverOpened] = useState(false);
-    const items = useStore(useHistory, h => h.breadcrumbs)
+    const filterBreadcrumbs = useHistory(h => h.filterBreadcrumbs)
     const navigation = useNavigation()
+    const params = useSearchParams()
+    const historySequence = params.get('sequence')
+    const historyRoot = params.get('root')
+
+    if (historySequence === '' || historySequence === null || historyRoot === '' || historyRoot === null) {
+        return <></>
+    }
+
+    const items = filterBreadcrumbs(Number.parseInt(historySequence), Number.parseInt(historyRoot));
 
     return <Toolbar className="!pb-0">
         <KonstaBreadcrumbs>
             <BreadcrumbsItem>
-                <Link onClick={() => {
-                    navigation.home()
-                }}>Home</Link>
+                <Icon ios={<House/>}/>
             </BreadcrumbsItem>
-            {items?.length && items.length > 1 ?
+            {items.length && items.length > 1 ?
                 <>
                     <BreadcrumbsSeparator/>
                     <BreadcrumbsCollapsed
@@ -40,7 +48,7 @@ export function Breadcrumbs(): JSX.Element {
                 : null}
 
             <BreadcrumbsSeparator/>
-            {items?.length ?
+            {items.length ?
                 <BreadcrumbsItem active>
                     {items[items.length - 1].title}
                 </BreadcrumbsItem>
@@ -57,21 +65,20 @@ export function Breadcrumbs(): JSX.Element {
         >
             <Scroll className="max-h-[50vh]">
                 <List nested>
-                    {items?.map(item =>
+                    {items.map(item =>
                         <ListItem
                             header={<Time time={item.when ? new Date(item.when) : null}/>}
-                            key={`${item.id}-${item.added}`}
+                            key={item.sequence}
                             link
                             onClick={() => {
                                 setPopoverOpened(false)
-                                navigation.breadcrumb(item)
+                                navigation.history(item)
                             }}
                             title={item.title}
                         />
                     )}
                 </List>
             </Scroll>
-
         </Popover>
     </Toolbar>
 }

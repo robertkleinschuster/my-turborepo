@@ -3,10 +3,9 @@
 import type {ProductType} from "hafas-client";
 import {
     Button,
+    Chip,
     Icon,
     List,
-    ListButton,
-    ListInput,
     ListItem,
     Popover,
     Segmented,
@@ -14,34 +13,13 @@ import {
     Toggle,
     Toolbar
 } from "konsta/react";
-import {Clock, Calendar, PlusCircle, MinusCircle} from "framework7-icons/react"
+import {Clock, Calendar} from "framework7-icons/react"
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import React, {useEffect, useState} from "react";
-import {addDays, addHours, addMinutes, subDays, subHours, subMinutes} from "date-fns";
+import {addHours, addMinutes, subHours, subMinutes} from "date-fns";
+import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
 import Product from "./product";
 import Time from "./time";
-
-function toDatetimeLocal(date: Date): string {
-    const ten = function (i) {
-        return (i < 10 ? '0' : '') + i;
-    };
-    const YYYY = date.getFullYear(),
-        MM = ten(date.getMonth() + 1),
-        DD = ten(date.getDate()),
-        HH = ten(date.getHours()),
-        II = ten(date.getMinutes());
-    return `${YYYY}-${MM}-${DD}T${HH}:${II}`;
-}
-
-function toDateLocal(date: Date): string {
-    const ten = function (i) {
-        return (i < 10 ? '0' : '') + i;
-    };
-    const YYYY = date.getFullYear(),
-        MM = ten(date.getMonth() + 1),
-        DD = ten(date.getDate());
-    return `${YYYY}-${MM}-${DD}`;
-}
 
 export default function Filter({products, showTime = false}: {
     products: readonly ProductType[],
@@ -75,11 +53,22 @@ export default function Filter({products, showTime = false}: {
                     <Icon ios={<Clock/>}/>&nbsp;<Time time={when}/>
                 </Button>
                 :
-                <Button className="filter-when !w-auto" onClick={() => {
-                    setWhenOpen(true)
-                }} rounded tonal>
-                    <Icon ios={<Calendar/>}/>&nbsp;{when.toLocaleDateString(['de'], {dateStyle: 'short'})}
-                </Button>
+                <Chip
+                    className="font-semibold relative"
+                    colors={{
+                        fillBgIos: 'bg-primary bg-opacity-15',
+                        fillTextIos: 'text-primary'
+                    }}
+                >
+                    <Icon ios={<Calendar/>}/>
+                    <input
+                        className="border-none bg-transparent after:absolute after:w-full after:h-full after:left-0"
+                        onChange={e => {
+                            setWhen(new Date(e.target.value))
+                        }} type="date"
+                        value={formatInputDate(when)}
+                    />
+                </Chip>
             }
 
             <Button className="filter-products !w-auto gap-1" onClick={() => {
@@ -99,74 +88,51 @@ export default function Filter({products, showTime = false}: {
             opened={whenOpen}
             target=".filter-when"
         >
-
-            {showTime ?
-                <div className="gap-1 flex flex-col m-4">
+            <div className="gap-4 flex flex-col m-4">
+                <Button
+                    className="relative"
+                    tonal
+                >
                     <input
-                        className="border-none bg-transparent self-center"
-                        onChange={(e) => {
-                            setWhen(new Date((e.target as HTMLInputElement).value))
+                        className="border-none bg-transparent after:absolute after:w-full after:h-full after:left-0"
+                        onChange={e => {
+                            setWhen(new Date(e.target.value))
                         }}
                         type="datetime-local"
-                        value={toDatetimeLocal(when)}
+                        value={formatInputDatetimeLocal(when)}
                     />
+                </Button>
 
-                    <Button onClick={() => {
-                        setWhen(new Date())
-                    }}>Jetzt</Button>
 
-                    <Segmented>
-                        <SegmentedButton
-                            onClick={() => {
-                                setWhen(subHours(when, 1))
-                            }}
-                        >- 1 std</SegmentedButton>
-                        <SegmentedButton
-                            onClick={() => {
-                                setWhen(addHours(when, 1))
-                            }}
-                        >+ 1 std</SegmentedButton>
-                    </Segmented>
-                    <Segmented>
-                        <SegmentedButton
-                            onClick={() => {
-                                setWhen(subMinutes(when, 5))
-                            }}
-                        >- 5 min</SegmentedButton>
-                        <SegmentedButton
-                            onClick={() => {
-                                setWhen(addMinutes(when, 5))
-                            }}
-                        >+ 5 min</SegmentedButton>
-                    </Segmented>
-                </div>
-                :
-                <List nested>
-                    <ListInput
-                        onChange={(e: Event) => {
-                            setWhen(new Date((e.target as HTMLInputElement).value))
+                <Button onClick={() => {
+                    setWhen(new Date())
+                }}>Jetzt</Button>
+
+                <Segmented>
+                    <SegmentedButton
+                        onClick={() => {
+                            setWhen(subHours(when, 1))
                         }}
-                        outline
-                        type="date"
-                        value={toDateLocal(when)}
-                    />
-                    <ListButton onClick={() => {
-                        setWhen(new Date())
-                    }}>Jetzt</ListButton>
-                    <ListButton onClick={() => {
-                        setWhen(subDays(when, 1))
-                    }}>
-                        <Icon
-                            ios={<MinusCircle/>}
-                        />&nbsp;1 Tag</ListButton>
-                    <ListButton onClick={() => {
-                        setWhen(addDays(when, 1))
-                    }}>
-                        <Icon
-                            ios={<PlusCircle/>}
-                        />&nbsp;1 Tag</ListButton>
-                </List>
-            }
+                    >- 1 std</SegmentedButton>
+                    <SegmentedButton
+                        onClick={() => {
+                            setWhen(addHours(when, 1))
+                        }}
+                    >+ 1 std</SegmentedButton>
+                </Segmented>
+                <Segmented>
+                    <SegmentedButton
+                        onClick={() => {
+                            setWhen(subMinutes(when, 5))
+                        }}
+                    >- 5 min</SegmentedButton>
+                    <SegmentedButton
+                        onClick={() => {
+                            setWhen(addMinutes(when, 5))
+                        }}
+                    >+ 5 min</SegmentedButton>
+                </Segmented>
+            </div>
         </Popover>
 
 

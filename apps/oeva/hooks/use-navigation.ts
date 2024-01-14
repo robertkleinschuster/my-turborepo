@@ -16,7 +16,6 @@ interface Navigation {
     home: () => void,
     journeys: () => void
     journey: (id: string) => void,
-    breadcrumb: (item: HistoryItem) => void
 }
 
 export function useNavigation(): Navigation {
@@ -45,14 +44,6 @@ export function useNavigation(): Navigation {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
         history: (item: HistoryItem) => {
-            if (item.type === 'trip') {
-                router.push(`/app/trips/${encodeURIComponent(item.id)}?sequence=${item.sequence}&root=${item.root}`)
-            }
-            if (item.type === 'station') {
-                router.push(`/app/stations/${encodeURIComponent(item.id)}/departures?when=${encodeURIComponent(item.when ?? '')}&sequence=${item.sequence}&root=${item.root}`)
-            }
-        },
-        breadcrumb: (item: HistoryItem) => {
             if (item.type === 'trip') {
                 router.push(`/app/trips/${encodeURIComponent(item.id)}?sequence=${item.sequence}&root=${item.root}`)
             }

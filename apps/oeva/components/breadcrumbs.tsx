@@ -54,7 +54,7 @@ export function Breadcrumbs() {
             opened={popoverOpened}
             target=".breadcrumbs"
         >
-            <Scroll className="max-h-[90vh]">
+            <Scroll className="max-h-[50vh]">
                 <List nested>
                     {items?.map(item =>
                         <ListItem

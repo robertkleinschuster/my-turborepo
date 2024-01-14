@@ -67,16 +67,22 @@ export const useHistory = create(
             },
             filterBreadcrumbs: (sequence: number, root: number|null) => {
                 const breadcrumbs: HistoryItem[] = []
-                const items = get().items
+                const items = Array.from(get().items)
                 for (let i = items.length - 1; i > 0; i--) {
                     const item = items[i]
-                    if (item.sequence <= sequence && (root !== null || item.root === root)) {
+                    if (item.sequence <= sequence && item.root === root) {
                         breadcrumbs.push(item)
                         if (!item.parent) {
                             break;
                         }
+                    } else {
+                        items[i] = {
+                            ...item,
+                            root: item.sequence,
+                        }
                     }
                 }
+                set(() => ({items}))
                 return breadcrumbs.reverse();
             },
             hideInRecents: (id: string) => {

@@ -8,13 +8,16 @@ interface History {
     breadcrumbs: readonly HistoryItem[],
     push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => void,
     hideInRecents: (id: string) => void,
-    clear: () => void
+    clear: () => void,
+    rollbackBreadcrumbs: (item: HistoryItem) => void
+    visit: (item: HistoryItem) => void
+    clearBreadcrumbs: () => void
 }
 
 export interface HistoryItem {
     id: string,
     sequence: number,
-    type: 'trip'|'station',
+    type: 'trip' | 'station',
     title: string,
     added: string,
     when: string | null,
@@ -30,17 +33,6 @@ function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
         }
     }
     return Array.from(recents.values());
-}
-
-function updateBreadcrumbs(items: readonly HistoryItem[]): readonly HistoryItem[]{
-    const result: HistoryItem[] = [];
-    for (const item of items.toReversed()) {
-        result.push(item)
-        if (!item.parent && result.length > 1) {
-            break;
-        }
-    }
-    return result.toReversed();
 }
 
 export const useHistory = create(
@@ -66,10 +58,30 @@ export const useHistory = create(
                     return {
                         items,
                         parent: item,
-                        breadcrumbs: parent ? updateBreadcrumbs(items) : [item],
+                        breadcrumbs: parent ? [...state.breadcrumbs, item] : [item],
                         recents: updateRecents(items)
                     }
                 })
+            },
+            visit: (item: HistoryItem) => {
+                set(() => ({breadcrumbs: [item]}))
+            },
+            rollbackBreadcrumbs: (item: HistoryItem) => {
+                set(state => {
+                    const breadcrumbs: HistoryItem[] = []
+                    for (const i of state.breadcrumbs) {
+                        breadcrumbs.push(i)
+                        if (i.id === item.id) {
+                            break;
+                        }
+                    }
+                    return {
+                        breadcrumbs,
+                    }
+                })
+            },
+            clearBreadcrumbs: () => {
+                set(() => ({breadcrumbs: []}))
             },
             hideInRecents: (id: string) => {
                 set(state => {
@@ -86,7 +98,8 @@ export const useHistory = create(
             clear: () => {
                 set(() => ({
                     items: [],
-                    recents: []
+                    recents: [],
+                    breadcrumbs: []
                 }))
             }
         }),

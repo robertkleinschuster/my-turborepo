@@ -15,7 +15,8 @@ interface Navigation {
     back: () => void
     home: () => void,
     journeys: () => void
-    journey: (id: string) => void
+    journey: (id: string) => void,
+    breadcrumb: (item: HistoryItem) => void
 }
 
 export function useNavigation(): Navigation {
@@ -23,6 +24,9 @@ export function useNavigation(): Navigation {
     const appId = useAppId()
     const params = useParams<{ id?: string }>()
     const historyPush = useHistory(state => state.push)
+    const historyVisit = useHistory(state => state.visit)
+    const rollbackBreadcrumbs = useHistory(state => state.rollbackBreadcrumbs)
+    const clearBreadcrumbs = useHistory(state => state.clearBreadcrumbs)
 
     const recordJourney = useJourneyPlanner(state => state.recording)
     const addStationToJourney = useJourneyPlanner(state => state.addStation)
@@ -44,20 +48,22 @@ export function useNavigation(): Navigation {
         journey: (id: string) => {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
-        history: (item: HistoryItem, preserveParent = false) => {
-            historyPush(item.type, item.id, item.when, item.title, preserveParent ? item.parent : null)
-
-
+        history: (item: HistoryItem) => {
+            clearBreadcrumbs()
+            historyVisit(item)
             if (item.type === 'trip') {
-                if (recordJourney) {
-                    addTripToJourney(item.title, item.id, item.when)
-                }
                 router.push(`/app/trips/${encodeURIComponent(item.id)}`)
             }
             if (item.type === 'station') {
-                if (recordJourney) {
-                    addStationToJourney(item.title, item.id, item.when)
-                }
+                router.push(`/app/stations/${encodeURIComponent(item.id)}/departures?when=${encodeURIComponent(item.when ?? '')}`)
+            }
+        },
+        breadcrumb: (item: HistoryItem) => {
+            rollbackBreadcrumbs(item)
+            if (item.type === 'trip') {
+                router.push(`/app/trips/${encodeURIComponent(item.id)}`)
+            }
+            if (item.type === 'station') {
                 router.push(`/app/stations/${encodeURIComponent(item.id)}/departures?when=${encodeURIComponent(item.when ?? '')}`)
             }
         },

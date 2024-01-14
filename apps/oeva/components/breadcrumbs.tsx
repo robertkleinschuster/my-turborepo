@@ -63,9 +63,8 @@ export function Breadcrumbs() {
                             link
                             onClick={() => {
                                 setPopoverOpened(false)
-                                navigation.history(item, true)
+                                navigation.breadcrumb(item)
                             }}
-                            subtitle={item.parent?.title}
                             title={item.title}
                         />
                     )}

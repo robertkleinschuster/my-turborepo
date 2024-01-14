@@ -14,14 +14,12 @@ import {useState} from "react";
 import {House} from "framework7-icons/react"
 import {useSearchParams} from "next/navigation";
 import {useHistory} from "../store/history";
-import {useNavigation} from "../hooks/use-navigation";
 import Scroll from "./scroll";
 import {HistoryList} from "./history-list";
 
 export function Breadcrumbs(): JSX.Element {
     const [popoverOpened, setPopoverOpened] = useState(false);
     const filterBreadcrumbs = useHistory(h => h.filterBreadcrumbs)
-    const navigation = useNavigation()
     const params = useSearchParams()
     const historySequence = params.get('sequence')
     const historyRoot = params.get('root')

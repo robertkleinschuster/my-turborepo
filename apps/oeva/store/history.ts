@@ -4,7 +4,8 @@ import {persist} from 'zustand/middleware'
 interface History {
     items: readonly HistoryItem[],
     parent: HistoryItem | null,
-    recents: readonly HistoryItem[]
+    recents: readonly HistoryItem[],
+    breadcrumbs: readonly HistoryItem[],
     push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => void,
     hideInRecents: (id: string) => void,
     clear: () => void
@@ -31,11 +32,23 @@ function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
     return Array.from(recents.values());
 }
 
+function updateBreadcrumbs(items: readonly HistoryItem[]): readonly HistoryItem[]{
+    const result: HistoryItem[] = [];
+    for (const item of items.toReversed()) {
+        result.push(item)
+        if (!item.parent && result.length > 1) {
+            break;
+        }
+    }
+    return result.toReversed();
+}
+
 export const useHistory = create(
     persist<History>(
         (set) => ({
             items: [],
             recents: [],
+            breadcrumbs: [],
             parent: null,
             push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => {
                 set(state => {
@@ -53,6 +66,7 @@ export const useHistory = create(
                     return {
                         items,
                         parent: item,
+                        breadcrumbs: parent ? updateBreadcrumbs(items) : [item],
                         recents: updateRecents(items)
                     }
                 })

@@ -9,7 +9,7 @@ interface Navigation {
     tripNoHistory: (id: string) => void,
     station: (id: string, when: string | null, title: string) => void,
     stationNoHistory: (id: string, when: string | null) => void,
-    history: (item: HistoryItem) => void
+    history: (item: HistoryItem, preserveParent?: boolean) => void
     refresh: () => void
     stations: () => void
     back: () => void
@@ -44,8 +44,9 @@ export function useNavigation(): Navigation {
         journey: (id: string) => {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
-        history: (item: HistoryItem) => {
-            historyPush(item.type, item.id, item.when, item.title, item.parent)
+        history: (item: HistoryItem, preserveParent = false) => {
+            historyPush(item.type, item.id, item.when, item.title, preserveParent ? item.parent : null)
+
 
             if (item.type === 'trip') {
                 if (recordJourney) {

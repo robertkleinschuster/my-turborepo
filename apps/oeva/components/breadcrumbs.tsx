@@ -7,19 +7,20 @@ import {
     BreadcrumbsSeparator,
     Link, List, ListItem, Popover, Toolbar
 } from "konsta/react"
-import {useState} from "react";
+import type {JSX} from "react";
+import { useState} from "react";
 import {useHistory} from "../store/history";
 import {useNavigation} from "../hooks/use-navigation";
 import useStore from "../hooks/use-store";
 import Scroll from "./scroll";
 import Time from "./time";
 
-export function Breadcrumbs() {
+export function Breadcrumbs(): JSX.Element {
     const [popoverOpened, setPopoverOpened] = useState(false);
     const items = useStore(useHistory, h => h.breadcrumbs)
     const navigation = useNavigation()
 
-    return <Toolbar>
+    return <Toolbar className="!pb-0">
         <KonstaBreadcrumbs>
             <BreadcrumbsItem>
                 <Link onClick={() => {

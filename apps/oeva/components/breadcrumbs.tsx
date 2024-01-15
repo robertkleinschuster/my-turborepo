@@ -41,7 +41,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
                         <Link onClick={() => {
                             nav.breadcrumb(items[0]);
                         }}>
-                            {items[0].title}
+                            <span className="truncate">{items[0].title}</span>
                         </Link>
                     </BreadcrumbsItem>
 
@@ -64,7 +64,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
                 <>
                     <BreadcrumbsSeparator/>
                     <BreadcrumbsItem active>
-                        {items[items.length - 1].title}
+                        <span className="truncate">{items[items.length - 1].title}</span>
                     </BreadcrumbsItem>
                 </>
                 : null}

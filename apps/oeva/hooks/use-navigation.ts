@@ -3,11 +3,13 @@ import type {HistoryItem} from "../store/history";
 import {useHistory} from "../store/history";
 import {useAppId} from "../store/app-id";
 import {useJourneyPlanner} from "../store/journey-planner";
+import type {Alternative, Station, Trip} from "hafas-client";
 
 interface Navigation {
-    trip: (id: string, when: string | null, title: string) => void,
+    trip: (id: string, when: string | null, title: string, trip?: Trip) => void,
+    alternative: (alternative: Alternative) => void,
     tripNoHistory: (id: string) => void,
-    station: (id: string, when: string | null, title: string, products?: string[]) => void,
+    station: (id: string, when: string | null, title: string, products?: string[], station?: Station) => void,
     stationNoHistory: (id: string, when: string | null) => void,
     history: (item: HistoryItem) => void
     breadcrumb: (item: HistoryItem) => void
@@ -70,6 +72,17 @@ export function useNavigation(): Navigation {
             }
         },
         trip: (id: string, when: string | null, title: string) => {
+            const item = historyPush('trip', id, when, title)
+            if (recordJourney) {
+                addTripToJourney(title, id, when)
+            }
+            router.push(`/app/trips/${encodeURIComponent(id)}?sequence=${item?.sequence}&root=${item?.root}`)
+        },
+        alternative: (alternative: Alternative) => {
+            const id = alternative.tripId;
+            const line = alternative.line;
+            const title = `${line?.name} ${alternative.destination?.name ?? ''}`
+            const when = alternative.plannedWhen ?? null
             const item = historyPush('trip', id, when, title)
             if (recordJourney) {
                 addTripToJourney(title, id, when)

@@ -51,9 +51,7 @@ export default function Alternatives({alternatives, products}: {
                     key={alternative.tripId + alternative.when}
                     link
                     onClick={() => {
-                        const line = alternative.line;
-                        const title = `${line?.name} ${alternative.direction ?? alternative.provenance ?? ''}`
-                        nav.trip(alternative.tripId, alternative.plannedWhen ?? null, title)
+                        nav.alternative(alternative)
                     }}
                     subtitle={<RemarkSummary cancelled={alternative.cancelled} remarks={alternative.remarks}/>}
                     title={<AlternativeTitle alternative={alternative} products={products}/>}

@@ -9,7 +9,8 @@ interface Navigation {
     tripNoHistory: (id: string) => void,
     station: (id: string, when: string | null, title: string) => void,
     stationNoHistory: (id: string, when: string | null) => void,
-    history: (item: HistoryItem, preserveParent?: boolean) => void
+    history: (item: HistoryItem) => void
+    breadcrumb: (item: HistoryItem) => void
     refresh: () => void
     stations: () => void
     back: () => void
@@ -44,6 +45,15 @@ export function useNavigation(): Navigation {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
         history: (item: HistoryItem) => {
+            const newItem = historyPush(item.type, item.id, item.when, item.title)
+            if (item.type === 'trip') {
+                router.push(`/app/trips/${encodeURIComponent(item.id)}?sequence=${newItem?.sequence}&root=${newItem?.root}`)
+            }
+            if (item.type === 'station') {
+                router.push(`/app/stations/${encodeURIComponent(item.id)}/departures?when=${encodeURIComponent(item.when ?? '')}&sequence=${newItem?.sequence}&root=${newItem?.root}`)
+            }
+        },
+        breadcrumb: (item: HistoryItem) => {
             if (item.type === 'trip') {
                 router.push(`/app/trips/${encodeURIComponent(item.id)}?sequence=${item.sequence}&root=${item.root}`)
             }

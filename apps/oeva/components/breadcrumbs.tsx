@@ -12,24 +12,18 @@ import {
 import type {JSX} from "react";
 import {useState} from "react";
 import {House} from "framework7-icons/react"
-import {useSearchParams} from "next/navigation";
 import dynamic from "next/dynamic";
-import {useHistory} from "../store/history";
+import {useBreadcrumbs} from "../hooks/use-breadcrumbs";
 import Scroll from "./scroll";
 import {HistoryList} from "./history-list";
 
 const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
     const [popoverOpened, setPopoverOpened] = useState(false);
-    const filterBreadcrumbs = useHistory(h => h.filterBreadcrumbs)
-    const params = useSearchParams()
-    const historySequence = params.get('sequence')
-    const historyRoot = params.get('root')
 
-    if (historySequence === '' || historySequence === null || historyRoot === '' || historyRoot === null) {
+    const items = useBreadcrumbs();
+    if (!items.length) {
         return <></>
     }
-
-    const items = filterBreadcrumbs(Number.parseInt(historySequence), Number.parseInt(historyRoot));
 
     return <Toolbar className="!pb-0">
         <KonstaBreadcrumbs>
@@ -65,7 +59,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
             target=".breadcrumbs"
         >
             <Scroll className="max-h-[50vh]">
-                <HistoryList items={items} nested onClick={() => {
+                <HistoryList breadcrumbs items={items} nested onClick={() => {
                     setPopoverOpened(false)
                 }}/>
             </Scroll>

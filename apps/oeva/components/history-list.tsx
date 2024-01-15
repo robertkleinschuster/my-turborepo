@@ -16,9 +16,10 @@ function Info({item}: { item: HistoryItem }): JSX.Element {
     return <>Ab. <Time time={item.when ? new Date(item.when) : null}/> {item.parent?.title}</>
 }
 
-export function HistoryList({items, nested, onClick}: {
+export function HistoryList({items, nested, breadcrumbs, onClick}: {
     items: readonly HistoryItem[],
     nested?: boolean,
+    breadcrumbs?: boolean
     onClick?: (item: HistoryItem) => void
 }): JSX.Element {
     const nav = useNavigation()
@@ -35,7 +36,11 @@ export function HistoryList({items, nested, onClick}: {
                     if (onClick) {
                         onClick(item)
                     }
-                    nav.history(item)
+                    if (breadcrumbs) {
+                        nav.breadcrumb(item)
+                    } else {
+                        nav.history(item)
+                    }
                 }}
                 title={item.title}
             />

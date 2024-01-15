@@ -14,17 +14,11 @@ function Info({item}: { item: HistoryItem }): JSX.Element {
 }
 
 function SubTitle({item}: { item: HistoryItem }): JSX.Element {
-    if (item.type === 'trip' && item.parent?.type === 'station' || item.type === 'station' && item.parent?.type === 'trip') {
-        return <div className="flex flex-wrap gap-1 items-center">
-            <span>An.&nbsp;<Time time={item.parent.when ? new Date(item.parent.when) : null}/> {item.parent.title}</span>
-            {item.next ? <>
-                {item.type === 'trip' ? <Icon ios={<ArrowRight/>}/> : <Icon ios={<Hourglass/>}/>}
-                <span>Ab.&nbsp;<Time time={item.next.when ? new Date(item.next.when) : null}/> {item.next.title}</span>
-            </> : null}
-
-        </div>
-    }
-    return <></>
+    return <div className="flex flex-wrap gap-1 items-center">
+        {item.parent ? <span>An.&nbsp;<Time time={item.parent.when ? new Date(item.parent.when) : null}/> {item.parent.title}</span> : null}
+        {item.parent && item.next ? <Icon ios={item.type === 'trip' ? <ArrowRight/> : <Hourglass/>}/> : null}
+        {item.next ? <span>Ab.&nbsp;<Time time={item.next.when ? new Date(item.next.when) : null}/> {item.next.title}</span> : null}
+    </div>
 }
 
 export function HistoryList({items, nested, breadcrumbs, details, onClick}: {
@@ -54,8 +48,8 @@ export function HistoryList({items, nested, breadcrumbs, details, onClick}: {
                         nav.history(item)
                     }
                 }}
-                title={item.title}
                 subtitle={details ? <SubTitle item={item}/> : null}
+                title={item.title}
             />
         )}
     </List>

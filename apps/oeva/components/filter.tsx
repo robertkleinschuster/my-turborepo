@@ -20,6 +20,8 @@ import {addHours, addMinutes, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
 import Product from "./product";
 import Time from "./time";
+import {useHistory} from "../store/history";
+import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 
 export default function Filter({products, showTime = false}: {
     products: readonly ProductType[],
@@ -31,7 +33,15 @@ export default function Filter({products, showTime = false}: {
     const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
     const [productsFilter, setProductsFilter] = useState<Set<string>>(new Set(searchParams.getAll('products')))
 
+    const updateHistory = useHistory(state => state.update)
+    const breadcrumb = useCurrentBreadcrumb()
+
     useEffect(() => {
+        if (breadcrumb) {
+            breadcrumb.when = when.toISOString()
+            updateHistory(breadcrumb)
+        }
+
         const newSearchParams = new URLSearchParams(searchParams)
         newSearchParams.delete('products')
         productsFilter.forEach(product => {

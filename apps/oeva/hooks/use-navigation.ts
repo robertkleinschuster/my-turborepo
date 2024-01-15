@@ -7,7 +7,7 @@ import {useJourneyPlanner} from "../store/journey-planner";
 interface Navigation {
     trip: (id: string, when: string | null, title: string) => void,
     tripNoHistory: (id: string) => void,
-    station: (id: string, when: string | null, title: string) => void,
+    station: (id: string, when: string | null, title: string, products?: string[]) => void,
     stationNoHistory: (id: string, when: string | null) => void,
     history: (item: HistoryItem) => void
     breadcrumb: (item: HistoryItem) => void
@@ -71,12 +71,25 @@ export function useNavigation(): Navigation {
         tripNoHistory: (id: string) => {
             router.push(`/app/trips/${encodeURIComponent(id)}`)
         },
-        station: (id: string, when: string | null, title: string) => {
+        station: (id: string, when: string | null, title: string, products?: string[]) => {
             const item = historyPush('station', id, when, title, params.id ? decodeURIComponent(params.id) : null)
             if (recordJourney) {
                 addStationToJourney(title, id, when)
             }
-            router.push(`/app/stations/${encodeURIComponent(id)}/departures?when=${encodeURIComponent(when ?? '')}&sequence=${item?.sequence}&root=${item?.root}`)
+            const searchParams = new URLSearchParams();
+            if (when) {
+                searchParams.set('when', when)
+            }
+            if (item) {
+                searchParams.set('sequence', item.sequence.toString())
+                if (item.root) {
+                    searchParams.set('root', item.root.toString())
+                }
+            }
+            if (products) {
+                products.forEach(product => searchParams.append('products', product))
+            }
+            router.push(`/app/stations/${encodeURIComponent(id)}/departures?${searchParams.toString()}`)
         },
         stationNoHistory: (id: string, when: string | null) => {
             router.push(`/app/stations/${encodeURIComponent(id)}/departures?when=${encodeURIComponent(when ?? '')}`)

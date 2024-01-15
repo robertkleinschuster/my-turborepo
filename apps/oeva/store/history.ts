@@ -7,6 +7,7 @@ interface History {
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
     push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => HistoryItem | null,
+    update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
 }
@@ -65,6 +66,15 @@ export const useHistory = create(
                     return items[items.length - 1]
                 }
                 return null;
+            },
+            update: (item: HistoryItem) => {
+                const items = Array.from(get().items)
+                for (let i = items.length - 1; i > 0; i--) {
+                    if (item.sequence === items[i].sequence) {
+                        items[i] = item;
+                    }
+                }
+                set(() => ({items}))
             },
             filterBreadcrumbs: (sequence: number, root: number) => {
                 const breadcrumbs: HistoryItem[] = []

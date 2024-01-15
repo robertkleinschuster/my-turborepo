@@ -6,7 +6,7 @@ interface History {
     parent: HistoryItem | null,
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
-    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => HistoryItem | null,
+    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parentId?: null | string) => HistoryItem | null,
     update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -22,6 +22,7 @@ export interface HistoryItem {
     when: string | null,
     recents: boolean | undefined,
     parent: HistoryItem | null
+    next: HistoryItem | null
 }
 
 function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
@@ -40,9 +41,9 @@ export const useHistory = create(
             items: [],
             recents: [],
             parent: null,
-            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => {
+            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parentId?: null | string) => {
                 set(state => {
-                    const parentItem = typeof parent === 'string' ? state.recents.find(i => i.id === parent) ?? null : parent ?? null
+                    const parentItem = parentId ? state.recents.find(i => i.id === parentId) ?? null : null
                     const item = {
                         id,
                         type,
@@ -52,9 +53,20 @@ export const useHistory = create(
                         sequence: state.items.length,
                         added: (new Date).toISOString(),
                         recents: true,
-                        parent: parentItem
+                        parent: parentItem,
+                        next: null,
                     }
                     const items = [...state.items, item];
+                    if (parentItem) {
+                        for (let i = items.length - 1; i > 0; i--) {
+                            if (parentItem.sequence === items[i].sequence) {
+                                items[i] = {
+                                    ...parentItem,
+                                    next: item,
+                                };
+                            }
+                        }
+                    }
                     return {
                         items,
                         parent: item,

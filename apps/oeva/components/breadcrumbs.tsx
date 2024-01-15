@@ -59,7 +59,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
             target=".breadcrumbs"
         >
             <Scroll className="max-h-[50vh]">
-                <HistoryList breadcrumbs items={items} nested onClick={() => {
+                <HistoryList breadcrumbs details items={items} nested onClick={() => {
                     setPopoverOpened(false)
                 }}/>
             </Scroll>

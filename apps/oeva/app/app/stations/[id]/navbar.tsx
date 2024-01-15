@@ -41,6 +41,7 @@ export default function StationNavbar({id, title, products}: {
 
         }
         title={title}
+        titleClassName="truncate w-1/2"
     />
         <Filter products={products} showTime/>
     </>

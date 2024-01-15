@@ -28,5 +28,6 @@ export default function TripNavbar({title, subtitle, operator}: {
     </span>}
         subtitle={subtitle}
         title={title}
+        titleClassName="truncate w-1/2"
     />
 }

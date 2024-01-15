@@ -15,9 +15,9 @@ function Info({item}: { item: HistoryItem }): JSX.Element {
 
 function SubTitle({item}: { item: HistoryItem }): JSX.Element {
     return <div className="flex flex-wrap gap-1 items-center">
-        {item.parent ? <span>An.&nbsp;<Time time={item.parent.when ? new Date(item.parent.when) : null}/> {item.parent.title}</span> : null}
-        {item.parent && item.next ? <Icon ios={item.type === 'trip' ? <ArrowRight/> : <Hourglass/>}/> : null}
-        {item.next ? <span>Ab.&nbsp;<Time time={item.next.when ? new Date(item.next.when) : null}/> {item.next.title}</span> : null}
+        {item.parent?.title ? <span>{item.type === 'trip' ? "Ab" : "An"}.&nbsp;<Time time={item.parent.when ? new Date(item.parent.when) : null}/> {item.parent.title}</span> : null}
+        {item.parent?.title && item.next?.title ? <Icon ios={item.type === 'trip' ? <ArrowRight/> : <Hourglass/>}/> : null}
+        {item.next?.title ? <span>{item.type === 'trip' ? "An" : "Ab"}.&nbsp;<Time time={item.next.when ? new Date(item.next.when) : null}/> {item.next.title}</span> : null}
     </div>
 }
 

@@ -43,30 +43,19 @@ export const useHistory = create(
             parent: null,
             push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parentId?: null | string) => {
                 set(state => {
-                    const parentItem = parentId ? state.recents.find(i => i.id === parentId) ?? null : null
                     const item = {
                         id,
                         type,
                         when,
                         title,
-                        root: parentItem ? parentItem.root : state.items.length,
+                        root: parentId ? state.parent?.root ?? state.items.length : state.items.length,
                         sequence: state.items.length,
                         added: (new Date).toISOString(),
                         recents: true,
-                        parent: parentItem,
+                        parent: null,
                         next: null,
                     }
                     const items = [...state.items, item];
-                    if (parentItem) {
-                        for (let i = items.length - 1; i > 0; i--) {
-                            if (parentItem.sequence === items[i].sequence) {
-                                items[i] = {
-                                    ...parentItem,
-                                    next: item,
-                                };
-                            }
-                        }
-                    }
                     return {
                         items,
                         parent: item,
@@ -93,12 +82,11 @@ export const useHistory = create(
                 const items = Array.from(get().items)
                 for (let i = items.length - 1; i > 0; i--) {
                     const item = items[i]
-                    if (item.root === root && item.sequence <= sequence && item.sequence >= root ) {
+                    if (item.root === root && item.sequence <= sequence && item.sequence >= root) {
                         breadcrumbs.push(item)
                     } else if (item.root === sequence) {
                         items[i] = {
                             ...item,
-                            parent: breadcrumbs.length ? breadcrumbs[breadcrumbs.length - 1] : null,
                             root
                         }
                         breadcrumbs.push(items[i])
@@ -111,6 +99,22 @@ export const useHistory = create(
                     }
                 }
                 set(() => ({items}))
+
+                for (let i = breadcrumbs.length - 1; i >= 0; i--) {
+                    if (breadcrumbs.at(i + 1)) {
+                        breadcrumbs[i] = {
+                            ...breadcrumbs[i],
+                            parent: {...breadcrumbs[i + 1]}
+                        }
+                    }
+                    if (breadcrumbs.at(i - 1)) {
+                        breadcrumbs[i] = {
+                            ...breadcrumbs[i],
+                            next: {...breadcrumbs[i - 1]}
+                        }
+                    }
+                }
+
                 return breadcrumbs.reverse();
             },
             hideInRecents: (id: string) => {

@@ -87,7 +87,9 @@ export function useNavigation(): Navigation {
                 }
             }
             if (products) {
-                products.forEach(product => searchParams.append('products', product))
+                products.forEach(product => {
+                    searchParams.append('products', product)
+                })
             }
             router.push(`/app/stations/${encodeURIComponent(id)}/departures?${searchParams.toString()}`)
         },

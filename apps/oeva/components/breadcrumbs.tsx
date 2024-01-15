@@ -13,11 +13,12 @@ import type {JSX} from "react";
 import {useState} from "react";
 import {House} from "framework7-icons/react"
 import {useSearchParams} from "next/navigation";
+import dynamic from "next/dynamic";
 import {useHistory} from "../store/history";
 import Scroll from "./scroll";
 import {HistoryList} from "./history-list";
 
-export function Breadcrumbs(): JSX.Element {
+const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
     const [popoverOpened, setPopoverOpened] = useState(false);
     const filterBreadcrumbs = useHistory(h => h.filterBreadcrumbs)
     const params = useSearchParams()
@@ -70,4 +71,6 @@ export function Breadcrumbs(): JSX.Element {
             </Scroll>
         </Popover>
     </Toolbar>
-}
+}), {ssr: false})
+
+export {Breadcrumbs}

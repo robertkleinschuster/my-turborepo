@@ -13,11 +13,11 @@ export default function Home(): JSX.Element {
             <Navbar title="OeVA"/>
             <List inset strong>
                 <ListItem link onClick={() => {
-                    router.push('/app/trips')
-                }} title="Fahrten"/>
-                <ListItem link onClick={() => {
-                    router.push('/app/stations')
+                    nav.stations()
                 }} title="Stationen"/>
+                <ListItem link onClick={() => {
+                    nav.trips()
+                }} title="Fahrten"/>
                 <ListItem link onClick={() => {
                     nav.journeys()
                 }} title="Meine Reisen"/>

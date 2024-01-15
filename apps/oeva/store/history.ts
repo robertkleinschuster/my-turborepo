@@ -6,7 +6,7 @@ interface History {
     parent: HistoryItem | null,
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
-    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parentId?: null | string) => HistoryItem | null,
+    push: (type: HistoryItem['type'], id: string, when: string | null, title: string) => HistoryItem | null,
     update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -16,7 +16,7 @@ export interface HistoryItem {
     id: string,
     root?: number | null,
     sequence: number,
-    type: 'trip' | 'station',
+    type: 'trip' | 'station' | 'trip_search' | 'station_search',
     title: string,
     added: string,
     when: string | null,
@@ -41,14 +41,14 @@ export const useHistory = create(
             items: [],
             recents: [],
             parent: null,
-            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parentId?: null | string) => {
+            push: (type: HistoryItem['type'], id: string, when: string | null, title: string) => {
                 set(state => {
                     const item = {
                         id,
                         type,
                         when,
                         title,
-                        root: parentId ? state.parent?.root ?? state.items.length : state.items.length,
+                        root: type === 'trip_search' || type === 'station_search' ? state.items.length : state.parent?.root ?? state.items.length ,
                         sequence: state.items.length,
                         added: (new Date).toISOString(),
                         recents: true,
@@ -87,7 +87,7 @@ export const useHistory = create(
                     const item = items[i]
                     if (item.root === root && item.sequence <= sequence && item.sequence >= root) {
                         breadcrumbs.push(item)
-                    } else if (item.root === sequence) {
+                    } else if (item.root === sequence && sequence === item.sequence) {
                         items[i] = {
                             ...item,
                             root

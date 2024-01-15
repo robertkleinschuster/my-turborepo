@@ -13,7 +13,7 @@ export default function Home(): JSX.Element {
     useEffect(() => {
         if (firstView.current) {
             firstView.current = false
-            router.replace(`/app/${startpage}`)
+            router.replace(`/app/home`)
         }
     }, [firstView, startpage]);
 

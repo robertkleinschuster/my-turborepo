@@ -1,9 +1,9 @@
-import React, {JSX, ReactNode} from "react";
+import type {JSX, ReactNode} from "react";
+import React from "react";
 import type {Metadata} from "next";
 import Scroll from "../../../../components/scroll"
 import {getClient} from "../../../../client/client";
 import TripNavbarData from "./navbar-data"
-import {Breadcrumbs} from "../../../../components/breadcrumbs";
 
 export async function generateMetadata(
     {params}: { params: { id: string } }
@@ -25,6 +25,5 @@ export default function Layout({children, params}: { children: ReactNode, params
         <Scroll>
             {children}
         </Scroll>
-        <Breadcrumbs/>
     </>
 }

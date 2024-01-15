@@ -21,8 +21,10 @@ export default function NavSearchbar({title}: { title: string }): JSX.Element {
 
 
     useEffect(() => {
-        router.replace(`${pathname}?query=${searchQuery}`)
-    }, [searchQuery, router, pathname])
+        const newSearchParams = new URLSearchParams(searchParams)
+        newSearchParams.set('query', searchQuery)
+        router.replace(`${pathname}?${newSearchParams.toString()}`)
+    }, [searchQuery, router, pathname, searchParams])
 
 
     return <Navbar

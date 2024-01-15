@@ -3,8 +3,6 @@ import type {Metadata} from "next";
 import Scroll from "../../../../components/scroll"
 import {getClient} from "../../../../client/client";
 import StationNavbarData from "./navbar-data"
-import {Breadcrumbs} from "../../../../components/breadcrumbs";
-
 
 export async function generateMetadata(
     {params}: { params: { id: string } }
@@ -26,6 +24,5 @@ export default function Layout({children, params}: {
         <Scroll>
             {children}
         </Scroll>
-        <Breadcrumbs/>
     </>
 }

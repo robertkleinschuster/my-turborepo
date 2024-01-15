@@ -10,6 +10,9 @@ import Time from "./time";
 
 function Info({item}: { item: HistoryItem }): JSX.Element {
     if (item.type === 'station') {
+        if (item.parent?.type === 'trip') {
+            return <>An. <Time time={item.when ? new Date(item.when) : null}/> {item.parent?.title}</>
+        }
         return <span className="flex gap-1 items-center"><Icon ios={<Clock/>}/><Time
             time={item.when ? new Date(item.when) : null}/></span>
     }

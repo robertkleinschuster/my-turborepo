@@ -5,7 +5,7 @@ interface History {
     items: readonly HistoryItem[],
     parent: HistoryItem | null,
     recents: readonly HistoryItem[],
-    filterBreadcrumbs: (sequence: number, root: number|null) => readonly HistoryItem[],
+    filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
     push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => HistoryItem | null,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -41,16 +41,17 @@ export const useHistory = create(
             parent: null,
             push: (type: HistoryItem['type'], id: string, when: string | null, title: string, parent?: HistoryItem | null | string) => {
                 set(state => {
+                    const parentItem = typeof parent === 'string' ? state.recents.find(i => i.id === parent) ?? null : parent ?? null
                     const item = {
                         id,
                         type,
                         when,
                         title,
-                        root: parent ? state.parent?.root : state.items.length,
+                        root: parentItem ? parentItem.root : state.items.length,
                         sequence: state.items.length,
                         added: (new Date).toISOString(),
                         recents: true,
-                        parent: typeof parent === 'string' ? state.recents.find(i => i.id === parent) ?? null : parent ?? null
+                        parent: parentItem
                     }
                     const items = [...state.items, item];
                     return {
@@ -65,20 +66,25 @@ export const useHistory = create(
                 }
                 return null;
             },
-            filterBreadcrumbs: (sequence: number, root: number|null) => {
+            filterBreadcrumbs: (sequence: number, root: number) => {
                 const breadcrumbs: HistoryItem[] = []
                 const items = Array.from(get().items)
                 for (let i = items.length - 1; i > 0; i--) {
                     const item = items[i]
-                    if (item.sequence <= sequence && item.root === root) {
+                    if (item.root === root && item.sequence <= sequence && item.sequence >= root ) {
                         breadcrumbs.push(item)
-                        if (item.sequence === root) {
-                            break;
+                    } else if (item.root === sequence) {
+                        items[i] = {
+                            ...item,
+                            parent: breadcrumbs.length ? breadcrumbs[breadcrumbs.length - 1] : null,
+                            root
                         }
+                        breadcrumbs.push(items[i])
                     } else {
                         items[i] = {
                             ...item,
-                            root: item.sequence
+                            root: item.sequence,
+                            parent: null,
                         }
                     }
                 }

@@ -75,7 +75,10 @@ export const useHistory = create(
                         items[i] = item;
                     }
                 }
-                set(() => ({items}))
+                set(() => ({
+                    items,
+                    recents: updateRecents(items)
+                }))
             },
             filterBreadcrumbs: (sequence: number, root: number) => {
                 const breadcrumbs: HistoryItem[] = []

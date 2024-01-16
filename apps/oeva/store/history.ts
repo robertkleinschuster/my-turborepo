@@ -6,7 +6,7 @@ interface History {
     parent: HistoryItem | null,
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
-    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, info?: HistoryItem['info']) => HistoryItem | null,
+    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params?: HistoryItem['params']) => HistoryItem | null,
     update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -16,14 +16,14 @@ export interface HistoryItem {
     id: string,
     root?: number | null,
     sequence: number,
-    type: 'trip' | 'station' | 'trip_search' | 'station_search',
+    type: 'trip' | 'station' | 'trip_search' | 'station_search' | 'history' | 'journeys' | 'settings',
     title: string,
     added: string,
     when: string | null,
     recents: boolean | undefined,
     parent: HistoryItem | null
     next: HistoryItem | null
-    info: object | null
+    params: Record<string, string | null>
 }
 
 function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
@@ -42,20 +42,21 @@ export const useHistory = create(
             items: [],
             recents: [],
             parent: null,
-            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, info?: HistoryItem['info']) => {
+            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params: HistoryItem['params'] = {}) => {
                 set(state => {
+                    params.when = when;
                     const item = {
                         id,
                         type,
                         when,
                         title,
-                        root: type === 'trip_search' || type === 'station_search' ? state.items.length : state.parent?.root ?? state.items.length,
+                        params,
+                        root: type === 'trip' || type === 'station' ? (state.parent?.root ?? state.items.length) : state.items.length,
                         sequence: state.items.length,
                         added: (new Date).toISOString(),
-                        recents: true,
+                        recents: type === 'trip' || type === 'station',
                         parent: null,
                         next: null,
-                        info: info ?? null,
                     }
                     const items = [...state.items, item];
                     return {

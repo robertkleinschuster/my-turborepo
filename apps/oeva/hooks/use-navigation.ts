@@ -1,9 +1,9 @@
 import {useRouter} from "next/navigation";
+import type {Alternative, Station, Trip} from "hafas-client";
 import type {HistoryItem} from "../store/history";
 import {useHistory} from "../store/history";
 import {useAppId} from "../store/app-id";
 import {useJourneyPlanner} from "../store/journey-planner";
-import type {Alternative, Station, Trip} from "hafas-client";
 
 interface Navigation {
     trip: (id: string, when: string | null, title: string, trip?: Trip) => void,
@@ -19,6 +19,8 @@ interface Navigation {
     back: () => void
     home: () => void,
     journeys: () => void
+    history_overview: () => void
+    settings: () => void
     journey: (id: string) => void,
 }
 
@@ -41,13 +43,22 @@ export function useNavigation(): Navigation {
             router.push('/app/home')
         },
         journeys: () => {
-            router.push(`/app/journeys/overview/${encodeURIComponent(appId)}`)
+            const item = historyPush('journeys', 'journeys', null, 'Meine Reisen')
+            router.push(`/app/journeys/overview/${encodeURIComponent(appId)}?sequence=${item?.sequence}&root=${item?.root}`)
         },
         journey: (id: string) => {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
+        history_overview: () => {
+            const item = historyPush('history', 'history', null, 'Zuletzt verwendet')
+            router.push(`/app/history?sequence=${item?.sequence}&root=${item?.root}`)
+        },
+        settings: () => {
+            const item = historyPush('settings', 'settings', null, 'Einstellungen')
+            router.push(`/app/settings?sequence=${item?.sequence}&root=${item?.root}`)
+        },
         history: (item: HistoryItem) => {
-            const newItem = historyPush(item.type, item.id, item.when, item.title)
+            const newItem = historyPush(item.type, item.id, item.when, item.title, item.params)
             if (item.type === 'trip') {
                 router.push(`/app/trips/${encodeURIComponent(item.id)}?sequence=${newItem?.sequence}&root=${newItem?.root}`)
             }
@@ -63,11 +74,11 @@ export function useNavigation(): Navigation {
                 router.push(`/app/stations/${encodeURIComponent(item.id)}/departures?when=${encodeURIComponent(item.when ?? '')}&sequence=${item.sequence}&root=${item.root}`)
             }
             if (item.type === 'station_search') {
-                const newItem = historyPush(item.type, item.id, item.when, item.title)
+                const newItem = historyPush(item.type, item.id, item.when, item.title, item.params)
                 router.push(`/app/stations?sequence=${newItem?.sequence}&root=${newItem?.root}`)
             }
             if (item.type === 'trip_search') {
-                const newItem = historyPush(item.type, item.id, item.when, item.title)
+                const newItem = historyPush(item.type, item.id, item.when, item.title, item.params)
                 router.push(`/app/trips?sequence=${newItem?.sequence}&root=${newItem?.root}`)
             }
         },
@@ -118,7 +129,7 @@ export function useNavigation(): Navigation {
             router.push(`/app/stations/${encodeURIComponent(id)}/departures?when=${encodeURIComponent(when ?? '')}`)
         },
         stations: () => {
-            const item = historyPush('station_search', 'trip_search', null, 'Stationen')
+            const item = historyPush('station_search', 'station_search', null, 'Stationen')
             router.push(`/app/stations?sequence=${item?.sequence}&root=${item?.root}`)
         },
         trips: () => {

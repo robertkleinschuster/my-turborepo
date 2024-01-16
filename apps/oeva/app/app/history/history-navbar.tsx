@@ -16,6 +16,6 @@ export function HistoryNavbar(): JSX.Element {
             }} text="Zurück"/>
         }
         right={<HistorySelectionToggle/>}
-        title="Verlauf"
+        title="Zuletzt verwendet"
     />
 }

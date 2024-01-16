@@ -33,10 +33,6 @@ export function buildSearchParams(item: HistoryItem): URLSearchParams {
     searchParams.set('sequence', item.sequence.toString())
     searchParams.set('root', item.root.toString())
 
-    if (item.type === 'station' && item.when !== null) {
-        searchParams.set('when', item.when)
-    }
-
     if (item.type === 'station') {
         addStationParams(searchParams, item.params)
     }
@@ -78,7 +74,7 @@ function createNav(
             router.push('/app/home')
         },
         journeys: () => {
-            const item = historyPush('journeys', 'journeys', null, 'Meine Reisen')
+            const item = historyPush('journeys', 'journeys', 'Meine Reisen')
             const searchParams = buildSearchParams(item)
             router.push(`/app/journeys/overview/${encodeURIComponent(appId)}?${searchParams.toString()}`)
         },
@@ -86,17 +82,17 @@ function createNav(
             router.push(`/app/journeys/${encodeURIComponent(id)}`)
         },
         history_overview: () => {
-            const item = historyPush('history', 'history', null, 'Zuletzt verwendet')
+            const item = historyPush('history', 'history', 'Zuletzt verwendet')
             const searchParams = buildSearchParams(item)
             router.push(`/app/history?${searchParams.toString()}`)
         },
         settings: () => {
-            const item = historyPush('settings', 'settings', null, 'Einstellungen')
+            const item = historyPush('settings', 'settings', 'Einstellungen')
             const searchParams = buildSearchParams(item)
             router.push(`/app/settings?${searchParams.toString()}`)
         },
         push: (item: HistoryItem) => {
-            const newItem = historyPush(item.type, item.id, item.when, item.title, item.params)
+            const newItem = historyPush(item.type, item.id, item.title, item.params)
             const searchParams = buildSearchParams(newItem)
             if (item.type === 'trip') {
                 router.push(`/app/trips/${encodeURIComponent(item.id)}?${searchParams.toString()}`)
@@ -125,18 +121,18 @@ function createNav(
                 router.push(`/app/stations/${encodeURIComponent(item.id)}/departures?${searchParams.toString()}`)
             }
             if (item.type === 'station_search') {
-                const newItem = historyPush(item.type, item.id, item.when, item.title, item.params)
+                const newItem = historyPush(item.type, item.id, item.title, item.params)
                 const searchParams = buildSearchParams(newItem)
                 router.push(`/app/stations?${searchParams.toString()}`)
             }
             if (item.type === 'trip_search') {
-                const newItem = historyPush(item.type, item.id, item.when, item.title, item.params)
+                const newItem = historyPush(item.type, item.id, item.title, item.params)
                 const searchParams = buildSearchParams(newItem)
                 router.push(`/app/trips?${searchParams.toString()}`)
             }
         },
         trip: (id: string, when: string | null, title: string) => {
-            const item = historyPush('trip', id, when, title)
+            const item = historyPush('trip', id, title, {when})
             const searchParams = buildSearchParams(item)
             if (recordJourney) {
                 addTripToJourney(title, id, when)
@@ -148,7 +144,7 @@ function createNav(
             const line = alternative.line;
             const title = `${line?.name} ${alternative.destination?.name ?? ''}`
             const when = alternative.plannedWhen ?? null
-            const item = historyPush('trip', id, when, title)
+            const item = historyPush('trip', id, title, {when})
             const searchParams = buildSearchParams(item)
             if (recordJourney) {
                 addTripToJourney(title, id, when)
@@ -159,7 +155,7 @@ function createNav(
             router.push(`/app/trips/${encodeURIComponent(id)}`)
         },
         station: (id: string, when: string | null, title: string, products?: string[]) => {
-            const item = historyPush('station', id, when, title)
+            const item = historyPush('station', id, title, {when})
             const searchParams = buildSearchParams(item)
             if (recordJourney) {
                 addStationToJourney(title, id, when)
@@ -175,12 +171,12 @@ function createNav(
             router.push(`/app/stations/${encodeURIComponent(id)}/departures?when=${encodeURIComponent(when ?? '')}`)
         },
         stations: () => {
-            const item = historyPush('station_search', 'station_search', null, 'Stationen')
+            const item = historyPush('station_search', 'station_search', 'Stationen')
             const searchParams = buildSearchParams(item)
             router.push(`/app/stations?${searchParams.toString()}`)
         },
         trips: () => {
-            const item = historyPush('trip_search', 'trip_search', null, 'Fahrten')
+            const item = historyPush('trip_search', 'trip_search', 'Fahrten')
             const searchParams = buildSearchParams(item)
             router.push(`/app/trips?${searchParams.toString()}`)
         }

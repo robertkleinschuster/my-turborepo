@@ -46,7 +46,6 @@ export default function Filter({products, showTime = false}: {
         }
 
         if (breadcrumb) {
-            breadcrumb.when = when.toISOString()
             breadcrumb.params = params
             nav.replace(breadcrumb)
         } else {

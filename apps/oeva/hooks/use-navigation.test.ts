@@ -8,7 +8,6 @@ describe('buildSearchParams', () => {
             root: 0,
             sequence: 1,
             title: '',
-            when: '',
             type: 'trip',
             id: '',
             params: {},
@@ -27,7 +26,6 @@ describe('buildSearchParams', () => {
             root: 0,
             sequence: 1,
             title: '',
-            when: '',
             type: 'station',
             id: '',
             params: {
@@ -40,7 +38,7 @@ describe('buildSearchParams', () => {
         };
 
         const searchParamsStation = buildSearchParams(item)
-        expect(searchParamsStation.get('when')).toEqual(item.params.when)
+        expect(searchParamsStation.get('when')).toEqual(item.params?.when)
 
         item.type = 'settings'
         const searchParamsSettings = buildSearchParams(item)

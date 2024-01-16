@@ -6,7 +6,7 @@ export interface History {
     previous: HistoryItem | null,
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
-    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params?: HistoryItem['params']) => HistoryItem,
+    push: (type: HistoryItem['type'], id: string, title: string, params?: HistoryItem['params']) => HistoryItem,
     update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -19,7 +19,6 @@ export interface HistoryItem {
     type: 'trip' | 'station' | 'trip_search' | 'station_search' | 'history' | 'journeys' | 'settings',
     title: string,
     added: string,
-    when: string | null,
     recents: boolean | undefined,
     previous: HistoryItem | null
     next: HistoryItem | null
@@ -42,13 +41,11 @@ export const useHistory = create(
             items: [],
             recents: [],
             previous: null,
-            push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params: HistoryItem['params'] = {}) => {
+            push: (type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}) => {
                 set(state => {
-                    params.when = when;
                     const item = {
                         id,
                         type,
-                        when,
                         title,
                         params,
                         root: type === 'trip' || type === 'station' ? (state.previous?.root ?? state.items.length) : state.items.length,
@@ -139,7 +136,7 @@ export const useHistory = create(
                 set(() => ({
                     items: [],
                     recents: [],
-                    breadcrumbs: []
+                    previous: null,
                 }))
             }
         }),

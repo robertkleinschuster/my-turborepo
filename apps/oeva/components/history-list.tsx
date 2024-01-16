@@ -10,14 +10,14 @@ import Time from "./time";
 
 function Info({item}: { item: HistoryItem }): JSX.Element {
     return <span className="flex gap-1 items-center"><Icon ios={<Clock/>}/><Time
-        time={item.when ? new Date(item.when) : null}/></span>
+        time={typeof item.params?.when === 'string' ? new Date(item.params.when) : null}/></span>
 }
 
 function SubTitle({item}: { item: HistoryItem }): JSX.Element {
     return <div className="flex flex-wrap gap-1 items-center">
-        {item.previous?.title ? <span>{item.type === 'trip' ? "Ab" : "An"}.&nbsp;<Time time={item.when ? new Date(item.when) : null}/> {item.previous.title}</span> : null}
+        {item.previous?.type === 'trip' || item.previous?.type === 'station' ? <span>{item.type === 'trip' ? "Ab" : "An"}.&nbsp;<Time time={typeof item.params?.when === 'string' ? new Date(item.params.when) : null}/> {item.previous.title}</span> : null}
         {item.previous?.title && item.next?.title ? <Icon ios={item.type === 'trip' ? <ArrowRight/> : <Hourglass/>}/> : null}
-        {item.next?.title ? <span>{item.type === 'trip' ? "An" : "Ab"}.&nbsp;<Time time={item.next.when ? new Date(item.next.when) : null}/> {item.next.title}</span> : null}
+        {item.next?.type === 'trip' || item.next?.type === 'station' ? <span>{item.type === 'trip' ? "An" : "Ab"}.&nbsp;<Time time={typeof item.next.params?.when === 'string' ? new Date(item.next.params.when) : null}/> {item.next.title}</span> : null}
     </div>
 }
 
@@ -43,9 +43,9 @@ export function HistoryList({items, nested, breadcrumbs, details, onClick}: {
                         onClick(item)
                     }
                     if (breadcrumbs) {
-                        nav.breadcrumb(item)
+                        nav.push_breadcrumb(item)
                     } else {
-                        nav.history(item)
+                        nav.push(item)
                     }
                 }}
                 subtitle={details ? <SubTitle item={item}/> : null}

@@ -18,16 +18,19 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import {addHours, addMinutes, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
-import Product from "./product";
-import Time from "./time";
-import {useHistory} from "../store/history";
+import type {HistoryItem} from "../store/history";
+import { useHistory} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
+import {addStationParams, useNavigation} from "../hooks/use-navigation";
+import Time from "./time";
+import Product from "./product";
 
 export default function Filter({products, showTime = false}: {
     products: readonly ProductType[],
     showTime?: boolean
 }): React.JSX.Element {
     const router = useRouter()
+    const nav = useNavigation()
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
@@ -37,19 +40,21 @@ export default function Filter({products, showTime = false}: {
     const breadcrumb = useCurrentBreadcrumb()
 
     useEffect(() => {
-        if (breadcrumb) {
-            breadcrumb.when = when.toISOString()
-            updateHistory(breadcrumb)
+        const params: HistoryItem['params'] = {
+            when: when.toISOString(),
+            products: Array.from(productsFilter)
         }
 
-        const newSearchParams = new URLSearchParams(searchParams)
-        newSearchParams.delete('products')
-        productsFilter.forEach(product => {
-            newSearchParams.append('products', product)
-        })
-        newSearchParams.set('when', when.toISOString())
-        router.replace(`${pathname}?${newSearchParams.toString()}`)
-    }, [pathname, router, searchParams, when, productsFilter])
+        if (breadcrumb) {
+            breadcrumb.when = when.toISOString()
+            breadcrumb.params = params
+            nav.replace(breadcrumb)
+        } else {
+            const newSearchParams = new URLSearchParams(searchParams)
+            addStationParams(newSearchParams, params)
+            router.replace(`${pathname}?${newSearchParams.toString()}`)
+        }
+    }, [pathname, router, searchParams, when, productsFilter, updateHistory, nav, breadcrumb])
 
     const [whenOpen, setWhenOpen] = useState(false);
     const [productsOpen, setProductsOpen] = useState(false)

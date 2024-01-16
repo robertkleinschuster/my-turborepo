@@ -2,7 +2,7 @@ import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import type {Journey, JourneyLegCreate} from "../lib/prisma";
 
-interface JourneyPlanner {
+export interface JourneyPlanner {
     journey: Journey & { legs?: JourneyLegCreate[] } | null
     recording: boolean
     pause: () => void,

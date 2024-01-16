@@ -1,7 +1,7 @@
 import {create} from "zustand";
 import {persist} from 'zustand/middleware'
 
-interface History {
+export interface History {
     items: readonly HistoryItem[],
     previous: HistoryItem | null,
     recents: readonly HistoryItem[],
@@ -23,7 +23,7 @@ export interface HistoryItem {
     recents: boolean | undefined,
     previous: HistoryItem | null
     next: HistoryItem | null
-    params: Record<string, string | null>
+    params: Record<string, string | string[] | null>|undefined
 }
 
 function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {

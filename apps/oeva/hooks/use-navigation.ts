@@ -56,7 +56,8 @@ export function useNavigation(): Navigation {
         },
         journeys: () => {
             const item = historyPush('journeys', 'journeys', null, 'Meine Reisen')
-            router.push(`/app/journeys/overview/${encodeURIComponent(appId)}?sequence=${item?.sequence}&root=${item?.root}`)
+            const searchParams = buildSearchParams(item)
+            router.push(`/app/journeys/overview/${encodeURIComponent(appId)}?${searchParams.toString()}`)
         },
         journey: (id: string) => {
             router.push(`/app/journeys/${encodeURIComponent(id)}`)

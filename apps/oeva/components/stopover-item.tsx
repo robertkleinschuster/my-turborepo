@@ -24,7 +24,7 @@ const StopoverItem = dynamic(() => Promise.resolve(({stopover, products, onLongP
     const historyItem = useCurrentBreadcrumb()
     const planned = stopover.plannedDeparture ?? stopover.plannedArrival
     const when = planned ? new Date(planned) : null
-    const prevWhen = historyItem?.parent?.type === 'station' && historyItem.when ? new Date(historyItem.when) : null;
+    const prevWhen = historyItem?.previous?.type === 'station' && historyItem.when ? new Date(historyItem.when) : null;
 
     const isPast = when && prevWhen && when <= prevWhen
 

@@ -3,10 +3,10 @@ import {persist} from 'zustand/middleware'
 
 interface History {
     items: readonly HistoryItem[],
-    parent: HistoryItem | null,
+    previous: HistoryItem | null,
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
-    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params?: HistoryItem['params']) => HistoryItem | null,
+    push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params?: HistoryItem['params']) => HistoryItem,
     update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -14,14 +14,14 @@ interface History {
 
 export interface HistoryItem {
     id: string,
-    root?: number | null,
+    root: number,
     sequence: number,
     type: 'trip' | 'station' | 'trip_search' | 'station_search' | 'history' | 'journeys' | 'settings',
     title: string,
     added: string,
     when: string | null,
     recents: boolean | undefined,
-    parent: HistoryItem | null
+    previous: HistoryItem | null
     next: HistoryItem | null
     params: Record<string, string | null>
 }
@@ -41,7 +41,7 @@ export const useHistory = create(
         (set, get) => ({
             items: [],
             recents: [],
-            parent: null,
+            previous: null,
             push: (type: HistoryItem['type'], id: string, when: string | null, title: string, params: HistoryItem['params'] = {}) => {
                 set(state => {
                     params.when = when;
@@ -51,25 +51,25 @@ export const useHistory = create(
                         when,
                         title,
                         params,
-                        root: type === 'trip' || type === 'station' ? (state.parent?.root ?? state.items.length) : state.items.length,
+                        root: type === 'trip' || type === 'station' ? (state.previous?.root ?? state.items.length) : state.items.length,
                         sequence: state.items.length,
                         added: (new Date).toISOString(),
                         recents: type === 'trip' || type === 'station',
-                        parent: null,
+                        previous: null,
                         next: null,
                     }
                     const items = [...state.items, item];
                     return {
                         items,
-                        parent: item,
+                        previous: item,
                         recents: updateRecents(items)
                     }
                 })
-                const items = get().items
-                if (items.length) {
-                    return items[items.length - 1]
+                const state = get()
+                if (!state.previous) {
+                    throw new Error('Error creating new history item.')
                 }
-                return null;
+                return state.previous;
             },
             update: (item: HistoryItem) => {
                 const items = Array.from(get().items)
@@ -100,7 +100,7 @@ export const useHistory = create(
                         items[i] = {
                             ...item,
                             root: item.sequence,
-                            parent: null,
+                            previous: null,
                         }
                     }
                 }
@@ -110,7 +110,7 @@ export const useHistory = create(
                     if (breadcrumbs.at(i + 1)) {
                         breadcrumbs[i] = {
                             ...breadcrumbs[i],
-                            parent: {...breadcrumbs[i + 1]}
+                            previous: {...breadcrumbs[i + 1]}
                         }
                     }
                     if (breadcrumbs.at(i - 1)) {

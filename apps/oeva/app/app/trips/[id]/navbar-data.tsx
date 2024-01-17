@@ -1,13 +1,18 @@
 "use server"
 
 import React from "react";
-import {getClient} from '../../../../client/client'
+// eslint-disable-next-line camelcase -- nextjs
+import {unstable_cache} from "next/cache";
+import {type ClientCode, defaultClient, getClient} from '../../../../client/client'
 import TripNavbar from './navbar'
 
-export default async function TripNavbarData({id}: { id: string }): Promise<React.JSX.Element> {
-    const client = getClient()
+const fetchCachedTrip = unstable_cache(async (id: string, clientCode: ClientCode) => {
+    const client = getClient(clientCode)
+    return client.trip(id, undefined)
+}, ['trip'], {revalidate: false})
 
-    const trip = await client.trip(decodeURIComponent(id), undefined)
+export default async function TripNavbarData({id}: { id: string }): Promise<React.JSX.Element> {
+    const trip = await fetchCachedTrip(decodeURIComponent(id), defaultClient)
 
     const lineName = trip.trip.line?.name ?? id;
 

@@ -61,8 +61,9 @@ export const useHistory = create(
                 return prepareItem(get(), type, id, title, params)
             },
             push: (item: HistoryItem) => {
+                const limit = 250
                 set(state => {
-                    const items = [...state.items, item]
+                    const items = [...state.items.slice(state.items.length > limit ? state.items.length - limit : 0), item]
                     return {
                         items,
                         previous: item,
@@ -103,6 +104,7 @@ export const useHistory = create(
                         }
                     }
                 }
+
                 set(() => ({items}))
 
                 for (let i = breadcrumbs.length - 1; i >= 0; i--) {

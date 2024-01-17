@@ -27,13 +27,16 @@ export interface HistoryItem {
 }
 
 function prepareItem(state: History, type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}): HistoryItem {
+    const sequence = (state.previous?.sequence ?? 0) + 1
+    const root = state.previous?.root ?? 0
+
     return {
         id,
         type,
         title,
         params,
-        root: type === 'trip' || type === 'station' ? (state.previous?.root ?? state.items.length) : state.items.length,
-        sequence: state.items.length,
+        sequence,
+        root: type === 'trip' || type === 'station' ? root : sequence,
         added: (new Date).toISOString(),
         recents: type === 'trip' || type === 'station',
         previous: null,

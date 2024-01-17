@@ -76,6 +76,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
                 setPopoverOpened(false)
             }}
             opened={popoverOpened}
+            style={{display: popoverOpened ? 'block' : 'none'}}
             target=".breadcrumbs"
         >
             <Scroll className="max-h-[50vh]">

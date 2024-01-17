@@ -62,7 +62,8 @@ function createNav(
     addStationToJourney: JourneyPlanner['addStation'],
     addTripToJourney: JourneyPlanner['addTrip'],
     historyUpdate: History['update'],
-    prefetch: boolean
+    prefetch: boolean,
+    historyPrepare: History['prepare'],
 ): Navigation {
     return {
         refresh: () => {
@@ -83,12 +84,16 @@ function createNav(
         },
         journeys: () => {
             const path = `/app/journeys/overview/${encodeURIComponent(appId)}`;
+
+            const item = historyPrepare('journeys', 'journeys', 'Meine Reisen')
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
+
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('journeys', 'journeys', 'Meine Reisen')
-                const searchParams = buildSearchParams(item)
-                router.push(`${path}?${searchParams.toString()}`)
+                historyPush(item)
+                router.push(href)
             }
         },
         journey: (id: string) => {
@@ -101,22 +106,30 @@ function createNav(
         },
         history_overview: () => {
             const path = `/app/history`
+
+            const item = historyPrepare('history', 'history', 'Zuletzt verwendet')
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
+
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('history', 'history', 'Zuletzt verwendet')
-                const searchParams = buildSearchParams(item)
-                router.push(`${path}?${searchParams.toString()}`)
+                historyPush(item)
+                router.push(href)
             }
         },
         settings: () => {
             const path = `/app/settings`
+
+            const item = historyPrepare('settings', 'settings', 'Einstellungen')
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
+
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('settings', 'settings', 'Einstellungen')
-                const searchParams = buildSearchParams(item)
-                router.push(`${path}?${searchParams.toString()}`)
+                historyPush(item)
+                router.push(href)
             }
         },
         push: (item: HistoryItem) => {
@@ -128,12 +141,15 @@ function createNav(
                 path = `/app/stations/${encodeURIComponent(item.id)}/departures`
             }
             if (path !== null) {
+                const newItem = historyPrepare(item.type, item.id, item.title, item.params)
+                const searchParams = buildSearchParams(newItem)
+                const href = `${path}?${searchParams.toString()}`
+
                 if (prefetch) {
-                    router.prefetch(path)
+                    router.prefetch(href)
                 } else {
-                    const newItem = historyPush(item.type, item.id, item.title, item.params)
-                    const searchParams = buildSearchParams(newItem)
-                    router.push(`${path}?${searchParams.toString()}`)
+                    historyPush(newItem)
+                    router.push(href)
                 }
             }
         },
@@ -146,12 +162,14 @@ function createNav(
                 path = `/app/stations/${encodeURIComponent(item.id)}/departures`
             }
             if (path !== null) {
+                const searchParams = buildSearchParams(item)
+                const href = `${path}?${searchParams.toString()}`
+
                 if (prefetch) {
-                    router.prefetch(path)
+                    router.prefetch(href)
                 } else {
                     historyUpdate(item)
-                    const searchParams = buildSearchParams(item)
-                    router.replace(`${path}?${searchParams.toString()}`)
+                    router.replace(href)
                 }
             }
         },
@@ -173,46 +191,62 @@ function createNav(
                 path = `/app/trips`
             }
             if (path !== null) {
-                if (prefetch) {
-                    router.prefetch(path)
-                } else if (createNewItem) {
-                    const newItem = historyPush(item.type, item.id, item.title, item.params)
+                if (createNewItem) {
+                    const newItem = historyPrepare(item.type, item.id, item.title, item.params)
                     const searchParams = buildSearchParams(newItem)
-                    router.push(`${path}?${searchParams.toString()}`)
+                    const href = `${path}?${searchParams.toString()}`
+                    if (prefetch) {
+                        router.prefetch(href)
+                    } else {
+                        historyPush(newItem)
+                        router.push(href)
+                    }
                 } else {
                     const searchParams = buildSearchParams(item)
-                    router.push(`${path}?${searchParams.toString()}`)
+                    const href = `${path}?${searchParams.toString()}`
+                    if (prefetch) {
+                        router.prefetch(href)
+                    } else {
+                        router.push(href)
+                    }
                 }
             }
         },
         trip: (id: string, when: string | null, title: string) => {
             const path = `/app/trips/${encodeURIComponent(id)}`
+
+            const item = historyPrepare('trip', id, title, {when})
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
+
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('trip', id, title, {when})
-                const searchParams = buildSearchParams(item)
+                historyPush(item)
                 if (recordJourney) {
                     addTripToJourney(title, id, when)
                 }
-                router.push(`${path}?${searchParams.toString()}`)
+                router.push(href)
             }
         },
         alternative: (alternative: Alternative) => {
             const id = alternative.tripId;
             const path = `/app/trips/${encodeURIComponent(id)}`
+
+            const line = alternative.line;
+            const title = `${line?.name} ${alternative.destination?.name ?? ''}`
+            const when = alternative.plannedWhen ?? null
+            const item = historyPrepare('trip', id, title, {when})
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const line = alternative.line;
-                const title = `${line?.name} ${alternative.destination?.name ?? ''}`
-                const when = alternative.plannedWhen ?? null
-                const item = historyPush('trip', id, title, {when})
-                const searchParams = buildSearchParams(item)
+                historyPush(item)
                 if (recordJourney) {
                     addTripToJourney(title, id, when)
                 }
-                router.push(`${path}?${searchParams.toString()}`)
+                router.push(href)
             }
         },
         tripNoHistory: (id: string) => {
@@ -224,24 +258,29 @@ function createNav(
         },
         station: (id: string, when: string | null, title: string, products?: string[]) => {
             const path = `/app/stations/${encodeURIComponent(id)}/departures`;
+
+            const item = historyPrepare('station', id, title, {when})
+            const searchParams = buildSearchParams(item)
+            if (products) {
+                products.forEach(product => {
+                    searchParams.append('products', product)
+                })
+            }
+
+            const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('station', id, title, {when})
-                const searchParams = buildSearchParams(item)
+                historyPush(item)
                 if (recordJourney) {
                     addStationToJourney(title, id, when)
                 }
-                if (products) {
-                    products.forEach(product => {
-                        searchParams.append('products', product)
-                    })
-                }
-                router.push(`${path}?${searchParams.toString()}`)
+                router.push(href)
             }
         },
         stationNoHistory: (id: string, when: string | null) => {
             const path = `/app/stations/${encodeURIComponent(id)}/departures?when=${encodeURIComponent(when ?? '')}`
+
             if (prefetch) {
                 router.prefetch(path)
             } else {
@@ -249,24 +288,29 @@ function createNav(
             }
         },
         stations: () => {
+            const path = `/app/stations`
 
-            const path = `/app/stations`;
+            const item = historyPrepare('station_search', 'station_search', 'Stationen')
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('station_search', 'station_search', 'Stationen')
-                const searchParams = buildSearchParams(item)
-                router.push(`${path}?${searchParams.toString()}`)
+                historyPush(item)
+                router.push(href)
             }
         },
         trips: () => {
             const path = `/app/trips`
+
+            const item = historyPrepare('trip_search', 'trip_search', 'Fahrten')
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
-                router.prefetch(path)
+                router.prefetch(href)
             } else {
-                const item = historyPush('trip_search', 'trip_search', 'Fahrten')
-                const searchParams = buildSearchParams(item)
-                router.push(`${path}?${searchParams.toString()}`)
+                historyPush(item)
+                router.push(href)
             }
         }
     }
@@ -276,16 +320,17 @@ export function useNavigation(): Navigation {
     const router = useRouter()
     const appId = useAppId()
     const historyPush = useHistory(state => state.push)
+    const historyPrepare = useHistory(state => state.prepare)
     const historyUpdate = useHistory(state => state.update)
     const recordJourney = useJourneyPlanner(state => state.recording)
     const addStationToJourney = useJourneyPlanner(state => state.addStation)
     const addTripToJourney = useJourneyPlanner(state => state.addTrip)
 
-    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false))
+    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false, historyPrepare))
 
     useEffect(() => {
-        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false))
-    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router])
+        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false, historyPrepare))
+    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router, historyPrepare])
 
     return nav;
 }
@@ -294,16 +339,17 @@ export function usePrefetch(): Navigation {
     const router = useRouter()
     const appId = useAppId()
     const historyPush = useHistory(state => state.push)
+    const historyPrepare = useHistory(state => state.prepare)
     const historyUpdate = useHistory(state => state.update)
     const recordJourney = useJourneyPlanner(state => state.recording)
     const addStationToJourney = useJourneyPlanner(state => state.addStation)
     const addTripToJourney = useJourneyPlanner(state => state.addTrip)
 
-    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true))
+    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true, historyPrepare))
 
     useEffect(() => {
-        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true))
-    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router])
+        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true, historyPrepare))
+    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router, historyPrepare])
 
     return nav;
 }

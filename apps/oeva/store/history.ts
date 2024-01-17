@@ -6,7 +6,8 @@ export interface History {
     previous: HistoryItem | null,
     recents: readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
-    push: (type: HistoryItem['type'], id: string, title: string, params?: HistoryItem['params']) => HistoryItem,
+    prepare: (type: HistoryItem['type'], id: string, title: string, params?: HistoryItem['params']) => HistoryItem,
+    push: (item: HistoryItem) => void,
     update: (item: HistoryItem) => void,
     hideInRecents: (id: string) => void,
     clear: () => void,
@@ -22,7 +23,7 @@ export interface HistoryItem {
     recents: boolean | undefined,
     previous: HistoryItem | null
     next: HistoryItem | null
-    params: Record<string, string | string[] | null>|undefined
+    params: Record<string, string | string[] | null> | undefined
 }
 
 function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
@@ -35,38 +36,39 @@ function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
     return Array.from(recents.values());
 }
 
+function prepareItem(state: History, type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}): HistoryItem {
+    return {
+        id,
+        type,
+        title,
+        params,
+        root: type === 'trip' || type === 'station' ? (state.previous?.root ?? state.items.length) : state.items.length,
+        sequence: state.items.length,
+        added: (new Date).toISOString(),
+        recents: type === 'trip' || type === 'station',
+        previous: null,
+        next: null,
+    }
+}
+
 export const useHistory = create(
     persist<History>(
         (set, get) => ({
             items: [],
             recents: [],
             previous: null,
-            push: (type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}) => {
+            prepare: (type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}) => {
+                return prepareItem(get(), type, id, title, params)
+            },
+            push: (item: HistoryItem) => {
                 set(state => {
-                    const item = {
-                        id,
-                        type,
-                        title,
-                        params,
-                        root: type === 'trip' || type === 'station' ? (state.previous?.root ?? state.items.length) : state.items.length,
-                        sequence: state.items.length,
-                        added: (new Date).toISOString(),
-                        recents: type === 'trip' || type === 'station',
-                        previous: null,
-                        next: null,
-                    }
-                    const items = [...state.items, item];
+                    const items = [...state.items, item]
                     return {
                         items,
                         previous: item,
                         recents: updateRecents(items)
                     }
                 })
-                const state = get()
-                if (!state.previous) {
-                    throw new Error('Error creating new history item.')
-                }
-                return state.previous;
             },
             update: (item: HistoryItem) => {
                 const items = Array.from(get().items)

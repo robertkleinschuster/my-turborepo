@@ -34,13 +34,20 @@ export function buildSearchParams(item: HistoryItem): URLSearchParams {
     searchParams.set('root', item.root.toString())
 
     if (item.type === 'station') {
-        addStationParams(searchParams, item.params)
+        addFilterParams(searchParams, item.params)
+    }
+
+    if (item.type === 'trip_search') {
+        addFilterParams(searchParams, item.params)
+        if (typeof item.params?.query === 'string') {
+            searchParams.set('query', item.params.query)
+        }
     }
 
     return searchParams;
 }
 
-export function addStationParams(searchParams: URLSearchParams, params: HistoryItem['params']): void {
+export function addFilterParams(searchParams: URLSearchParams, params: HistoryItem['params']): void {
     if (typeof params?.when === 'string') {
         searchParams.set('when', params.when)
     }
@@ -144,6 +151,9 @@ function createNav(
                     path = `/app/stations/${encodeURIComponent(item.id)}/departures`
                 }
             }
+            if (item.type === 'trip_search') {
+                path = `/app/trips`
+            }
             if (path !== null) {
                 const newItem = historyPrepare(item.type, item.id, item.title, item.params)
                 const searchParams = buildSearchParams(newItem)
@@ -162,6 +172,9 @@ function createNav(
             if (item.type === 'trip') {
                 path = `/app/trips/${encodeURIComponent(item.id)}`
             }
+            if (item.type === 'trip_search') {
+                path = `/app/trips`
+            }
             if (item.type === 'station') {
                 if (item.params?.mode === 'arrivals') {
                     path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
@@ -169,6 +182,7 @@ function createNav(
                     path = `/app/stations/${encodeURIComponent(item.id)}/departures`
                 }
             }
+
             if (path !== null) {
                 const searchParams = buildSearchParams(item)
                 const href = `${path}?${searchParams.toString()}`

@@ -19,9 +19,9 @@ import React, {useEffect, useState} from "react";
 import {addHours, addMinutes, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
 import type {HistoryItem} from "../store/history";
-import { useHistory} from "../store/history";
+import {useHistory} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
-import {addStationParams, useNavigation} from "../hooks/use-navigation";
+import {addFilterParams, useNavigation} from "../hooks/use-navigation";
 import Time from "./time";
 import Product from "./product";
 
@@ -43,9 +43,10 @@ export default function Filter({products, showTime = false}: {
 
     useEffect(() => {
         const params: HistoryItem['params'] = {
+            query: searchParams.get('query'),
             when: when.toISOString(),
             products: Array.from(productsFilter),
-            mode: segment === 'departures' ? 'departures' : 'arrivals'
+            mode: segment,
         }
 
         if (breadcrumb) {
@@ -53,10 +54,10 @@ export default function Filter({products, showTime = false}: {
             nav.replace(breadcrumb)
         } else {
             const newSearchParams = new URLSearchParams(searchParams)
-            addStationParams(newSearchParams, params)
+            addFilterParams(newSearchParams, params)
             router.replace(`${pathname}?${newSearchParams.toString()}`)
         }
-    }, [pathname, router, searchParams, when, productsFilter, updateHistory, nav, breadcrumb])
+    }, [pathname, router, searchParams, when, productsFilter, updateHistory, nav, breadcrumb, segment])
 
     const [whenOpen, setWhenOpen] = useState(false);
     const [productsOpen, setProductsOpen] = useState(false)

@@ -5,6 +5,8 @@ import {
   SquareArrowUp
 } from 'framework7-icons/react';
 
+export const runtime = 'edge'
+
 export default function Home(): JSX.Element {
   return (
     <App theme="ios">

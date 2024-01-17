@@ -14,7 +14,7 @@ import {
     Toolbar
 } from "konsta/react";
 import {Clock, Calendar} from "framework7-icons/react"
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import {usePathname, useRouter, useSearchParams, useSelectedLayoutSegment} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import {addHours, addMinutes, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
@@ -33,6 +33,8 @@ export default function Filter({products, showTime = false}: {
     const nav = useNavigation()
     const searchParams = useSearchParams()
     const pathname = usePathname()
+    const segment = useSelectedLayoutSegment()
+
     const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
     const [productsFilter, setProductsFilter] = useState<Set<string>>(new Set(searchParams.getAll('products')))
 
@@ -42,7 +44,8 @@ export default function Filter({products, showTime = false}: {
     useEffect(() => {
         const params: HistoryItem['params'] = {
             when: when.toISOString(),
-            products: Array.from(productsFilter)
+            products: Array.from(productsFilter),
+            mode: segment === 'departures' ? 'departures' : 'arrivals'
         }
 
         if (breadcrumb) {

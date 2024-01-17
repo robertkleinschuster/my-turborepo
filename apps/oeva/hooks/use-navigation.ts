@@ -138,7 +138,11 @@ function createNav(
                 path = `/app/trips/${encodeURIComponent(item.id)}`
             }
             if (item.type === 'station') {
-                path = `/app/stations/${encodeURIComponent(item.id)}/departures`
+                if (item.params?.mode === 'arrivals') {
+                    path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
+                } else {
+                    path = `/app/stations/${encodeURIComponent(item.id)}/departures`
+                }
             }
             if (path !== null) {
                 const newItem = historyPrepare(item.type, item.id, item.title, item.params)
@@ -159,7 +163,11 @@ function createNav(
                 path = `/app/trips/${encodeURIComponent(item.id)}`
             }
             if (item.type === 'station') {
-                path = `/app/stations/${encodeURIComponent(item.id)}/departures`
+                if (item.params?.mode === 'arrivals') {
+                    path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
+                } else {
+                    path = `/app/stations/${encodeURIComponent(item.id)}/departures`
+                }
             }
             if (path !== null) {
                 const searchParams = buildSearchParams(item)
@@ -180,7 +188,11 @@ function createNav(
                 path = `/app/trips/${encodeURIComponent(item.id)}`
             }
             if (item.type === 'station') {
-                path = `/app/stations/${encodeURIComponent(item.id)}/departures`
+                if (item.params?.mode === 'arrivals') {
+                    path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
+                } else {
+                    path = `/app/stations/${encodeURIComponent(item.id)}/departures`
+                }
             }
             if (item.type === 'station_search') {
                 createNewItem = true

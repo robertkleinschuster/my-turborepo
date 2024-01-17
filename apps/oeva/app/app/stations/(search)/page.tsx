@@ -3,6 +3,9 @@ import Locations from '../../../../components/locations';
 import { getClient } from '../../../../client/client';
 import {StationHistory} from "../../../../components/station-history";
 
+export const fetchCache = 'default-cache'
+export const revalidate = 3600
+
 export default async function Stations({ searchParams }: { searchParams: { query: string } }): Promise<React.JSX.Element> {
     if (!searchParams.query) {
         return <StationHistory/>

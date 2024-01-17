@@ -4,6 +4,9 @@ import Scroll from "../../../../components/scroll"
 import {getClient} from "../../../../client/client";
 import StationNavbarData from "./navbar-data"
 
+export const fetchCache = 'default-cache'
+export const revalidate = 3600
+
 export async function generateMetadata(
     {params}: { params: { id: string } }
 ): Promise<Metadata> {

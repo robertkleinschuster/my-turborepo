@@ -5,6 +5,9 @@ import {getClient} from '../../../../client/client';
 import {buildProductsFilter} from '../../../../client/products-filter';
 import {TripHistory} from "../../../../components/trip-history";
 
+export const fetchCache = 'default-cache'
+export const revalidate = 60
+
 export default async function Stations({searchParams}: {
     searchParams: { query: string, when?: string, products?: string[] }
 }): Promise<React.JSX.Element> {

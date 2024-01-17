@@ -3,6 +3,9 @@ import Alternatives from '../../../../../components/alternatives'
 import {getClient} from '../../../../../client/client'
 import {buildProductsFilter} from '../../../../../client/products-filter'
 
+export const fetchCache = 'default-cache'
+export const revalidate = 60
+
 export default async function Departures({params, searchParams}: {
     params: { id: string },
     searchParams: { when?: string, products?: string[] }

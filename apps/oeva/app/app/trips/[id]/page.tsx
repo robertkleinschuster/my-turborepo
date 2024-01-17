@@ -3,6 +3,9 @@ import Stopovers from '../../../../components/stopovers'
 import {getClient} from '../../../../client/client'
 import Remarks from '../../../../components/remarks'
 
+export const fetchCache = 'default-cache'
+export const revalidate = 60
+
 export default async function Trip({params}: { params: { id: string } }): Promise<React.JSX.Element> {
     const client = getClient()
 

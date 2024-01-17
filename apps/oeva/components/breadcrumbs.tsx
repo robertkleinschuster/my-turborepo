@@ -10,27 +10,18 @@ import {
     Toolbar
 } from "konsta/react"
 import type {JSX} from "react";
-import { useEffect, useState} from "react";
+import {useState} from "react";
 import {House} from "framework7-icons/react"
 import dynamic from "next/dynamic";
 import {useBreadcrumbs} from "../hooks/use-breadcrumbs";
-import {useNavigation, usePrefetch} from "../hooks/use-navigation";
+import {useNavigation} from "../hooks/use-navigation";
 import Scroll from "./scroll";
 import {HistoryList} from "./history-list";
 
 const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
     const [popoverOpened, setPopoverOpened] = useState(false);
     const nav = useNavigation()
-    const prefetch = usePrefetch()
     const items = useBreadcrumbs();
-
-
-    useEffect(() => {
-        prefetch.home()
-        for (const item of items) {
-            prefetch.push_breadcrumb(item)
-        }
-    }, [prefetch, items]);
 
     return <Toolbar>
         <KonstaBreadcrumbs>

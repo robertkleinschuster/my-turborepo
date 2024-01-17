@@ -12,9 +12,6 @@ export default function Home(): JSX.Element {
     useEffect(() => {
         prefetch.stations()
         prefetch.trips()
-        prefetch.history_overview()
-        prefetch.journeys()
-        prefetch.settings()
     }, [prefetch]);
 
     return (

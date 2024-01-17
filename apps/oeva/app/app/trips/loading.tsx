@@ -1,5 +1,5 @@
 "use client"
 
-import Loading from "../loading";
+import Loading from "../../../components/loading";
 
 export default Loading

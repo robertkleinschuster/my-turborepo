@@ -2,8 +2,8 @@
 
 import {Block, List, ListItem} from "konsta/react"
 import type {Location, ProductType, Station, Stop} from "hafas-client"
-import React from "react"
-import {useNavigation} from "../hooks/use-navigation";
+import React, {useEffect} from "react"
+import {useNavigation, usePrefetch} from "../hooks/use-navigation";
 import StopProducts from "./stop-products"
 
 export default function Locations({locations, products}: {
@@ -11,8 +11,14 @@ export default function Locations({locations, products}: {
     products: readonly ProductType[]
 }): React.JSX.Element {
     const nav = useNavigation()
-
-
+    const prefetch = usePrefetch()
+    useEffect(() => {
+        for (const location of locations) {
+            if (location.id) {
+                prefetch.station(location.id, null, '')
+            }
+        }
+    }, [locations, prefetch]);
     if (locations.length === 0) {
         return <Block className="text-center">Keine Ergebnisse</Block>
     }

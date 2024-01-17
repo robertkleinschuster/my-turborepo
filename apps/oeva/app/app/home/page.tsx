@@ -2,10 +2,21 @@
 
 import {List, ListItem, Navbar} from 'konsta/react';
 import type {JSX} from "react";
-import {useNavigation} from "../../../hooks/use-navigation";
+import { useEffect} from "react";
+import {useNavigation, usePrefetch} from "../../../hooks/use-navigation";
 
 export default function Home(): JSX.Element {
     const nav = useNavigation()
+    const prefetch = usePrefetch()
+
+    useEffect(() => {
+        prefetch.stations()
+        prefetch.trips()
+        prefetch.history_overview()
+        prefetch.journeys()
+        prefetch.settings()
+    }, [prefetch]);
+
     return (
         <>
             <Navbar title="OeVA"/>

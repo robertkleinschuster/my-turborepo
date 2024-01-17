@@ -1,21 +1,29 @@
 "use client"
 
 import type {JSX} from "react";
-import { useRef, useEffect} from "react";
-import {useRouter} from "next/navigation";
+import {useRef, useEffect} from "react";
 import {useSettings} from "../../store/settings";
+import {useNavigation} from "../../hooks/use-navigation";
 
 export default function Home(): JSX.Element {
-    const router = useRouter()
+    const nav = useNavigation()
     const startpage = useSettings(state => state.startpage)
     const firstView = useRef<boolean>(true)
 
     useEffect(() => {
         if (firstView.current) {
             firstView.current = false
-            router.replace(`/app/home`)
+            if (startpage === 'history') {
+                nav.history_overview();
+            } else if (startpage === 'stations') {
+                nav.stations();
+            } else if (startpage === 'trips') {
+                nav.trips()
+            } else {
+                nav.home()
+            }
         }
-    }, [firstView, startpage]);
+    }, [firstView, nav, startpage]);
 
     return <></>;
 }

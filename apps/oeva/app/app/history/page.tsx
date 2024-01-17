@@ -21,11 +21,11 @@ function DeleteSummary(selection: ListSelection<HistoryItem>): JSX.Element {
 }
 
 function History(): JSX.Element {
-    const recents = useHistory(state => state.recents)
+    const filterRecents = useHistory(state => state.filterRecents)
     const hideInRecents = useHistory(state => state.hideInRecents)
 
     return <>
-        <HistoryList items={recents}/>
+        <HistoryList items={filterRecents()}/>
         <HistorySelectionToolbar
             buildSummary={DeleteSummary}
             onDelete={selection => {

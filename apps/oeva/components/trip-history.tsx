@@ -9,8 +9,8 @@ import {HistoryBlockTitle} from "./history-block-title";
 import {HistorySelectionProvider} from "../app/app/history/history-selection-context";
 
 const TripHistory = dynamic(() => Promise.resolve((): JSX.Element => {
-    const recents = useHistory(state => state.recents)
-    const recentItems = recents.filter(item => item.type === 'trip');
+    const filterRecents = useHistory(state => state.filterRecents)
+    const recentItems = filterRecents().filter(item => item.type === 'trip');
     return <HistorySelectionProvider>
         <HistoryBlockTitle/>
         <HistoryList items={recentItems}/>

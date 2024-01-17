@@ -4,7 +4,7 @@ import {persist} from 'zustand/middleware'
 export interface History {
     items: readonly HistoryItem[],
     previous: HistoryItem | null,
-    recents: readonly HistoryItem[],
+    filterRecents: () => readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
     prepare: (type: HistoryItem['type'], id: string, title: string, params?: HistoryItem['params']) => HistoryItem,
     push: (item: HistoryItem) => void,
@@ -26,16 +26,6 @@ export interface HistoryItem {
     params: Record<string, string | string[] | null> | undefined
 }
 
-function updateRecents(items: readonly HistoryItem[]): readonly HistoryItem[] {
-    const recents = new Map<string, HistoryItem>;
-    for (let i = items.length - 1; i >= 0; i--) {
-        if ((items[i].recents ?? true) && !recents.has(items[i].id)) {
-            recents.set(items[i].id, items[i])
-        }
-    }
-    return Array.from(recents.values());
-}
-
 function prepareItem(state: History, type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}): HistoryItem {
     return {
         id,
@@ -55,7 +45,6 @@ export const useHistory = create(
     persist<History>(
         (set, get) => ({
             items: [],
-            recents: [],
             previous: null,
             prepare: (type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}) => {
                 return prepareItem(get(), type, id, title, params)
@@ -63,25 +52,37 @@ export const useHistory = create(
             push: (item: HistoryItem) => {
                 const limit = 250
                 set(state => {
-                    const items = [...state.items.slice(state.items.length > limit ? state.items.length - limit : 0), item]
-                    return {
-                        items,
-                        previous: item,
-                        recents: updateRecents(items)
+                    const sanitizedItem = {
+                        ...item,
+                        next: null,
+                        previous: null
                     }
+                    const items = [...state.items.slice(state.items.length > limit ? state.items.length - limit : 0), sanitizedItem]
+                    return {items, previous: sanitizedItem}
                 })
             },
             update: (item: HistoryItem) => {
                 const items = Array.from(get().items)
                 for (let i = items.length - 1; i > 0; i--) {
                     if (item.sequence === items[i].sequence) {
-                        items[i] = item;
+                        items[i] = {
+                            ...item,
+                            next: null,
+                            previous: null
+                        };
                     }
                 }
-                set(() => ({
-                    items,
-                    recents: updateRecents(items)
-                }))
+                set(() => ({items}))
+            },
+            filterRecents: (): readonly HistoryItem[] => {
+                const items = Array.from(get().items)
+                const recents = new Map<string, HistoryItem>;
+                for (let i = items.length - 1; i >= 0; i--) {
+                    if ((items[i].recents ?? true) && !recents.has(items[i].id)) {
+                        recents.set(items[i].id, items[i])
+                    }
+                }
+                return Array.from(recents.values());
             },
             filterBreadcrumbs: (sequence: number, root: number) => {
                 const breadcrumbs: HistoryItem[] = []
@@ -130,18 +131,14 @@ export const useHistory = create(
                         ...item,
                         recents: (item.recents ?? true) && item.id !== id
                     }))
-                    return {
-                        items,
-                        recents: updateRecents(items)
-                    }
+                    return {items}
                 })
             },
             clear: () => {
                 set(() => ({
                     items: [],
-                    recents: [],
                     previous: null,
-                }))
+                }), true)
             }
         }),
         {

@@ -5,6 +5,8 @@ import type {JSX} from "react";
 import { useEffect} from "react";
 import {useNavigation, usePrefetch} from "../../../hooks/use-navigation";
 
+export const runtime = 'edge'
+
 export default function Home(): JSX.Element {
     const nav = useNavigation()
     const prefetch = usePrefetch()

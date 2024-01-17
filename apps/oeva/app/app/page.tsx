@@ -5,6 +5,8 @@ import {useRef, useEffect} from "react";
 import {useSettings} from "../../store/settings";
 import {useNavigation} from "../../hooks/use-navigation";
 
+export const runtime = 'edge'
+
 export default function Home(): JSX.Element {
     const nav = useNavigation()
     const startpage = useSettings(state => state.startpage)

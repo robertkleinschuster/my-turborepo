@@ -25,7 +25,7 @@ export default function Locations({locations, products}: {
                 key={location.name}
                 link
                 onClick={() => {
-                    location.id && nav.station(location.id, new Date().toISOString(), location.name ?? '')
+                    location.id && nav.station(location.id, null, location.name ?? '')
                 }}
                 title={<LocationTitle location={location}/>}
             />

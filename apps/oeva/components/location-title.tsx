@@ -9,7 +9,7 @@ export function LocationTitle({location}: { location: Stop | Station | Location 
     const prefetch = usePrefetch()
     useEffect(() => {
         if (isVisible && location.id) {
-            prefetch.station(location.id, new Date().toISOString(), '')
+            prefetch.station(location.id, null, '')
         }
     }, [isVisible, location.id, prefetch]);
 

@@ -260,7 +260,12 @@ function createNav(
             const path = `/app/trips/${encodeURIComponent(id)}`
 
             const line = alternative.line;
-            const title = `${line?.name} ${alternative.destination?.name ?? ''}`
+            let title = line?.name ?? '';
+            if (alternative.direction) {
+                title += ` in Richtung ${alternative.direction}`
+            } else if (alternative.provenance) {
+                title += ` aus Richtung ${alternative.provenance}`
+            }
             const when = alternative.plannedWhen ?? null
             const item = historyPrepare('trip', id, title, {when})
             const searchParams = buildSearchParams(item)

@@ -9,7 +9,8 @@ import type {JourneyPlanner} from "../store/journey-planner";
 import {useJourneyPlanner} from "../store/journey-planner";
 
 interface Navigation {
-    trip: (id: string, when: string | null, title: string, trip?: Trip) => void,
+    trip: (id: string, when: string | null, title: string) => void,
+    tripObj: (trip: Trip) => void,
     alternative: (alternative: Alternative) => void,
     tripNoHistory: (id: string) => void,
     station: (id: string, when: string | null, title: string, products?: string[], station?: Station) => void,
@@ -258,16 +259,17 @@ function createNav(
         alternative: (alternative: Alternative) => {
             const id = alternative.tripId;
             const path = `/app/trips/${encodeURIComponent(id)}`
-
             const line = alternative.line;
-            let title = line?.name ?? '';
-            if (alternative.direction) {
-                title += ` in Richtung ${alternative.direction}`
-            } else if (alternative.provenance) {
-                title += ` aus Richtung ${alternative.provenance}`
-            }
             const when = alternative.plannedWhen ?? null
-            const item = historyPrepare('trip', id, title, {when})
+            const item = historyPrepare('trip', id, line?.name ?? '', {when})
+            item.info = {
+                line: line?.name ?? null,
+                product: alternative.line?.product ?? null,
+                direction: alternative.direction ?? null,
+                destination: alternative.destination?.name ?? null,
+                origin: alternative.origin?.name ?? null,
+                provenance: alternative.provenance ?? null,
+            }
             const searchParams = buildSearchParams(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
@@ -275,7 +277,32 @@ function createNav(
             } else {
                 historyPush(item)
                 if (recordJourney) {
-                    addTripToJourney(title, id, when)
+                    addTripToJourney(line?.name ?? '', id, when)
+                }
+                router.push(href)
+            }
+        },
+        tripObj: (trip: Trip) => {
+            const id = trip.id;
+            const path = `/app/trips/${encodeURIComponent(id)}`
+            const line = trip.line;
+            const when = trip.plannedDeparture ?? trip.plannedArrival ?? null
+            const item = historyPrepare('trip', id, line?.name ?? '', {when})
+            item.info = {
+                line: line?.name ?? null,
+                product: line?.product ?? null,
+                direction: trip.direction ?? null,
+                destination: trip.destination?.name ?? null,
+                origin: trip.origin?.name ?? null,
+            }
+            const searchParams = buildSearchParams(item)
+            const href = `${path}?${searchParams.toString()}`
+            if (prefetch) {
+                router.prefetch(href)
+            } else {
+                historyPush(item)
+                if (recordJourney) {
+                    addTripToJourney(line?.name ?? '', id, when)
                 }
                 router.push(href)
             }

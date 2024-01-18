@@ -17,6 +17,7 @@ import {useBreadcrumbs} from "../hooks/use-breadcrumbs";
 import {useNavigation} from "../hooks/use-navigation";
 import Scroll from "./scroll";
 import {HistoryList} from "./history-list";
+import {HistoryItemTitle} from "./history-item-title";
 
 const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
     const [popoverOpened, setPopoverOpened] = useState(false);
@@ -41,7 +42,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
                         <Link onClick={() => {
                             nav.push_breadcrumb(items[0]);
                         }}>
-                            <span className="truncate">{items[0].title}</span>
+                            <span className="truncate"><HistoryItemTitle item={items[0]}/></span>
                         </Link>
                     </BreadcrumbsItem>
 
@@ -64,7 +65,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
                 <>
                     <BreadcrumbsSeparator/>
                     <BreadcrumbsItem active>
-                        <span className="truncate">{items[items.length - 1].title}</span>
+                        <span className="truncate"><HistoryItemTitle item={items[items.length - 1]}/></span>
                     </BreadcrumbsItem>
                 </>
                 : null}

@@ -13,7 +13,7 @@ export interface History {
     clear: () => void,
 }
 
-export interface HistoryItem {
+interface BaseHistoryItem {
     id: string,
     root: number,
     sequence: number,
@@ -24,7 +24,40 @@ export interface HistoryItem {
     previous: HistoryItem | null
     next: HistoryItem | null
     params: Record<string, string | string[] | null> | undefined
+    info?: Record<string, string | string[] | null> | undefined
 }
+
+export interface TripHistoryItem extends BaseHistoryItem {
+    type: 'trip',
+    info: {
+        line: string | null,
+        product: string | null,
+        direction: string | null,
+        destination: string | null,
+        provenance: string | null,
+        origin: string | null,
+    }
+}
+
+export interface TripSearchHistoryItem extends BaseHistoryItem {
+    type: 'trip_search',
+    params: {
+        query: string | null,
+        when: string | null,
+        products: string[] | null
+    }
+}
+
+export interface StationHistoryItem extends BaseHistoryItem {
+    type: 'station',
+    params: {
+        mode: 'arrivals' | 'departures'
+        when: string | null,
+        products: string[] | null
+    }
+}
+
+export type HistoryItem = BaseHistoryItem | TripHistoryItem | StationHistoryItem | TripSearchHistoryItem
 
 function prepareItem(state: History, type: HistoryItem['type'], id: string, title: string, params: HistoryItem['params'] = {}): HistoryItem {
     const sequence = (state.previous?.sequence ?? 0) + 1

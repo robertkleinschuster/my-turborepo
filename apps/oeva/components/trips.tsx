@@ -28,9 +28,7 @@ export default function Trips({trips, products, error}: { trips: readonly Trip[]
                     key={trip.id + trip.departure}
                     link
                     onClick={() => {
-                        const line = trip.line;
-                        const title = `${line?.name ?? ''} in Richtung ${trip.direction ?? ''}`
-                        nav.trip(trip.id, trip.plannedDeparture ?? null, title)
+                        nav.tripObj(trip)
                     }}
                     title={<span className={trip.cancelled ? 'line-through' : undefined}>{trip.line ? <Line line={trip.line} products={products}/>: null} {trip.destination?.name ?? ''}</span>}
                 />)}

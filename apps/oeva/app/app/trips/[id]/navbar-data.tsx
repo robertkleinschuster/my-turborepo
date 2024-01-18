@@ -14,7 +14,7 @@ const fetchCachedTrip = unstable_cache(async (id: string, clientCode: ClientCode
 export default async function TripNavbarData({id}: { id: string }): Promise<React.JSX.Element> {
     const trip = await fetchCachedTrip(id, defaultClient)
 
-    const lineName = trip.trip.line?.name ?? id;
+    const lineName = trip.trip.line?.name ?? '';
 
     const direction = trip.trip.direction ?? '';
 

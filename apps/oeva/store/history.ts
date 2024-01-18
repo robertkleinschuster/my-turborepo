@@ -5,6 +5,7 @@ export interface History {
     items: readonly HistoryItem[],
     previous: HistoryItem | null,
     filterRecents: () => readonly HistoryItem[],
+    filterParents: () => readonly HistoryItem[],
     filterBreadcrumbs: (sequence: number, root: number) => readonly HistoryItem[],
     prepare: (type: HistoryItem['type'], id: string, title: string, params?: HistoryItem['params']) => HistoryItem,
     push: (item: HistoryItem) => void,
@@ -21,8 +22,11 @@ interface BaseHistoryItem {
     title: string,
     added: string,
     recents: boolean | undefined,
+    recents_overview: boolean | undefined,
+    breadcrumbs: boolean | undefined,
     previous: HistoryItem | null
     next: HistoryItem | null
+    children?: HistoryItem[]
     params: Record<string, string | string[] | null> | undefined
     info?: Record<string, string | string[] | null> | undefined
 }
@@ -72,6 +76,8 @@ function prepareItem(state: History, type: HistoryItem['type'], id: string, titl
         root: type === 'trip' || type === 'station' ? root : sequence,
         added: (new Date).toISOString(),
         recents: type === 'trip' || type === 'station',
+        recents_overview: type === 'station_search' || type === 'trip_search',
+        breadcrumbs: true,
         previous: null,
         next: null,
     }
@@ -125,19 +131,18 @@ export const useHistory = create(
                 const items = Array.from(get().items)
                 for (let i = items.length - 1; i > 0; i--) {
                     const item = items[i]
-                    if (item.root === root && item.sequence <= sequence && item.sequence >= root) {
+                    if (item.breadcrumbs && item.root === root && item.sequence <= sequence && item.sequence >= root) {
                         breadcrumbs.push(item)
                     } else if (item.root === sequence && sequence === item.sequence) {
                         items[i] = {
                             ...item,
-                            root
+                            breadcrumbs: true,
                         }
                         breadcrumbs.push(items[i])
-                    } else {
+                    } else if (item.root === root) {
                         items[i] = {
                             ...item,
-                            root: item.sequence,
-                            previous: null,
+                            breadcrumbs: false,
                         }
                     }
                 }
@@ -161,11 +166,35 @@ export const useHistory = create(
 
                 return breadcrumbs.reverse();
             },
+            filterParents: (): readonly HistoryItem[] => {
+                const items = Array.from(get().items)
+                const parents: HistoryItem[] = []
+
+                for (let i = items.length - 1; i > 0; i--) {
+                    if (items[i].recents_overview && items.at(i + 1)) {
+                        const children: HistoryItem[] = []
+                        for (let j = i + 1; items[j].root === items[i].root; j++) {
+                            if (items[j].breadcrumbs) {
+                                children.push(items[j])
+                            }
+                        }
+                        if (children.length) {
+                            parents.push({
+                                ...items[i],
+                                children
+                            })
+                        }
+                    }
+                }
+
+                return parents
+            },
             hideInRecents: (id: string) => {
                 set(state => {
                     const items = state.items.map(item => ({
                         ...item,
-                        recents: (item.recents ?? true) && item.id !== id
+                        recents: (item.recents ?? true) && item.id !== id,
+                        recents_overview: (item.recents_overview ?? true) && item.id !== id
                     }))
                     return {items}
                 })

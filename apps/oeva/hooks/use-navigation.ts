@@ -24,7 +24,7 @@ interface Navigation {
     back: () => void
     home: () => void,
     journeys: () => void
-    history_overview: () => void
+    history_overview: (rootItem?: HistoryItem | null) => void
     settings: () => void
     journey: (id: string) => void,
 }
@@ -112,11 +112,15 @@ function createNav(
                 router.push(path)
             }
         },
-        history_overview: () => {
+        history_overview: (rootItem: HistoryItem | null = null) => {
             const path = `/app/history`
 
             const item = historyPrepare('history', 'history', 'Zuletzt verwendet')
             const searchParams = buildSearchParams(item)
+            if (rootItem?.children?.length) {
+                searchParams.set('filterRoot', rootItem.root.toString())
+                searchParams.set('filterSequence', rootItem.children[rootItem.children.length - 1].sequence.toString())
+            }
             const href = `${path}?${searchParams.toString()}`
 
             if (prefetch) {

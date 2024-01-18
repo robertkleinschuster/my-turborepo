@@ -8,6 +8,8 @@ import {useHistory} from "../../../store/history";
 import {HistoryList} from "../../../components/history-list";
 import type {ListSelection} from "../../../context/list-selection";
 import {HistorySelectionToolbar} from "./history-selection-context";
+import {useSearchParams} from "next/navigation";
+import {useNavigation} from "../../../hooks/use-navigation";
 
 function DeleteSummary(selection: ListSelection<HistoryItem>): JSX.Element {
     if (!selection) {
@@ -21,11 +23,29 @@ function DeleteSummary(selection: ListSelection<HistoryItem>): JSX.Element {
 }
 
 function History(): JSX.Element {
-    const filterRecents = useHistory(state => state.filterRecents)
+    const nav = useNavigation()
+    const searchParams = useSearchParams()
+    const root = searchParams.get('filterRoot')
+    const sequence = searchParams.get('filterSequence')
+    const filterParents = useHistory(state => state.filterParents)
+    const filterBreadcrumbs = useHistory(state => state.filterBreadcrumbs)
     const hideInRecents = useHistory(state => state.hideInRecents)
-
+    const items = root === null || sequence === null ?
+        filterParents() :
+        filterBreadcrumbs(Number.parseInt(sequence), Number.parseInt(root)).filter(item => !item.recents_overview)
     return <>
-        <HistoryList items={filterRecents()}/>
+        <HistoryList
+            details
+            items={items}
+            navigate={false}
+            onClick={item => {
+                if (root === null || sequence === null) {
+                    nav.history_overview(item)
+                } else {
+                    nav.push(item)
+                }
+            }}
+        />
         <HistorySelectionToolbar
             buildSummary={DeleteSummary}
             onDelete={selection => {

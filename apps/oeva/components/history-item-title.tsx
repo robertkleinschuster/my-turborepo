@@ -24,5 +24,9 @@ export function HistoryItemTitle({item}: { item: HistoryItem }): JSX.Element {
         }
     }
 
+    if (item.recents_overview && item.children?.length) {
+        return <span ref={ref}><HistoryItemTitle item={item.children[0]}/> - <HistoryItemTitle item={item.children[item.children.length - 1]}/></span>
+    }
+
     return <span ref={ref}>{item.title}</span>
 }

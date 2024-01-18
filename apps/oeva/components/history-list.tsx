@@ -11,12 +11,13 @@ import {HistoryItemTitle} from "./history-item-title";
 import {HistoryItemInfo} from "./history-item-info";
 import {HistoryItemSubTitle} from "./history-item-subtitle";
 
-export function HistoryList({items, nested, breadcrumbs, details, onClick}: {
+export function HistoryList({items, nested, breadcrumbs, details, onClick, navigate = true}: {
     items: readonly HistoryItem[],
     nested?: boolean,
     breadcrumbs?: boolean
     details?: boolean
-    onClick?: (item: HistoryItem) => void
+    onClick?: (item: HistoryItem) => void,
+    navigate?: boolean
 }): JSX.Element {
     const nav = useNavigation()
 
@@ -32,10 +33,12 @@ export function HistoryList({items, nested, breadcrumbs, details, onClick}: {
                     if (onClick) {
                         onClick(item)
                     }
-                    if (breadcrumbs) {
-                        nav.push_breadcrumb(item)
-                    } else {
-                        nav.push(item)
+                    if (navigate) {
+                        if (breadcrumbs) {
+                            nav.push_breadcrumb(item)
+                        } else {
+                            nav.push(item)
+                        }
                     }
                 }}
                 subtitle={details ? <HistoryItemSubTitle item={item}/> : null}

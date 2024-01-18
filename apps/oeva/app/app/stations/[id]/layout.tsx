@@ -30,7 +30,7 @@ export default function Layout({children, params}: {
     params: { id: string }
 }): React.JSX.Element {
     return <>
-        <StationNavbarData id={params.id}/>
+        <StationNavbarData id={decodeURIComponent(params.id)}/>
         <Scroll>
             {children}
         </Scroll>

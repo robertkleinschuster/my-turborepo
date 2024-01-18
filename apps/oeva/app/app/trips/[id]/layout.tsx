@@ -1,19 +1,24 @@
 import type {JSX, ReactNode} from "react";
 import React from "react";
 import type {Metadata} from "next";
+// eslint-disable-next-line camelcase -- nextjs
+import {unstable_cache} from "next/cache";
 import Scroll from "../../../../components/scroll"
-import {getClient} from "../../../../client/client";
+import {type ClientCode, defaultClient, getClient} from "../../../../client/client";
 import TripNavbarData from "./navbar-data"
 
 export const fetchCache = 'default-cache'
 export const revalidate = 60
 
+const fetchCachedTrip = unstable_cache(async (id: string, clientCode: ClientCode) => {
+    const client = getClient(clientCode)
+    return client.trip(id, undefined)
+}, ['trip'], {revalidate: false})
+
 export async function generateMetadata(
     {params}: { params: { id: string } }
 ): Promise<Metadata> {
-    const client = getClient()
-
-    const trip = await client.trip(decodeURIComponent(params.id), undefined)
+    const trip = await fetchCachedTrip(decodeURIComponent(params.id), defaultClient)
 
     const lineName = trip.trip.line?.name ?? params.id;
 
@@ -24,7 +29,7 @@ export async function generateMetadata(
 }
 export default function Layout({children, params}: { children: ReactNode, params: { id: string } }): JSX.Element {
     return <>
-        <TripNavbarData id={params.id}/>
+        <TripNavbarData id={decodeURIComponent(params.id)}/>
         <Scroll>
             {children}
         </Scroll>

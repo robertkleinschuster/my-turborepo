@@ -16,10 +16,9 @@ import {
 import {Clock, Calendar} from "framework7-icons/react"
 import {usePathname, useRouter, useSearchParams, useSelectedLayoutSegment} from "next/navigation";
 import React, {useEffect, useState} from "react";
-import {addHours, addMinutes, subHours, subMinutes} from "date-fns";
+import {addHours, addMinutes, formatISO, startOfMinute, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
 import type {HistoryItem} from "../store/history";
-import {useHistory} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
 import Time from "./time";
@@ -37,14 +36,12 @@ export default function Filter({products, showTime = false}: {
 
     const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
     const [productsFilter, setProductsFilter] = useState<Set<string>>(new Set(searchParams.getAll('products')))
-
-    const updateHistory = useHistory(state => state.update)
     const breadcrumb = useCurrentBreadcrumb()
 
     useEffect(() => {
         const params: HistoryItem['params'] = {
             query: searchParams.get('query'),
-            when: when.toISOString(),
+            when: formatISO(startOfMinute(when)),
             products: Array.from(productsFilter),
             mode: segment,
         }
@@ -57,7 +54,7 @@ export default function Filter({products, showTime = false}: {
             addFilterParams(newSearchParams, params)
             router.replace(`${pathname}?${newSearchParams.toString()}`)
         }
-    }, [pathname, router, searchParams, when, productsFilter, updateHistory, nav, breadcrumb, segment])
+    }, [pathname, router, searchParams, when, productsFilter, nav, breadcrumb, segment])
 
     const [whenOpen, setWhenOpen] = useState(false);
     const [productsOpen, setProductsOpen] = useState(false)

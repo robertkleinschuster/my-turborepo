@@ -1,4 +1,5 @@
 import React from 'react'
+import {parseISO, startOfMinute} from "date-fns";
 import Alternatives from '../../../../../components/alternatives'
 import {getClient} from '../../../../../client/client'
 import {buildProductsFilter} from '../../../../../client/products-filter';
@@ -10,12 +11,12 @@ export default async function Arrivals({params, searchParams}: {
     params: { id: string },
     searchParams: { when?: string, products?: string[] }
 }): Promise<React.JSX.Element> {
-    const when = searchParams.when ? new Date(decodeURIComponent(searchParams.when)) : undefined;
+    const when = searchParams.when ? parseISO(decodeURIComponent(searchParams.when)) : new Date()
     const client = getClient()
-    const arrivals = await client.arrivals(params.id, {
+    const arrivals = await client.arrivals(decodeURIComponent(params.id), {
         duration: 1440,
         results: 40,
-        when,
+        when: startOfMinute(when),
         products: buildProductsFilter(client.profile.products, searchParams.products),
         remarks: true
     })

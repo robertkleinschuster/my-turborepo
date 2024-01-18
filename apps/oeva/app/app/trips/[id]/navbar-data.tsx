@@ -12,7 +12,7 @@ const fetchCachedTrip = unstable_cache(async (id: string, clientCode: ClientCode
 }, ['trip'], {revalidate: false})
 
 export default async function TripNavbarData({id}: { id: string }): Promise<React.JSX.Element> {
-    const trip = await fetchCachedTrip(decodeURIComponent(id), defaultClient)
+    const trip = await fetchCachedTrip(id, defaultClient)
 
     const lineName = trip.trip.line?.name ?? id;
 

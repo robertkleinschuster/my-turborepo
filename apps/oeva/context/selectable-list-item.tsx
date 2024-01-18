@@ -1,12 +1,16 @@
 "use client"
 
-import type {Props} from "konsta/react/types/ListItem"
-import type {HTMLAttributes, JSX} from "react";
+import type {Props as ListItemProps} from "konsta/react/types/ListItem"
+import type {JSX} from "react";
 import {Checkbox, ListItem} from "konsta/react";
 import type {ListSelectionContext} from "./list-selection";
 
+interface SelectableListItemProps<T> extends ListItemProps {
+    item: T
+}
+
 export function createSelectableListItem<T>(context: ListSelectionContext<T>) {
-    return function SelectableListItem(props: Props & HTMLAttributes<Element> & { item: T }): JSX.Element {
+    return function SelectableListItem(props: SelectableListItemProps<T>): JSX.Element {
         const dispatch = context.useListSelectionDispatch()
         const selection = context.useListSelection()
 

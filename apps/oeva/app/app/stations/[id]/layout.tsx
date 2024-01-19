@@ -5,6 +5,7 @@ import {unstable_cache} from "next/cache";
 import Scroll from "../../../../components/scroll"
 import type {ClientCode} from "../../../../client/client";
 import { defaultClient, getClient} from "../../../../client/client";
+import {FilterWhenRelative} from "../../../../components/filter-when-relative";
 import StationNavbarData from "./navbar-data"
 
 export const fetchCache = 'default-cache'
@@ -32,7 +33,9 @@ export default function Layout({children, params}: {
     return <>
         <StationNavbarData id={decodeURIComponent(params.id)}/>
         <Scroll>
+            <FilterWhenRelative minutes={-30} title="Früher"/>
             {children}
+            <FilterWhenRelative minutes={+30} title="Später"/>
         </Scroll>
     </>
 }

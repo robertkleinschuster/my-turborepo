@@ -15,10 +15,10 @@ import {
 } from "konsta/react";
 import {Clock, Calendar} from "framework7-icons/react"
 import {usePathname, useRouter, useSearchParams, useSelectedLayoutSegment} from "next/navigation";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {addHours, addMinutes, formatISO, startOfMinute, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
-import type {HistoryItem} from "../store/history";
+import {HistoryItem, useHistory} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
 import Time from "./time";
@@ -37,15 +37,16 @@ export default function Filter({products, showTime = false}: {
     const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
     const [productsFilter, setProductsFilter] = useState<Set<string>>(new Set(searchParams.getAll('products')))
     const breadcrumb = useCurrentBreadcrumb()
+    const [whenOpen, setWhenOpen] = useState(false);
+    const [productsOpen, setProductsOpen] = useState(false)
 
     useEffect(() => {
-        const params: HistoryItem['params'] = {
-            query: searchParams.get('query'),
-            when: formatISO(startOfMinute(when)),
-            products: Array.from(productsFilter),
-            mode: segment,
+        if (searchParams.get('when')) {
+            setWhen(new Date(decodeURIComponent(searchParams.get('when') ?? '')))
         }
+    }, [searchParams]);
 
+    const applyFilter = useCallback((params: HistoryItem['params']) => {
         if (breadcrumb) {
             breadcrumb.params = params
             nav.replace(breadcrumb)
@@ -54,10 +55,30 @@ export default function Filter({products, showTime = false}: {
             addFilterParams(newSearchParams, params)
             router.replace(`${pathname}?${newSearchParams.toString()}`)
         }
-    }, [pathname, router, searchParams, when, productsFilter, nav, breadcrumb, segment])
+    }, [breadcrumb, nav, pathname, router, searchParams])
 
-    const [whenOpen, setWhenOpen] = useState(false);
-    const [productsOpen, setProductsOpen] = useState(false)
+    const applyWhen = useCallback((w: Date) => {
+        setWhen(w)
+        const params: HistoryItem['params'] = {
+            query: searchParams.get('query'),
+            when: formatISO(startOfMinute(w)),
+            products: Array.from(productsFilter),
+            mode: segment,
+        }
+        applyFilter(params)
+    }, [applyFilter, productsFilter, searchParams, segment])
+
+    const applyProductsFilter = useCallback((filter: Set<string>) => {
+        setProductsFilter(filter)
+        const params: HistoryItem['params'] = {
+            query: searchParams.get('query'),
+            when: formatISO(startOfMinute(when)),
+            products: Array.from(filter),
+            mode: segment,
+        }
+
+        applyFilter(params)
+    }, [applyFilter, searchParams, segment, when])
 
     return <>
         <Toolbar innerClassName="gap-2 !justify-start" top>
@@ -79,7 +100,7 @@ export default function Filter({products, showTime = false}: {
                     <input
                         className="border-none bg-transparent after:absolute after:w-full after:h-full after:left-0"
                         onChange={e => {
-                            setWhen(new Date(e.target.value))
+                            applyWhen(new Date(e.target.value))
                         }} type="date"
                         value={formatInputDate(when)}
                     />
@@ -111,7 +132,7 @@ export default function Filter({products, showTime = false}: {
                     <input
                         className="border-none bg-transparent after:absolute after:w-full after:h-full after:left-0"
                         onChange={e => {
-                            setWhen(new Date(e.target.value))
+                            applyWhen(new Date(e.target.value))
                         }}
                         type="datetime-local"
                         value={formatInputDatetimeLocal(when)}
@@ -120,33 +141,37 @@ export default function Filter({products, showTime = false}: {
 
 
                 <Button onClick={() => {
-                    setWhen(new Date())
-                }}>Jetzt</Button>
+                    applyWhen(new Date())
+                }} tonal>Jetzt</Button>
 
                 <Segmented>
                     <SegmentedButton
                         onClick={() => {
-                            setWhen(subHours(when, 1))
+                            applyWhen(subHours(when, 1))
                         }}
                     >- 1 std</SegmentedButton>
                     <SegmentedButton
                         onClick={() => {
-                            setWhen(addHours(when, 1))
+                            applyWhen(addHours(when, 1))
                         }}
                     >+ 1 std</SegmentedButton>
                 </Segmented>
                 <Segmented>
                     <SegmentedButton
                         onClick={() => {
-                            setWhen(subMinutes(when, 5))
+                            applyWhen(subMinutes(when, 5))
                         }}
                     >- 5 min</SegmentedButton>
                     <SegmentedButton
                         onClick={() => {
-                            setWhen(addMinutes(when, 5))
+                            applyWhen(addMinutes(when, 5))
                         }}
                     >+ 5 min</SegmentedButton>
                 </Segmented>
+
+                <Button onClick={() => {
+                    setWhenOpen(false)
+                }}>Anzeigen</Button>
             </div>
         </Popover>
 
@@ -167,7 +192,7 @@ export default function Filter({products, showTime = false}: {
                             onChange={() => {
                                 const newProductsFilter = new Set(productsFilter);
                                 newProductsFilter.has(product.id) ? newProductsFilter.delete(product.id) : newProductsFilter.add(product.id)
-                                setProductsFilter(newProductsFilter)
+                                applyProductsFilter(newProductsFilter)
                             }}
                         />
                     }

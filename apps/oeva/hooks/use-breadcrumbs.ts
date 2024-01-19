@@ -1,10 +1,11 @@
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import type {HistoryItem} from "../store/history";
-import {useHistory} from "../store/history";
+import {filterBreadcrumbs, useHistory} from "../store/history";
 
 export function useBreadcrumbs(): readonly HistoryItem[] {
-    const filterBreadcrumbs = useHistory(state => state.filterBreadcrumbs)
+    const historyItems = useHistory(state => state.items)
+    const updateBreadcrumbs = useHistory(state => state.updateBreadcrumbs)
     const params = useSearchParams()
     const [items, setItems] = useState<readonly HistoryItem[]>([])
 
@@ -15,10 +16,18 @@ export function useBreadcrumbs(): readonly HistoryItem[] {
         if (historySequence === '' || historySequence === null || historyRoot === '' || historyRoot === null) {
             setItems([])
         } else {
-            setItems(filterBreadcrumbs(Number.parseInt(historySequence), Number.parseInt(historyRoot)))
+            setItems(filterBreadcrumbs(historyItems, Number.parseInt(historySequence), Number.parseInt(historyRoot)))
         }
 
-    }, [filterBreadcrumbs, params])
+    }, [params, historyItems])
+
+    useEffect(() => {
+        const historyRoot = params.get('root')
+        const historySequence = params.get('sequence')
+        if (historySequence && historyRoot) {
+            updateBreadcrumbs(Number.parseInt(historySequence), Number.parseInt(historyRoot))
+        }
+    }, [params, updateBreadcrumbs])
 
     return items;
 }

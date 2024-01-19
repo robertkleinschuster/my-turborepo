@@ -1,4 +1,5 @@
-import {useRouter} from "next/navigation";
+import type {ReadonlyURLSearchParams} from "next/navigation";
+import { usePathname, useRouter, useSearchParams} from "next/navigation";
 import type {Alternative, Station, Trip} from "hafas-client";
 import type {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {useEffect, useState} from "react";
@@ -72,7 +73,13 @@ function createNav(
     historyUpdate: History['update'],
     prefetch: boolean,
     historyPrepare: History['prepare'],
+    currentPathname: string,
+    currentSearchParams: ReadonlyURLSearchParams
 ): Navigation {
+    const isCurrent = (href: string): boolean => {
+        return href === `${currentPathname}?${currentSearchParams.toString()}`
+    }
+
     return {
         refresh: () => {
             router.refresh()
@@ -161,8 +168,13 @@ function createNav(
             }
             if (path !== null) {
                 const newItem = historyPrepare(item.type, item.id, item.title, item.params)
+                newItem.info = item.info
                 const searchParams = buildSearchParams(newItem)
                 const href = `${path}?${searchParams.toString()}`
+
+                if (isCurrent(href)) {
+                    return;
+                }
 
                 if (prefetch) {
                     router.prefetch(href)
@@ -191,6 +203,10 @@ function createNav(
             if (path !== null) {
                 const searchParams = buildSearchParams(item)
                 const href = `${path}?${searchParams.toString()}`
+
+                if (isCurrent(href)) {
+                    return;
+                }
 
                 if (prefetch) {
                     router.prefetch(href)
@@ -353,6 +369,7 @@ function createNav(
             const path = `/app/stations`
 
             const item = historyPrepare('station_search', 'station_search', 'Stationen')
+            item.id = `${item.id}-${item.sequence}`
             const searchParams = buildSearchParams(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
@@ -366,6 +383,7 @@ function createNav(
             const path = `/app/trips`
 
             const item = historyPrepare('trip_search', 'trip_search', 'Fahrten')
+            item.id = `${item.id}-${item.sequence}`
             const searchParams = buildSearchParams(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
@@ -380,6 +398,8 @@ function createNav(
 
 export function useNavigation(): Navigation {
     const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
     const appId = useAppId()
     const historyPush = useHistory(state => state.push)
     const historyPrepare = useHistory(state => state.prepare)
@@ -388,17 +408,19 @@ export function useNavigation(): Navigation {
     const addStationToJourney = useJourneyPlanner(state => state.addStation)
     const addTripToJourney = useJourneyPlanner(state => state.addTrip)
 
-    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false, historyPrepare))
+    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false, historyPrepare, pathname, searchParams))
 
     useEffect(() => {
-        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false, historyPrepare))
-    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router, historyPrepare])
+        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, false, historyPrepare, pathname, searchParams))
+    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router, historyPrepare, pathname, searchParams])
 
     return nav;
 }
 
 export function usePrefetch(): Navigation {
     const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
     const appId = useAppId()
     const historyPush = useHistory(state => state.push)
     const historyPrepare = useHistory(state => state.prepare)
@@ -407,11 +429,11 @@ export function usePrefetch(): Navigation {
     const addStationToJourney = useJourneyPlanner(state => state.addStation)
     const addTripToJourney = useJourneyPlanner(state => state.addTrip)
 
-    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true, historyPrepare))
+    const [nav, setNav] = useState(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true, historyPrepare, pathname, searchParams))
 
     useEffect(() => {
-        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true, historyPrepare))
-    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router, historyPrepare])
+        setNav(createNav(router, historyPush, appId, recordJourney, addStationToJourney, addTripToJourney, historyUpdate, true, historyPrepare, pathname, searchParams))
+    }, [addStationToJourney, addTripToJourney, appId, historyPush, historyUpdate, recordJourney, router, historyPrepare, pathname, searchParams])
 
     return nav;
 }

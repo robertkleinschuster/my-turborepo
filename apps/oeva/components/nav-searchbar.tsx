@@ -4,8 +4,10 @@ import {Navbar, NavbarBackLink, Searchbar} from "konsta/react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import type {JSX} from "react";
 import React, { useEffect, useState} from "react";
+import {useNavigation} from "../hooks/use-navigation";
 
 export default function NavSearchbar({title}: { title: string }): JSX.Element {
+    const nav = useNavigation()
     const router = useRouter()
     const searchParams = useSearchParams()
     const pathname = usePathname()
@@ -30,7 +32,7 @@ export default function NavSearchbar({title}: { title: string }): JSX.Element {
     return <Navbar
         left={
             <NavbarBackLink onClick={() => {
-                router.push('/app/home')
+                nav.home()
             }} text="Zurück"/>
         }
         subnavbar={

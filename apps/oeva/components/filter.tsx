@@ -18,7 +18,7 @@ import {usePathname, useRouter, useSearchParams, useSelectedLayoutSegment} from 
 import React, {useCallback, useEffect, useState} from "react";
 import {addHours, addMinutes, formatISO, startOfMinute, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
-import {HistoryItem, useHistory} from "../store/history";
+import {HistoryItem} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
 import Time from "./time";

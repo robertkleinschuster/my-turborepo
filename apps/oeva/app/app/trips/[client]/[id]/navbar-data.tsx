@@ -3,7 +3,7 @@
 import React from "react";
 // eslint-disable-next-line camelcase -- nextjs
 import {unstable_cache} from "next/cache";
-import {type ClientCode, defaultClient, getClient} from '../../../../client/client'
+import {type ClientCode, getClient} from '../../../../../client/client'
 import TripNavbar from './navbar'
 
 const fetchCachedTrip = unstable_cache(async (id: string, clientCode: ClientCode) => {
@@ -11,8 +11,8 @@ const fetchCachedTrip = unstable_cache(async (id: string, clientCode: ClientCode
     return client.trip(id, undefined)
 }, ['trip'], {revalidate: false})
 
-export default async function TripNavbarData({id}: { id: string }): Promise<React.JSX.Element> {
-    const trip = await fetchCachedTrip(id, defaultClient)
+export default async function TripNavbarData({id, clientCode}: { id: string, clientCode: ClientCode }): Promise<React.JSX.Element> {
+    const trip = await fetchCachedTrip(id, clientCode)
 
     const lineName = trip.trip.line?.name ?? '';
 

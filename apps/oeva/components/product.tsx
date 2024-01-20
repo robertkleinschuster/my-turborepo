@@ -1,47 +1,26 @@
-import type { ProductType } from "hafas-client";
 import React from "react";
+import type {Mode} from "../client/client";
 
-export default function Product({ product }: { product: ProductType }): React.JSX.Element {
-    if (product.id === 'train-and-s-bahn') {
+export default function Product({ product }: { product: Mode }): React.JSX.Element {
+    if (product.id === 'train') {
         return <span className="class-a-modern-train" />
     }
 
-    if (product.id === 'tram') {
-        return <span className="class-a-haf-prod-tram" />
-    }
-
-    if (product.id === 'u-bahn') {
-        return <span className="class-a-haf-prod-ubahn" />
-    }
-
-    if (product.id === 'city-bus') {
-        return <span className="class-haf_prod_bus" />
-    }
-
-    if (product.id === 'regional-bus') {
+    if (product.id === 'bus') {
         return <span className="class-a-bus" />
     }
 
-    if (product.id === 'long-distance-bus') {
-        return <span className="class-m-ic-bus" />
+    if (product.id === 'gondola') {
+        return <span className="class-a-ablecar" />
     }
 
-    if (product.id === 'other-bus') {
-        return <span className="class-m-bus" />
-    }
-
-    if (product.id === 'aerial-lift') {
-        return <span className="class-a-haf-prod-cablecar" />
-    }
-
-    if (product.id === 'ferry') {
+    if (product.id === 'watercraft') {
         return <span className="class-a-haf-prod-ship" />
     }
 
-
-    if (product.id === 'on-call') {
+    if (product.id === 'taxi') {
         return <span className="class-a-haf-prod-ast" />
     }
 
-    return <span>{product.short}</span>
+    return <span>{product.name}</span>
 }

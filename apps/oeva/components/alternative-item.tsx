@@ -1,20 +1,22 @@
-import type {Alternative, ProductType} from "hafas-client";
+import type {Alternative} from "hafas-client";
 import React, {useEffect, useRef} from "react";
 import {useLongPress} from "use-long-press";
 import {addMinutes, parseISO} from "date-fns";
 import {Icon, ListItem} from "konsta/react";
+import {ExclamationmarkTriangle} from "framework7-icons/react"
 import {useIsVisible} from "../hooks/use-is-visible";
 import {useNavigation, usePrefetch} from "../hooks/use-navigation";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
+import type {ClientCode, Mode} from "../client/client";
 import TimeDelay from "./time-delay";
 import {Platform} from "./platform";
 import RemarkSummary from "./remark-summary";
 import AlternativeTitle from "./alternative-title";
-import {ExclamationmarkTriangle} from "framework7-icons/react"
 
-export function AlternativeItem({alternative, products, onLongPress}: {
+export function AlternativeItem({alternative, client, modes, onLongPress}: {
     alternative: Alternative,
-    products: readonly ProductType[],
+    client: ClientCode,
+    modes: readonly Mode[],
     onLongPress: () => void
 }): React.JSX.Element {
     const ref = useRef<HTMLSpanElement>(null)
@@ -32,9 +34,9 @@ export function AlternativeItem({alternative, products, onLongPress}: {
 
     useEffect(() => {
         if (isVisible) {
-            prefetch.alternative(alternative)
+            prefetch.alternative(client, alternative)
         }
-    }, [alternative, isVisible, prefetch]);
+    }, [alternative, client, isVisible, prefetch]);
 
     const walkingMeterPerMinute = 75;
 
@@ -60,9 +62,9 @@ export function AlternativeItem({alternative, products, onLongPress}: {
         </span>}
         link
         onClick={() => {
-            nav.alternative(alternative)
+            nav.alternative(client, alternative)
         }}
         subtitle={<RemarkSummary cancelled={alternative.cancelled} remarks={alternative.remarks}/>}
-        title={<AlternativeTitle alternative={alternative} products={products} ref={ref}/>}
+        title={<AlternativeTitle alternative={alternative} modes={modes} ref={ref}/>}
     />
 }

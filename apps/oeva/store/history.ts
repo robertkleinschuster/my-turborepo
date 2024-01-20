@@ -1,5 +1,6 @@
 import {create} from "zustand";
 import {persist} from 'zustand/middleware'
+import type {ClientCode} from "../client/client";
 
 export interface History {
     items: readonly HistoryItem[],
@@ -16,6 +17,7 @@ interface BaseHistoryItem {
     id: string,
     root: number,
     sequence: number,
+    client?: ClientCode | undefined | null,
     type: 'trip' | 'station' | 'trip_search' | 'station_search' | 'history' | 'journeys' | 'settings',
     title: string,
     added: string,

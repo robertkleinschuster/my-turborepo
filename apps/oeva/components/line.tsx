@@ -1,9 +1,10 @@
-import type { Line, ProductType } from "hafas-client";
+import type { Line } from "hafas-client";
 import React from "react";
+import type {Mode} from "../client/client";
 import Product from "./product";
 
-export default function Line({ line, products }: { line: Line, products: readonly ProductType[] }): React.JSX.Element {
-    if (line.product === 'train-and-s-bahn') {
+export default function Line({ line, modes }: { line: Line, modes: readonly Mode[] }): React.JSX.Element {
+    if (line.mode === 'train') {
         if (line.productName === 'ICE') {
             return <><span className="class-a-ice" /> {line.fahrtNr}</>
         }
@@ -60,13 +61,16 @@ export default function Line({ line, products }: { line: Line, products: readonl
             return <><span className="class-a-sbahn" /> {line.name.substring(1)}</>
         }
 
-        return <><span className="class-a-modern-train" /> {line.name}</>
+        if (line.product === 'tram') {
+            return <span className="class-a-haf-prod-tram" />
+        }
     }
+
     const lineName = line.name ?? line.fahrtNr
 
-    for (const product of products) {
-        if (product.id === line.product) {
-            return <><Product product={product} /> {lineName}</>
+    for (const mode of modes) {
+        if (mode.id === line.mode) {
+            return <><Product product={mode} /> {lineName}</>
         }
     }
 

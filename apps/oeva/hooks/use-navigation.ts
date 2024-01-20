@@ -6,15 +6,14 @@ import {useEffect, useState} from "react";
 import type {HistoryItem, History} from "../store/history";
 import {useHistory} from "../store/history";
 import {useAppId} from "../store/app-id";
+import type {ClientCode} from "../client/client-code";
+import { ClientCodeDefault} from "../client/client-code";
+import {useSettings} from "../store/settings";
 
 interface Navigation {
-    trip: (id: string, when: string | null, title: string) => void,
-    tripObj: (trip: Trip) => void,
-    alternative: (alternative: Alternative) => void,
-    tripNoHistory: (id: string) => void,
-    station: (id: string, when: string | null, title: string, products?: string[], station?: Station) => void,
-    stationObj: (station: Station|Stop|Location, when?: string | null, products?: string[] | null) => void,
-    stationNoHistory: (id: string, when: string | null) => void,
+    tripObj: (client: ClientCode, trip: Trip) => void,
+    alternative: (client: ClientCode, alternative: Alternative) => void,
+    stationObj: (client: ClientCode, station: Station | Stop | Location, when?: string | null, products?: string[] | null) => void,
     push: (item: HistoryItem) => void
     replace: (item: HistoryItem) => void
     push_breadcrumb: (item: HistoryItem) => void
@@ -61,6 +60,42 @@ export function addFilterParams(searchParams: URLSearchParams, params: HistoryIt
     }
 }
 
+export function buildPath(item: HistoryItem): string | null {
+    const client = item.client ?? ClientCodeDefault.DEFAULT
+
+    if (item.type === 'settings') {
+        return `/app/settings`
+    }
+
+    if (item.type === 'history') {
+        return `/app/history`
+    }
+
+    if (item.type === 'trip_search') {
+        return `/app/trips/${client}`
+    }
+
+    if (item.type === 'station_search') {
+        return `/app/stations/${client}`
+    }
+
+    if (item.type === 'trip') {
+        return `/app/trips/${client}/${encodeURIComponent(item.id)}`
+    }
+
+    if (item.type === 'station') {
+        if (item.params?.mode === 'arrivals') {
+            return `/app/stations/${client}/${encodeURIComponent(item.id)}/arrivals`
+        } else if (item.params?.mode === 'nearby') {
+            return `/app/stations/${client}/${encodeURIComponent(item.id)}/nearby`
+        } else {
+            return `/app/stations/${client}/${encodeURIComponent(item.id)}/departures`
+        }
+    }
+
+    return null
+}
+
 
 function createNav(
     router: AppRouterInstance,
@@ -70,7 +105,8 @@ function createNav(
     prefetch: boolean,
     historyPrepare: History['prepare'],
     currentPathname: string,
-    currentSearchParams: ReadonlyURLSearchParams
+    currentSearchParams: ReadonlyURLSearchParams,
+    settingsClient: ClientCode | null
 ): Navigation {
     const isCurrent = (href: string): boolean => {
         return href === `${currentPathname}?${currentSearchParams.toString()}`
@@ -116,10 +152,9 @@ function createNav(
             }
         },
         history_overview: (rootItem: HistoryItem | null = null) => {
-            const path = `/app/history`
-
             const item = historyPrepare('history', 'history', 'Zuletzt verwendet')
             const searchParams = buildSearchParams(item)
+            const path = buildPath(item)
             if (rootItem?.children?.length) {
                 searchParams.set('filterRoot', rootItem.root.toString())
                 searchParams.set('filterSequence', rootItem.children[rootItem.children.length - 1].sequence.toString())
@@ -134,10 +169,9 @@ function createNav(
             }
         },
         settings: () => {
-            const path = `/app/settings`
-
             const item = historyPrepare('settings', 'settings', 'Einstellungen')
             const searchParams = buildSearchParams(item)
+            const path = buildPath(item)
             const href = `${path}?${searchParams.toString()}`
 
             if (prefetch) {
@@ -148,24 +182,10 @@ function createNav(
             }
         },
         push: (item: HistoryItem) => {
-            let path: null | string = null
-            if (item.type === 'trip') {
-                path = `/app/trips/${encodeURIComponent(item.id)}`
-            }
-            if (item.type === 'station') {
-                if (item.params?.mode === 'arrivals') {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
-                } else if (item.params?.mode === 'nearby') {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/nearby`
-                } else {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/departures`
-                }
-            }
-            if (item.type === 'trip_search') {
-                path = `/app/trips`
-            }
+            const path = buildPath(item)
             if (path !== null) {
                 const newItem = historyPrepare(item.type, item.id, item.title, item.params)
+                newItem.client = item.client
                 newItem.info = item.info
                 const searchParams = buildSearchParams(newItem)
                 const href = `${path}?${searchParams.toString()}`
@@ -183,23 +203,7 @@ function createNav(
             }
         },
         replace: (item: HistoryItem) => {
-            let path: null | string = null
-            if (item.type === 'trip') {
-                path = `/app/trips/${encodeURIComponent(item.id)}`
-            }
-            if (item.type === 'trip_search') {
-                path = `/app/trips`
-            }
-            if (item.type === 'station') {
-                if (item.params?.mode === 'arrivals') {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
-                } else if (item.params?.mode === 'nearby') {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/nearby`
-                } else {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/departures`
-                }
-            }
-
+            const path = buildPath(item)
             if (path !== null) {
                 const searchParams = buildSearchParams(item)
                 const href = `${path}?${searchParams.toString()}`
@@ -217,29 +221,11 @@ function createNav(
             }
         },
         push_breadcrumb: (item: HistoryItem) => {
-            let path: null | string = null
-            let createNewItem = false
-            if (item.type === 'trip') {
-                path = `/app/trips/${encodeURIComponent(item.id)}`
-            }
-            if (item.type === 'station') {
-                if (item.params?.mode === 'arrivals') {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/arrivals`
-                } else {
-                    path = `/app/stations/${encodeURIComponent(item.id)}/departures`
-                }
-            }
-            if (item.type === 'station_search') {
-                createNewItem = true
-                path = `/app/stations`
-            }
-            if (item.type === 'trip_search') {
-                createNewItem = true
-                path = `/app/trips`
-            }
+            const path = buildPath(item)
             if (path !== null) {
-                if (createNewItem) {
+                if (item.type === 'station_search' || item.type === 'trip_search') {
                     const newItem = historyPrepare(item.type, item.id, item.title, item.params)
+                    newItem.client = item.client
                     const searchParams = buildSearchParams(newItem)
                     const href = `${path}?${searchParams.toString()}`
                     if (prefetch) {
@@ -259,26 +245,12 @@ function createNav(
                 }
             }
         },
-        trip: (id: string, when: string | null, title: string) => {
-            const path = `/app/trips/${encodeURIComponent(id)}`
-
-            const item = historyPrepare('trip', id, title, {when})
-            const searchParams = buildSearchParams(item)
-            const href = `${path}?${searchParams.toString()}`
-
-            if (prefetch) {
-                router.prefetch(href)
-            } else {
-                historyPush(item)
-                router.push(href)
-            }
-        },
-        alternative: (alternative: Alternative) => {
+        alternative: (client, alternative: Alternative) => {
             const id = alternative.tripId;
-            const path = `/app/trips/${encodeURIComponent(id)}`
             const line = alternative.line;
             const when = alternative.plannedWhen ?? null
             const item = historyPrepare('trip', id, line?.name ?? '', {when})
+            item.client = client
             item.info = {
                 line: line?.name ?? null,
                 product: alternative.line?.product ?? null,
@@ -287,6 +259,7 @@ function createNav(
                 origin: alternative.origin?.name ?? null,
                 provenance: alternative.provenance ?? null,
             }
+            const path = buildPath(item)
             const searchParams = buildSearchParams(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
@@ -296,12 +269,12 @@ function createNav(
                 router.push(href)
             }
         },
-        tripObj: (trip: Trip) => {
+        tripObj: (client, trip: Trip) => {
             const id = trip.id;
-            const path = `/app/trips/${encodeURIComponent(id)}`
             const line = trip.line;
             const when = trip.plannedDeparture ?? trip.plannedArrival ?? null
             const item = historyPrepare('trip', id, line?.name ?? '', {when})
+            item.client = client
             item.info = {
                 line: line?.name ?? null,
                 product: line?.product ?? null,
@@ -310,6 +283,7 @@ function createNav(
                 origin: trip.origin?.name ?? null,
             }
             const searchParams = buildSearchParams(item)
+            const path = buildPath(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
                 router.prefetch(href)
@@ -318,43 +292,16 @@ function createNav(
                 router.push(href)
             }
         },
-        tripNoHistory: (id: string) => {
-            if (prefetch) {
-                router.prefetch(`/app/trips/${encodeURIComponent(id)}`)
-            } else {
-                router.push(`/app/trips/${encodeURIComponent(id)}`)
-            }
-        },
-        station: (id: string, when: string | null, title: string, products?: string[]) => {
-            const path = `/app/stations/${encodeURIComponent(id)}/departures`;
-
-            const item = historyPrepare('station', id, title, {when})
-            const searchParams = buildSearchParams(item)
-            if (products) {
-                products.forEach(product => {
-                    searchParams.append('products', product)
-                })
-            }
-
-            const href = `${path}?${searchParams.toString()}`
-            if (prefetch) {
-                router.prefetch(href)
-            } else {
-                historyPush(item)
-                router.push(href)
-            }
-        },
-        stationObj: (station: Station|Stop|Location, when: string | null = null, products: string[] | null = null) => {
+        stationObj: (client: ClientCode, station: Station | Stop | Location, when: string | null = null, products: string[] | null = null) => {
             if (!station.id) {
                 return;
             }
-            const path = `/app/stations/${encodeURIComponent(station.id)}/departures`;
             const item = historyPrepare('station', station.id, station.name ?? '', {when, products})
-
+            item.client = client
             item.info = {
                 distance: station.distance?.toString() ?? null
             }
-
+            const path = buildPath(item)
             const searchParams = buildSearchParams(item)
             const href = `${path}?${searchParams.toString()}`
 
@@ -365,21 +312,12 @@ function createNav(
                 router.push(href)
             }
         },
-        stationNoHistory: (id: string, when: string | null) => {
-            const path = `/app/stations/${encodeURIComponent(id)}/departures?when=${encodeURIComponent(when ?? '')}`
-
-            if (prefetch) {
-                router.prefetch(path)
-            } else {
-                router.push(path)
-            }
-        },
         stations: () => {
-            const path = `/app/stations`
-
             const item = historyPrepare('station_search', 'station_search', 'Stationen')
             item.id = `${item.id}-${item.sequence}`
+            item.client = settingsClient
             const searchParams = buildSearchParams(item)
+            const path = buildPath(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
                 router.prefetch(href)
@@ -389,11 +327,11 @@ function createNav(
             }
         },
         trips: () => {
-            const path = `/app/trips`
-
             const item = historyPrepare('trip_search', 'trip_search', 'Fahrten')
             item.id = `${item.id}-${item.sequence}`
+            item.client = settingsClient
             const searchParams = buildSearchParams(item)
+            const path = buildPath(item)
             const href = `${path}?${searchParams.toString()}`
             if (prefetch) {
                 router.prefetch(href)
@@ -413,12 +351,12 @@ export function useNavigation(): Navigation {
     const historyPush = useHistory(state => state.push)
     const historyPrepare = useHistory(state => state.prepare)
     const historyUpdate = useHistory(state => state.update)
-
-    const [nav, setNav] = useState(createNav(router, historyPush, appId, historyUpdate, false, historyPrepare, pathname, searchParams))
+    const settingsClient = useSettings(state => state.client)
+    const [nav, setNav] = useState(createNav(router, historyPush, appId, historyUpdate, false, historyPrepare, pathname, searchParams, settingsClient))
 
     useEffect(() => {
-        setNav(createNav(router, historyPush, appId, historyUpdate, false, historyPrepare, pathname, searchParams))
-    }, [appId, historyPush, historyUpdate, router, historyPrepare, pathname, searchParams])
+        setNav(createNav(router, historyPush, appId, historyUpdate, false, historyPrepare, pathname, searchParams, settingsClient))
+    }, [appId, historyPush, historyUpdate, router, historyPrepare, pathname, searchParams, settingsClient])
 
     return nav;
 }
@@ -431,12 +369,13 @@ export function usePrefetch(): Navigation {
     const historyPush = useHistory(state => state.push)
     const historyPrepare = useHistory(state => state.prepare)
     const historyUpdate = useHistory(state => state.update)
+    const settingsClient = useSettings(state => state.client)
 
-    const [nav, setNav] = useState(createNav(router, historyPush, appId, historyUpdate, true, historyPrepare, pathname, searchParams))
+    const [nav, setNav] = useState(createNav(router, historyPush, appId, historyUpdate, true, historyPrepare, pathname, searchParams, settingsClient))
 
     useEffect(() => {
-        setNav(createNav(router, historyPush, appId, historyUpdate, true, historyPrepare, pathname, searchParams))
-    }, [appId, historyPush, historyUpdate, router, historyPrepare, pathname, searchParams])
+        setNav(createNav(router, historyPush, appId, historyUpdate, true, historyPrepare, pathname, searchParams, settingsClient))
+    }, [appId, historyPush, historyUpdate, router, historyPrepare, pathname, searchParams, settingsClient])
 
     return nav;
 }

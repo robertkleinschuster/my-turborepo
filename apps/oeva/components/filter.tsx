@@ -1,6 +1,5 @@
 "use client"
 
-import type {ProductType} from "hafas-client";
 import {
     Button,
     Chip,
@@ -21,11 +20,12 @@ import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
 import type {HistoryItem} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
+import type {Mode} from "../client/client";
 import Time from "./time";
 import Product from "./product";
 
 export default function Filter({products, showTime = false, productsOnly}: {
-    products: readonly ProductType[],
+    products: readonly Mode[],
     showTime?: boolean,
     productsOnly?: boolean
 }): React.JSX.Element {
@@ -113,7 +113,7 @@ export default function Filter({products, showTime = false, productsOnly}: {
             <Button className="filter-products !w-auto gap-1" onClick={() => {
                 setProductsOpen(true)
             }} rounded tonal>
-                <span>{productsFilter.size ? 'Verkehrsmittel:' : 'Verkehrsmittel wählen'}</span>
+                <span>{productsFilter.size ? 'Verkehrsmittel:' : 'Verkehrsmittel'}</span>
                 {products.filter(product => productsFilter.has(product.id)).map(product =>
                     <Product key={product.id} product={product}/>
                 )}
@@ -187,7 +187,7 @@ export default function Filter({products, showTime = false, productsOnly}: {
             target=".filter-products"
         >
             <List nested>
-                {products.map(product => <ListItem
+                {products.filter(mode => mode.filter).map(product => <ListItem
                     after={
                         <Toggle
                             checked={productsFilter.has(product.id)}

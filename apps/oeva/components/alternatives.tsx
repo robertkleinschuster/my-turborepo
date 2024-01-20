@@ -1,14 +1,16 @@
 "use client"
 
-import type {Alternative, ProductType} from "hafas-client";
+import type {Alternative} from "hafas-client";
 import {Block, List} from 'konsta/react'
 import React, {useState} from "react";
+import type {ClientCode, Mode} from "../client/client";
 import {RemarksPanel} from "./remarks-panel";
 import {AlternativeItem} from "./alternative-item";
 
-export default function Alternatives({alternatives, products}: {
+export default function Alternatives({alternatives, client, modes}: {
     alternatives: readonly Alternative[],
-    products: readonly ProductType[]
+    client: ClientCode,
+    modes: readonly Mode[]
 }): React.JSX.Element {
     const [showPanel, setShowPanel] = useState(false)
     const [subject, setSubject] = useState<Alternative | null>(null)
@@ -20,11 +22,12 @@ export default function Alternatives({alternatives, products}: {
             <List inset strong>
                 {alternatives.map(alternative => <AlternativeItem
                     alternative={alternative}
-                    key={alternative.tripId + alternative.when} onLongPress={() => {
+                    client={client}
+                    key={alternative.tripId + alternative.when} modes={modes}
+                    onLongPress={() => {
                         setSubject(alternative)
                         setShowPanel(true)
                     }}
-                    products={products}
                 />)}
             </List>
         )}

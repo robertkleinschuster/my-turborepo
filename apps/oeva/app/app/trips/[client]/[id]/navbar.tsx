@@ -4,8 +4,8 @@ import type {Operator as OperatorType} from "hafas-client";
 import {Button, Icon, Navbar, NavbarBackLink} from "konsta/react"
 import React from "react";
 import {ArrowClockwise} from "framework7-icons/react"
-import Operator from "../../../../components/operator";
-import {useNavigation} from "../../../../hooks/use-navigation";
+import Operator from "../../../../../components/operator";
+import {useNavigation} from "../../../../../hooks/use-navigation";
 
 export default function TripNavbar({title, subtitle, operator}: {
     title: string,

@@ -1,21 +1,22 @@
 import dynamic from "next/dynamic";
 import {ListItem} from "konsta/react";
 import type {JSX} from "react";
-import { useEffect, useRef} from "react";
-import React from "react";
+import React, { useEffect, useRef} from "react";
 import {useLongPress} from "use-long-press";
-import type {ProductType, StopOver} from "hafas-client";
+import type { StopOver} from "hafas-client";
 import {useNavigation, usePrefetch} from "../hooks/use-navigation";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {useIsVisible} from "../hooks/use-is-visible";
+import type {ClientCode, Mode} from "../client/client";
 import StopProducts from "./stop-products";
 import {StopoverDeparture} from "./stopover-departure";
 import {StopoverArrival} from "./stopover-arrival";
 import RemarkSummary from "./remark-summary";
 
-const StopoverItem = dynamic(() => Promise.resolve(({stopover, products, onLongPress}: {
+const StopoverItem = dynamic(() => Promise.resolve(({client, stopover, products, onLongPress}: {
     stopover: StopOver,
-    products: readonly ProductType[],
+    client: ClientCode,
+    products: readonly Mode[],
     onLongPress: () => void
 }): JSX.Element => {
     const ref = useRef(null)
@@ -35,9 +36,9 @@ const StopoverItem = dynamic(() => Promise.resolve(({stopover, products, onLongP
 
     useEffect(() => {
         if (!isPast && isVisible && stopover.stop?.id) {
-            prefetch.station(stopover.stop.id, stopover.arrival ?? stopover.departure ?? '', stopover.stop.name ?? '')
+            prefetch.stationObj(client, stopover.stop, stopover.arrival ?? stopover.departure ?? null)
         }
-    }, [isVisible, isPast, prefetch, stopover]);
+    }, [isVisible, isPast, prefetch, stopover, client]);
 
     return <ListItem
         {...longPress()}
@@ -50,8 +51,8 @@ const StopoverItem = dynamic(() => Promise.resolve(({stopover, products, onLongP
         key={(stopover.stop?.id ?? '') + (stopover.arrival ?? stopover.departure)}
         link={!isPast}
         onClick={() => {
-            if (!isPast) {
-                stopover.stop?.id && nav.station(stopover.stop.id, stopover.arrival ?? stopover.departure ?? '', stopover.stop.name ?? '')
+            if (!isPast && stopover.stop) {
+                nav.stationObj(client, stopover.stop, stopover.arrival ?? stopover.departure ?? null)
             }
         }}
         subtitle={<RemarkSummary cancelled={!stopover.departure && !stopover.arrival} remarks={stopover.remarks}/>}

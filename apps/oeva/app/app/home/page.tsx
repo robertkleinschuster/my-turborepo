@@ -29,9 +29,6 @@ export default function Home(): JSX.Element {
                 <ListItem link onClick={() => {
                     nav.history_overview()
                 }} title="Zuletzt verwendet"/>
-                <ListItem link onClick={() => {
-                    nav.journeys()
-                }} title="Meine Reisen"/>
             </List>
 
             <List inset strong>

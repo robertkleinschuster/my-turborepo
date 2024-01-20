@@ -1,22 +1,25 @@
 "use client"
 
 import {Button, Icon, Navbar, NavbarBackLink, Segmented, SegmentedButton} from "konsta/react"
-import {useSearchParams, useSelectedLayoutSegment, useRouter} from "next/navigation";
+import {useSearchParams, useSelectedLayoutSegment, useRouter, usePathname} from "next/navigation";
 import React from "react";
-import type {ProductType} from "hafas-client";
 import {ArrowClockwise} from "framework7-icons/react"
-import Filter from "../../../../components/filter";
-import {useCurrentBreadcrumb} from "../../../../hooks/use-breadcrumbs";
+import Filter from "../../../../../components/filter";
+import {useCurrentBreadcrumb} from "../../../../../hooks/use-breadcrumbs";
+import type {Mode} from "../../../../../client/client";
+import type {StationHistoryItem} from "../../../../../store/history";
 
-export default function StationNavbar({id, title, products}: {
-    id: string,
+export default function StationNavbar({title, products}: {
     title: string,
-    products: readonly ProductType[]
+    products: readonly Mode[]
 }): React.JSX.Element {
     const segment = useSelectedLayoutSegment();
     const router = useRouter()
     const searchParams = useSearchParams()
-    const breadcrumb = useCurrentBreadcrumb()
+    const pathname = usePathname()
+    const breadcrumb = useCurrentBreadcrumb() as StationHistoryItem | null
+    const parts = pathname.split('/')
+    const basePath = parts.slice(0, parts.length - 1).join('/')
 
     return <><Navbar
         left={
@@ -30,24 +33,25 @@ export default function StationNavbar({id, title, products}: {
         subnavbar={
             <Segmented strong>
                 <SegmentedButton active={segment === 'departures'} onClick={() => {
-                    router.replace(`/app/stations/${id}/departures?${searchParams.toString()}`)
+                    router.replace(`${basePath}/departures?${searchParams.toString()}`)
                 }} strong>
                     Abfahrten
                 </SegmentedButton>
                 <SegmentedButton active={segment === 'arrivals'} onClick={() => {
-                    router.replace(`/app/stations/${id}/arrivals?${searchParams.toString()}`)
+                    router.replace(`${basePath}/arrivals?${searchParams.toString()}`)
                 }} strong>
                     Ankünfte
                 </SegmentedButton>
                 <SegmentedButton active={segment === 'nearby'} onClick={() => {
-                    router.replace(`/app/stations/${id}/nearby?${searchParams.toString()}`)
+                    router.replace(`${basePath}/nearby?${searchParams.toString()}`)
                 }} strong>
                     In der Nähe
                 </SegmentedButton>
             </Segmented>
 
         }
-        subtitle={breadcrumb?.type === 'station' && breadcrumb.info?.distance ? <>{breadcrumb.info.distance} m Fußweg von {breadcrumb.previous?.title}</> : null}
+        subtitle={breadcrumb?.type === 'station' && breadcrumb.info?.distance ? <>{breadcrumb.info.distance} m Fußweg
+            von {breadcrumb.previous?.title}</> : null}
         subtitleClassName="truncate"
         title={title}
         titleClassName="truncate w-1/2"

@@ -100,45 +100,14 @@ export default function Journey(): JSX.Element {
                     item={leg}
                     key={leg.id}
                     link
-                    onClick={() => {
-                        if (leg.extType === 'STATION' && leg.extId) {
-                            if (planning?.id === journey.id) {
-                                nav.stationNoHistory(leg.extId, leg.timeStart?.toISOString() ?? null)
-                            } else {
-                                nav.station(leg.extId, leg.timeStart?.toISOString() ?? null, leg.name)
-                            }
-                        }
-                        if (leg.extType === 'TRIP' && leg.extId) {
-                            if (planning?.id === journey.id) {
-                                nav.tripNoHistory(leg.extId)
-                            } else {
-                                nav.trip(leg.extId, leg.timeStart?.toISOString() ?? null, leg.name)
-                            }
-                        }
-                    }}
+
                     title={leg.name}
                 />)}
                 {planning?.legs?.map((leg, i) => <ListItem
                     header={<Time time={typeof leg.timeStart === 'string' ? new Date(leg.timeStart) : leg.timeStart}/>}
                     key={i}
                     link
-                    onClick={() => {
-                        const when = typeof leg.timeStart === 'string' ? leg.timeStart : leg.timeStart?.toISOString() ?? null
-                        if (leg.extType === 'STATION' && leg.extId) {
-                            if (planning.id === journey.id) {
-                                nav.stationNoHistory(leg.extId, when)
-                            } else {
-                                nav.station(leg.extId, when, leg.name)
-                            }
-                        }
-                        if (leg.extType === 'TRIP' && leg.extId) {
-                            if (planning.id === journey.id) {
-                                nav.tripNoHistory(leg.extId)
-                            } else {
-                                nav.trip(leg.extId, when ?? null, leg.name)
-                            }
-                        }
-                    }}
+
                     subtitle="in Planung"
                     title={leg.name}
                 />)}

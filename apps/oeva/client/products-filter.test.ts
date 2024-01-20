@@ -20,13 +20,21 @@ describe('buildProductsFilter', () => {
                 mode: 'train',
                 default: false,
                 bitmasks: []
+            },   {
+                id: 'bus',
+                name: 'Bus',
+                short: 'Bus',
+                mode: 'bus',
+                default: false,
+                bitmasks: []
             }
         ];
-        const filter = buildProductsFilter(available, ['tram']);
+        const filter = buildProductsFilter(available, ['train']);
 
         expect(filter).toEqual({
             tram: true,
-            train: false
+            train: true,
+            bus: false,
         })
     })
     it('should return empty object for null or empty list', () => {

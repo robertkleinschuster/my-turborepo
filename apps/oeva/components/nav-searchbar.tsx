@@ -5,8 +5,10 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import type {JSX} from "react";
 import React, { useEffect, useState} from "react";
 import {useNavigation} from "../hooks/use-navigation";
+import {ClientCode} from "../client/client-code";
+import {ClientName} from "./client-name";
 
-export default function NavSearchbar({title}: { title: string }): JSX.Element {
+export default function NavSearchbar({title, client}: { title: string, client: ClientCode }): JSX.Element {
     const nav = useNavigation()
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -45,7 +47,7 @@ export default function NavSearchbar({title}: { title: string }): JSX.Element {
                 value={searchQuery}
             />
         }
+        subtitle={<ClientName clientCode={client}/>}
         title={title}
-
     />
 }

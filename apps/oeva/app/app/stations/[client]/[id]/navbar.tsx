@@ -6,11 +6,13 @@ import React from "react";
 import {ArrowClockwise} from "framework7-icons/react"
 import Filter from "../../../../../components/filter";
 import {useCurrentBreadcrumb} from "../../../../../hooks/use-breadcrumbs";
-import type {Mode} from "../../../../../client/client";
+import type {ClientCode, Mode} from "../../../../../client/client";
 import type {StationHistoryItem} from "../../../../../store/history";
+import {ClientName} from "../../../../../components/client-name";
 
-export default function StationNavbar({title, products}: {
+export default function StationNavbar({title, client, products}: {
     title: string,
+    client: ClientCode
     products: readonly Mode[]
 }): React.JSX.Element {
     const segment = useSelectedLayoutSegment();
@@ -50,8 +52,12 @@ export default function StationNavbar({title, products}: {
             </Segmented>
 
         }
-        subtitle={breadcrumb?.type === 'station' && breadcrumb.info?.distance ? <>{breadcrumb.info.distance} m Fußweg
-            von {breadcrumb.previous?.title}</> : null}
+        subtitle={
+        <>
+            <p><ClientName clientCode={client}/></p>
+            {breadcrumb?.type === 'station' && breadcrumb.info.distance ? <p>{breadcrumb.info.distance} m Fußweg on {breadcrumb.previous?.title}</p> : null}
+        </>
+    }
         subtitleClassName="truncate"
         title={title}
         titleClassName="truncate w-1/2"

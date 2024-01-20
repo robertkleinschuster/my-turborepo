@@ -12,7 +12,7 @@ export default function Layout({children, params}: {
     const client = getClient(params.client)
 
     return <>
-        <NavSearchbar title="Fahrten"/>
+        <NavSearchbar client={client.code} title="Fahrten"/>
         <Filter products={client.modes}/>
         <Scroll>
             {children}

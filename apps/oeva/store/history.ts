@@ -83,6 +83,7 @@ function prepareItem(state: History, type: HistoryItem['type'], id: string, titl
         breadcrumbs: true,
         previous: null,
         next: null,
+        info: {},
     }
 }
 

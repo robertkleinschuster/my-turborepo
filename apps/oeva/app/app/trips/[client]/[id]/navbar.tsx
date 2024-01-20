@@ -6,10 +6,13 @@ import React from "react";
 import {ArrowClockwise} from "framework7-icons/react"
 import Operator from "../../../../../components/operator";
 import {useNavigation} from "../../../../../hooks/use-navigation";
+import type {ClientCode} from "../../../../../client/client-code";
+import {ClientName} from "../../../../../components/client-name";
 
-export default function TripNavbar({title, subtitle, operator}: {
+export default function TripNavbar({title, subtitle, operator, client}: {
     title: string,
     subtitle: string,
+    client: ClientCode
     operator: OperatorType | undefined
 }): React.JSX.Element {
     const nav = useNavigation()
@@ -26,7 +29,10 @@ export default function TripNavbar({title, subtitle, operator}: {
                 nav.refresh()
             }}><Icon ios={<ArrowClockwise/>}/></Button>
     </span>}
-        subtitle={subtitle}
+        subtitle={<>
+            <p><ClientName clientCode={client}/></p>
+            <p>{subtitle}</p>
+        </>}
         title={title}
         titleClassName="truncate w-1/2"
     />

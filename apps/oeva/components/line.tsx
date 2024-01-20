@@ -4,7 +4,13 @@ import type {Mode} from "../client/client";
 import Product from "./product";
 
 export default function Line({ line, modes }: { line: Line, modes: readonly Mode[] }): React.JSX.Element {
+    const lineName = line.name ?? line.fahrtNr
+
     if (line.mode === 'train') {
+        if (line.product === 'tram') {
+            return <><span className="class-a-haf-prod-tram" /> {lineName}</>
+        }
+
         if (line.productName === 'ICE') {
             return <><span className="class-a-ice" /> {line.fahrtNr}</>
         }
@@ -60,13 +66,8 @@ export default function Line({ line, modes }: { line: Line, modes: readonly Mode
         if (line.name?.startsWith('S')) {
             return <><span className="class-a-sbahn" /> {line.name.substring(1)}</>
         }
-
-        if (line.product === 'tram') {
-            return <span className="class-a-haf-prod-tram" />
-        }
     }
 
-    const lineName = line.name ?? line.fahrtNr
 
     for (const mode of modes) {
         if (mode.id === line.mode) {

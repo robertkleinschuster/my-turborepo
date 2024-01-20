@@ -48,6 +48,9 @@ export function AlternativeItem({alternative, client, modes, onLongPress}: {
 
     const reachable = !walkingArrival || when && walkingArrival <= when
 
+    const arrival = typeof breadcrumb?.previous?.params?.when === 'string' ? parseISO(breadcrumb.previous.params.when) : null
+    const inPast = arrival && when && arrival >= when;
+
     return <ListItem
         {...longPress(alternative)}
         className={
@@ -58,7 +61,12 @@ export function AlternativeItem({alternative, client, modes, onLongPress}: {
             <TimeDelay delay={alternative.delay} label="" planned={parseTime(alternative.plannedWhen)}
                        prognosed={parseTime(alternative.when)}/>
             <Platform planned={alternative.plannedPlatform} prognosed={alternative.platform}/>
-            {!reachable ? <span className="flex gap-1 items-center dark:text-yellow-400 text-red-500"><Icon ios={<ExclamationmarkTriangle/>}/>{walkingDistance} m Fußweg von {breadcrumb?.previous?.title}</span> : null}
+            {inPast ? <span className="flex gap-1 items-center dark:text-yellow-400 text-red-500"><Icon
+                    ios={<ExclamationmarkTriangle/>}/>Abfahrt vor Ankunft</span> :
+                <>{!reachable ? <span className="flex gap-1 items-center dark:text-yellow-400 text-red-500"><Icon ios={
+                    <ExclamationmarkTriangle/>}/>{walkingDistance} m Fußweg von {breadcrumb?.previous?.title}</span> : null}</>
+            }
+
         </span>}
         link
         onClick={() => {

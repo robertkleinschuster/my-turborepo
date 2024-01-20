@@ -55,7 +55,7 @@ export default function StationNavbar({title, client, products}: {
         subtitle={
         <>
             <p><ClientName clientCode={client}/></p>
-            {breadcrumb?.type === 'station' && breadcrumb.info.distance ? <p>{breadcrumb.info.distance} m Fußweg on {breadcrumb.previous?.title}</p> : null}
+            {breadcrumb?.type === 'station' && breadcrumb.info.distance ? <p>{breadcrumb.info.distance} m Fußweg von {breadcrumb.previous?.title}</p> : null}
         </>
     }
         subtitleClassName="truncate"

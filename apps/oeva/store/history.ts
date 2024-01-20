@@ -40,6 +40,7 @@ export interface TripHistoryItem extends BaseHistoryItem {
         destination: string | null,
         provenance: string | null,
         origin: string | null,
+        when: string | null,
     }
 }
 
@@ -60,7 +61,8 @@ export interface StationHistoryItem extends BaseHistoryItem {
         products: string[] | null
     },
     info: {
-        distance: string | null
+        distance: string | null,
+        when: string | null,
     }
 }
 

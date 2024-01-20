@@ -258,6 +258,7 @@ function createNav(
                 destination: alternative.destination?.name ?? null,
                 origin: alternative.origin?.name ?? null,
                 provenance: alternative.provenance ?? null,
+                when
             }
             const path = buildPath(item)
             const searchParams = buildSearchParams(item)
@@ -281,6 +282,7 @@ function createNav(
                 direction: trip.direction ?? null,
                 destination: trip.destination?.name ?? null,
                 origin: trip.origin?.name ?? null,
+                when
             }
             const searchParams = buildSearchParams(item)
             const path = buildPath(item)
@@ -299,7 +301,8 @@ function createNav(
             const item = historyPrepare('station', station.id, station.name ?? '', {when, products})
             item.client = client
             item.info = {
-                distance: station.distance?.toString() ?? null
+                distance: station.distance?.toString() ?? null,
+                when
             }
             const path = buildPath(item)
             const searchParams = buildSearchParams(item)

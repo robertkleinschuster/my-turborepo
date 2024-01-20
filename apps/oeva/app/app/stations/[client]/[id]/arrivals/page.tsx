@@ -24,7 +24,7 @@ export default async function Arrivals({params, searchParams}: {
     })
 
     const parseTime = (time: string | undefined): Date | null => {
-        return time ? parseISO(time) : null;
+        return time ? new Date(time) : null;
     }
 
     const whenEnd = arrivals.arrivals.length > 1 ?

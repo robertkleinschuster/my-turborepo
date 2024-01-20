@@ -34,7 +34,7 @@ export default async function Departures({params, searchParams}: {
     const departures = await fetchCachedDepartures(decodeURIComponent(params.id), client.code, formatISO(startOfMinute(when)), searchParams.products)
 
     const parseTime = (time: string | undefined): Date | null => {
-        return time ? parseISO(time) : null;
+        return time ? new Date(time) : null;
     }
 
     const whenEnd = departures.departures.length > 1 ?

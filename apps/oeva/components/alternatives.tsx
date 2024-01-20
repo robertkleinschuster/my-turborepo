@@ -17,7 +17,7 @@ export default function Alternatives({alternatives, client, modes}: {
 
     return <>
         {alternatives.length === 0 ? (
-            <Block className="text-center">Nothing found</Block>
+            <Block className="text-center">Keine Fahrten in diesem Zeitraum</Block>
         ) : (
             <List inset strong>
                 {alternatives.map(alternative => <AlternativeItem

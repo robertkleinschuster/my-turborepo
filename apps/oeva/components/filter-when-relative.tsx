@@ -1,16 +1,15 @@
 "use client"
 
-import type {JSX} from "react";
+import type {JSX, ReactNode} from "react";
 import {useCallback} from "react";
-import {Icon, List, ListItem} from "konsta/react";
-import {addMinutes, formatISO, parseISO, startOfMinute} from "date-fns";
+import {List, ListItem} from "konsta/react";
+import {formatISO, startOfMinute} from "date-fns";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {Goforward30, Gobackward30} from "framework7-icons/react"
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import type {HistoryItem} from "../store/history";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
 
-export function FilterWhenRelative({minutes, title}: { minutes: number, title: string }): JSX.Element {
+export function FilterWhenRelative({time, title}: { time: Date, title: ReactNode }): JSX.Element {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -24,7 +23,7 @@ export function FilterWhenRelative({minutes, title}: { minutes: number, title: s
         } else {
             const newSearchParams = new URLSearchParams(searchParams)
             addFilterParams(newSearchParams, params)
-            router.replace(`${pathname}?${newSearchParams.toString()}`, {scroll: false})
+            router.replace(`${pathname}?${newSearchParams.toString()}`)
         }
     }, [breadcrumb, nav, pathname, router, searchParams])
 
@@ -37,11 +36,8 @@ export function FilterWhenRelative({minutes, title}: { minutes: number, title: s
     return <List inset strong>
         <ListItem
             label
-            media={<Icon ios={minutes > 0 ? <Goforward30/> : <Gobackward30/>}/>}
             onClick={() => {
-                const when = searchParams.get('when');
-                const current = when ? parseISO(when) : new Date()
-                applyWhen(startOfMinute(addMinutes(current, minutes)))
+                applyWhen(startOfMinute(time))
             }}
             title={title}
         />

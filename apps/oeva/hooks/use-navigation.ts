@@ -216,7 +216,7 @@ function createNav(
                     router.prefetch(href)
                 } else {
                     historyUpdate(item)
-                    router.replace(href, {scroll: false})
+                    router.replace(href)
                 }
             }
         },

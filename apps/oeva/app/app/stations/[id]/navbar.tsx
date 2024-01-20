@@ -6,6 +6,7 @@ import React from "react";
 import type {ProductType} from "hafas-client";
 import {ArrowClockwise} from "framework7-icons/react"
 import Filter from "../../../../components/filter";
+import {useCurrentBreadcrumb} from "../../../../hooks/use-breadcrumbs";
 
 export default function StationNavbar({id, title, products}: {
     id: string,
@@ -15,6 +16,7 @@ export default function StationNavbar({id, title, products}: {
     const segment = useSelectedLayoutSegment();
     const router = useRouter()
     const searchParams = useSearchParams()
+    const breadcrumb = useCurrentBreadcrumb()
 
     return <><Navbar
         left={
@@ -37,12 +39,19 @@ export default function StationNavbar({id, title, products}: {
                 }} strong>
                     Ankünfte
                 </SegmentedButton>
+                <SegmentedButton active={segment === 'nearby'} onClick={() => {
+                    router.replace(`/app/stations/${id}/nearby?${searchParams.toString()}`)
+                }} strong>
+                    In der Nähe
+                </SegmentedButton>
             </Segmented>
 
         }
+        subtitle={breadcrumb?.type === 'station' && breadcrumb.info?.distance ? <>{breadcrumb.info.distance} m Fußweg von {breadcrumb.previous?.title}</> : null}
+        subtitleClassName="truncate"
         title={title}
         titleClassName="truncate w-1/2"
     />
-        <Filter products={products} showTime/>
+        <Filter products={products} productsOnly={segment === 'nearby'} showTime/>
     </>
 }

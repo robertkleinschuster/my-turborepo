@@ -18,15 +18,16 @@ import {usePathname, useRouter, useSearchParams, useSelectedLayoutSegment} from 
 import React, {useCallback, useEffect, useState} from "react";
 import {addHours, addMinutes, formatISO, startOfMinute, subHours, subMinutes} from "date-fns";
 import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
-import {HistoryItem} from "../store/history";
+import type {HistoryItem} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
 import Time from "./time";
 import Product from "./product";
 
-export default function Filter({products, showTime = false}: {
+export default function Filter({products, showTime = false, productsOnly}: {
     products: readonly ProductType[],
-    showTime?: boolean
+    showTime?: boolean,
+    productsOnly?: boolean
 }): React.JSX.Element {
     const router = useRouter()
     const nav = useNavigation()
@@ -82,31 +83,33 @@ export default function Filter({products, showTime = false}: {
 
     return <>
         <Toolbar innerClassName="gap-2 !justify-start" top>
-            {showTime ?
-                <Button className="filter-when !w-auto" onClick={() => {
-                    setWhenOpen(true)
-                }} rounded tonal>
-                    <Icon ios={<Clock/>}/>&nbsp;<Time time={when}/>
-                </Button>
-                :
-                <Chip
-                    className="font-semibold relative"
-                    colors={{
-                        fillBgIos: 'bg-primary bg-opacity-15',
-                        fillTextIos: 'text-primary'
-                    }}
-                >
-                    <Icon ios={<Calendar/>}/>
-                    <input
-                        className="border-none bg-transparent after:absolute after:w-full after:h-full after:left-0"
-                        onChange={e => {
-                            applyWhen(new Date(e.target.value))
-                        }} type="date"
-                        value={formatInputDate(when)}
-                    />
-                </Chip>
-            }
-
+            {!productsOnly ?
+                <>
+                    {showTime ?
+                        <Button className="filter-when !w-auto" onClick={() => {
+                            setWhenOpen(true)
+                        }} rounded tonal>
+                            <Icon ios={<Clock/>}/>&nbsp;<Time time={when}/>
+                        </Button>
+                        :
+                        <Chip
+                            className="font-semibold relative"
+                            colors={{
+                                fillBgIos: 'bg-primary bg-opacity-15',
+                                fillTextIos: 'text-primary'
+                            }}
+                        >
+                            <Icon ios={<Calendar/>}/>
+                            <input
+                                className="border-none bg-transparent after:absolute after:w-full after:h-full after:left-0"
+                                onChange={e => {
+                                    applyWhen(new Date(e.target.value))
+                                }} type="date"
+                                value={formatInputDate(when)}
+                            />
+                        </Chip>
+                    }
+                </> : null}
             <Button className="filter-products !w-auto gap-1" onClick={() => {
                 setProductsOpen(true)
             }} rounded tonal>

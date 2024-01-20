@@ -5,6 +5,7 @@ import {formatISO, parseISO, startOfMinute} from "date-fns";
 import Alternatives from '../../../../../components/alternatives'
 import {type ClientCode, defaultClient, getClient} from '../../../../../client/client'
 import {buildProductsFilter} from '../../../../../client/products-filter'
+import {FilterWhenRelative} from "../../../../../components/filter-when-relative";
 
 export const fetchCache = 'default-cache'
 export const revalidate = 60
@@ -30,5 +31,9 @@ export default async function Departures({params, searchParams}: {
     const client = getClient(defaultClient)
 
     const departures = await fetchCachedDepartures(decodeURIComponent(params.id), defaultClient, formatISO(startOfMinute(when)), searchParams.products)
-    return <Alternatives alternatives={departures.departures} products={client.profile.products}/>
+    return <>
+        <FilterWhenRelative minutes={-30} title="Früher"/>
+        <Alternatives alternatives={departures.departures} products={client.profile.products}/>
+        <FilterWhenRelative minutes={+30} title="Später"/>
+    </>
 }

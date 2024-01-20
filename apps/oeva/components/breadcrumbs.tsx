@@ -26,7 +26,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
 
     return <Toolbar>
         <KonstaBreadcrumbs>
-            <BreadcrumbsItem>
+            <BreadcrumbsItem className="!overflow-visible">
                 <Link onClick={() => {
                     nav.home();
                 }}>
@@ -38,11 +38,11 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
                 <>
                     <BreadcrumbsSeparator/>
 
-                    <BreadcrumbsItem>
+                    <BreadcrumbsItem className="!overflow-visible">
                         <Link onClick={() => {
                             nav.push_breadcrumb(items[0]);
                         }}>
-                            <span className="truncate"><HistoryItemTitle item={items[0]}/></span>
+                            <HistoryItemTitle item={items[0]}/>
                         </Link>
                     </BreadcrumbsItem>
 
@@ -64,8 +64,8 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
             {items.length ?
                 <>
                     <BreadcrumbsSeparator/>
-                    <BreadcrumbsItem active>
-                        <span className="truncate"><HistoryItemTitle item={items[items.length - 1]}/></span>
+                    <BreadcrumbsItem active className="!overflow-auto no-scrollbar">
+                        <HistoryItemTitle item={items[items.length - 1]}/>
                     </BreadcrumbsItem>
                 </>
                 : null}

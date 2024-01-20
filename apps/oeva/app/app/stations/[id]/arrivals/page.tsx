@@ -3,6 +3,7 @@ import {parseISO, startOfMinute} from "date-fns";
 import Alternatives from '../../../../../components/alternatives'
 import {getClient} from '../../../../../client/client'
 import {buildProductsFilter} from '../../../../../client/products-filter';
+import {FilterWhenRelative} from "../../../../../components/filter-when-relative";
 
 export const fetchCache = 'default-cache'
 export const revalidate = 60
@@ -20,5 +21,9 @@ export default async function Arrivals({params, searchParams}: {
         products: buildProductsFilter(client.profile.products, searchParams.products),
         remarks: true
     })
-    return <Alternatives alternatives={arrivals.arrivals} products={client.profile.products}/>
+    return <>
+        <FilterWhenRelative minutes={-30} title="Früher"/>
+        <Alternatives alternatives={arrivals.arrivals} products={client.profile.products}/>
+        <FilterWhenRelative minutes={+30} title="Später"/>
+    </>
 }

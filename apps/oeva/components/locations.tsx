@@ -1,15 +1,17 @@
 "use client"
 
-import {Block, List, ListItem} from "konsta/react"
+import {Block, Icon, List, ListItem} from "konsta/react"
 import type {Location, ProductType, Station, Stop} from "hafas-client"
 import React from "react"
+import {Location as LocationIcon} from "framework7-icons/react"
 import {useNavigation} from "../hooks/use-navigation";
 import StopProducts from "./stop-products"
 import {LocationTitle} from "./location-title";
 
-export default function Locations({locations, products}: {
+export default function Locations({locations, products, when = null}: {
     locations: readonly (Location | Stop | Station)[],
-    products: readonly ProductType[]
+    products: readonly ProductType[],
+    when?: string|null
 }): React.JSX.Element {
     const nav = useNavigation()
 
@@ -25,8 +27,9 @@ export default function Locations({locations, products}: {
                 key={location.name}
                 link
                 onClick={() => {
-                    location.id && nav.station(location.id, null, location.name ?? '')
+                    nav.stationObj(location, when)
                 }}
+                subtitle={location.distance ? <span className="flex gap-1 items-center"><Icon ios={<LocationIcon/>}/>{location.distance} m, ~ {Math.round(location.distance / 75)} min</span> : undefined}
                 title={<LocationTitle location={location}/>}
             />
         })}

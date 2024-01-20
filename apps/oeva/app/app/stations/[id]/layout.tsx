@@ -33,9 +33,7 @@ export default function Layout({children, params}: {
     return <>
         <StationNavbarData id={decodeURIComponent(params.id)}/>
         <Scroll>
-            <FilterWhenRelative minutes={-30} title="Früher"/>
             {children}
-            <FilterWhenRelative minutes={+30} title="Später"/>
         </Scroll>
     </>
 }

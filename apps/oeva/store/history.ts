@@ -53,9 +53,12 @@ export interface TripSearchHistoryItem extends BaseHistoryItem {
 export interface StationHistoryItem extends BaseHistoryItem {
     type: 'station',
     params: {
-        mode: 'arrivals' | 'departures'
+        mode: 'arrivals' | 'departures' | 'nearby'
         when: string | null,
         products: string[] | null
+    },
+    info: {
+        distance: string | null
     }
 }
 

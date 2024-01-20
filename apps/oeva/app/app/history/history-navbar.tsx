@@ -22,10 +22,15 @@ export function HistoryNavbar(): JSX.Element {
     return <Navbar
         left={
             <NavbarBackLink onClick={() => {
-                nav.home()
+                if (root) {
+                    nav.back()
+                } else {
+                    nav.home()
+                }
             }} text="Zurück"/>
         }
         right={searchParams.get('filterRoot') ? null : <HistorySelectionToggle/>}
-        title={parent ? <HistoryItemTitle item={parent}/> : "Zuletzt verwendet"}
+        subtitle={parent ? <HistoryItemTitle item={parent}/> : null}
+        title="Zuletzt verwendet"
     />
 }

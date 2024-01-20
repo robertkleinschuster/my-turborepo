@@ -9,6 +9,7 @@ import {useCurrentBreadcrumb} from "../../../../../hooks/use-breadcrumbs";
 import type {ClientCode, Mode} from "../../../../../client/client";
 import type {StationHistoryItem} from "../../../../../store/history";
 import {ClientName} from "../../../../../components/client-name";
+import {useNavigation} from "../../../../../hooks/use-navigation";
 
 export default function StationNavbar({title, client, products}: {
     title: string,
@@ -17,6 +18,7 @@ export default function StationNavbar({title, client, products}: {
 }): React.JSX.Element {
     const segment = useSelectedLayoutSegment();
     const router = useRouter()
+    const nav = useNavigation()
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const breadcrumb = useCurrentBreadcrumb() as StationHistoryItem | null
@@ -35,17 +37,32 @@ export default function StationNavbar({title, client, products}: {
         subnavbar={
             <Segmented strong>
                 <SegmentedButton active={segment === 'departures'} onClick={() => {
-                    router.replace(`${basePath}/departures?${searchParams.toString()}`)
+                    if (breadcrumb) {
+                        breadcrumb.params.mode = 'departures'
+                        nav.replace(breadcrumb)
+                    } else {
+                        router.replace(`${basePath}/departures?${searchParams.toString()}`)
+                    }
                 }} strong>
                     Abfahrten
                 </SegmentedButton>
                 <SegmentedButton active={segment === 'arrivals'} onClick={() => {
-                    router.replace(`${basePath}/arrivals?${searchParams.toString()}`)
+                    if (breadcrumb) {
+                        breadcrumb.params.mode = 'arrivals'
+                        nav.replace(breadcrumb)
+                    } else {
+                        router.replace(`${basePath}/arrivals?${searchParams.toString()}`)
+                    }
                 }} strong>
                     Ankünfte
                 </SegmentedButton>
                 <SegmentedButton active={segment === 'nearby'} onClick={() => {
-                    router.replace(`${basePath}/nearby?${searchParams.toString()}`)
+                    if (breadcrumb) {
+                        breadcrumb.params.mode = 'nearby'
+                        nav.replace(breadcrumb)
+                    } else {
+                        router.replace(`${basePath}/nearby?${searchParams.toString()}`)
+                    }
                 }} strong>
                     In der Nähe
                 </SegmentedButton>
@@ -53,11 +70,12 @@ export default function StationNavbar({title, client, products}: {
 
         }
         subtitle={
-        <>
-            <p><ClientName clientCode={client}/></p>
-            {breadcrumb?.type === 'station' && breadcrumb.info.distance ? <p>{breadcrumb.info.distance} m Fußweg von {breadcrumb.previous?.title}</p> : null}
-        </>
-    }
+            <>
+                <p><ClientName clientCode={client}/></p>
+                {breadcrumb?.type === 'station' && breadcrumb.info.distance ?
+                    <p>{breadcrumb.info.distance} m Fußweg von {breadcrumb.previous?.title}</p> : null}
+            </>
+        }
         subtitleClassName="truncate"
         title={title}
         titleClassName="truncate w-1/2"

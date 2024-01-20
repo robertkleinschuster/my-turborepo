@@ -180,6 +180,7 @@ export default function Filter({products, showTime = false, productsOnly}: {
 
 
         <Popover
+            className="w-72"
             onBackdropClick={() => {
                 setProductsOpen(false)
             }}

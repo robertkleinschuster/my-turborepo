@@ -5,7 +5,8 @@ import {
     BreadcrumbsCollapsed,
     BreadcrumbsItem,
     BreadcrumbsSeparator,
-    Icon, Link,
+    Icon,
+    Link,
     Popover,
     Toolbar
 } from "konsta/react"
@@ -72,7 +73,7 @@ const Breadcrumbs = dynamic(() => Promise.resolve((): JSX.Element => {
 
         </KonstaBreadcrumbs>
         <Popover
-            className="breadcrumbs-popover"
+            className="breadcrumbs-popover w-2/3 max-w-160"
             onBackdropClick={() => {
                 setPopoverOpened(false)
             }}

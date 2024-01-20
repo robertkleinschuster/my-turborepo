@@ -42,13 +42,13 @@ export function AlternativeItem({alternative, client, modes, onLongPress}: {
 
     const walkingDistance = breadcrumb?.type === 'station' && typeof breadcrumb.info?.distance === 'string' ? breadcrumb.info.distance : null;
     const walkingMinutes = walkingDistance ? Number.parseInt(walkingDistance) / walkingMeterPerMinute : null
-    const walkingArrival = walkingMinutes && typeof breadcrumb?.previous?.params?.when === 'string' ?
-        addMinutes(parseISO(breadcrumb.previous.params.when), walkingMinutes) : null
+    const walkingArrival = walkingMinutes && typeof breadcrumb?.info?.when === 'string' ?
+        addMinutes(parseISO(breadcrumb.info.when), walkingMinutes) : null
     const when = parseTime(alternative.when)
 
     const reachable = !walkingArrival || when && walkingArrival <= when
 
-    const arrival = typeof breadcrumb?.previous?.params?.when === 'string' ? parseISO(breadcrumb.previous.params.when) : null
+    const arrival = typeof breadcrumb?.info?.when === 'string' ? parseISO(breadcrumb.info.when) : null
     const inPast = arrival && when && arrival >= when;
 
     return <ListItem

@@ -40,7 +40,7 @@ export function FilterWhenRelative({alternatives}: { alternatives: readonly Alte
         return time ? new Date(time) : null;
     }
 
-    const whenEnd = alternatives?.length > 1 ?
+    const whenEnd = alternatives.length > 1 ?
         parseTime(alternatives[alternatives.length - 1].when) ?? addMinutes(when, 60) : addMinutes(when, 60)
 
     return <List inset strong>

@@ -5,7 +5,7 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import type {JSX} from "react";
 import React, { useEffect, useState} from "react";
 import {useNavigation} from "../hooks/use-navigation";
-import {ClientCode} from "../client/client-code";
+import type {ClientCode} from "../client/client-code";
 import {ClientName} from "./client-name";
 
 export default function NavSearchbar({title, client}: { title: string, client: ClientCode }): JSX.Element {

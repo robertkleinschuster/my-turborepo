@@ -1,6 +1,6 @@
 "use client"
 
-import {Block, Icon, List, ListItem} from "konsta/react"
+import {Icon, List, ListItem} from "konsta/react"
 import type {Location, Station, Stop} from "hafas-client"
 import React from "react"
 import {Location as LocationIcon} from "framework7-icons/react"
@@ -8,6 +8,7 @@ import {useNavigation} from "../hooks/use-navigation";
 import type {ClientCode, Mode} from "../client/client";
 import StopProducts from "./stop-products"
 import {LocationTitle} from "./location-title";
+import {Message} from "./message";
 
 export default function Locations({locations, client, products, when = null}: {
     locations: readonly (Location | Stop | Station)[],
@@ -18,7 +19,7 @@ export default function Locations({locations, client, products, when = null}: {
     const nav = useNavigation()
 
     if (locations.length === 0) {
-        return <Block className="text-center">Keine Ergebnisse</Block>
+        return <Message>Keine Ergebnisse</Message>
     }
 
     return <List inset strong>

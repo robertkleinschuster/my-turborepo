@@ -20,14 +20,15 @@ import {formatInputDate, formatInputDatetimeLocal} from "../helper/date-time";
 import type {HistoryItem} from "../store/history";
 import {useCurrentBreadcrumb} from "../hooks/use-breadcrumbs";
 import {addFilterParams, useNavigation} from "../hooks/use-navigation";
-import type {Mode} from "../client/client";
+import type {Mode, ProductGroup} from "../client/client";
 import Time from "./time";
 import Product from "./product";
 
-export default function Filter({products, showTime = false, productsOnly}: {
-    products: readonly Mode[],
+export default function Filter({modes, groups, showTime = false, modesOnly}: {
+    modes: readonly Mode[],
+    groups: readonly ProductGroup[]
     showTime?: boolean,
-    productsOnly?: boolean
+    modesOnly?: boolean
 }): React.JSX.Element {
     const router = useRouter()
     const nav = useNavigation()
@@ -36,10 +37,12 @@ export default function Filter({products, showTime = false, productsOnly}: {
     const segment = useSelectedLayoutSegment()
 
     const [when, setWhen] = useState(searchParams.get('when') ? new Date(decodeURIComponent(searchParams.get('when') ?? '')) : new Date())
-    const [productsFilter, setProductsFilter] = useState<Set<string>>(new Set(searchParams.getAll('products')))
+    const [modesFilter, setModesFilter] = useState<Set<string>>(new Set(searchParams.getAll('modes')))
+    const [groupsFilter, setGroupsFilter] = useState<Set<string>>(new Set(searchParams.getAll('groups')))
     const breadcrumb = useCurrentBreadcrumb()
     const [whenOpen, setWhenOpen] = useState(false);
-    const [productsOpen, setProductsOpen] = useState(false)
+    const [modesOpen, setModesOpen] = useState(false)
+    const [groupsOpen, setGroupsOpen] = useState(false)
 
     useEffect(() => {
         if (searchParams.get('when')) {
@@ -63,27 +66,42 @@ export default function Filter({products, showTime = false, productsOnly}: {
         const params: HistoryItem['params'] = {
             query: searchParams.get('query'),
             when: formatISO(startOfMinute(w)),
-            products: Array.from(productsFilter),
+            modes: Array.from(modesFilter),
+            groups: Array.from(groupsFilter),
             mode: segment,
         }
         applyFilter(params)
-    }, [applyFilter, productsFilter, searchParams, segment])
+    }, [applyFilter, groupsFilter, modesFilter, searchParams, segment])
 
-    const applyProductsFilter = useCallback((filter: Set<string>) => {
-        setProductsFilter(filter)
+    const applyModesFilter = useCallback((filter: Set<string>) => {
+        setModesFilter(filter)
         const params: HistoryItem['params'] = {
             query: searchParams.get('query'),
             when: formatISO(startOfMinute(when)),
-            products: Array.from(filter),
+            modes: Array.from(filter),
+            groups: Array.from(groupsFilter),
             mode: segment,
         }
 
         applyFilter(params)
-    }, [applyFilter, searchParams, segment, when])
+    }, [applyFilter, groupsFilter, searchParams, segment, when])
+
+    const applyGroupsFilter = useCallback((filter: Set<string>) => {
+        setGroupsFilter(filter)
+        const params: HistoryItem['params'] = {
+            query: searchParams.get('query'),
+            when: formatISO(startOfMinute(when)),
+            modes: Array.from(modesFilter),
+            groups: Array.from(filter),
+            mode: segment,
+        }
+
+        applyFilter(params)
+    }, [applyFilter, modesFilter, searchParams, segment, when])
 
     return <>
         <Toolbar innerClassName="gap-2 !justify-start" top>
-            {!productsOnly ?
+            {!modesOnly ?
                 <>
                     {showTime ?
                         <Button className="filter-when !w-auto" onClick={() => {
@@ -110,13 +128,16 @@ export default function Filter({products, showTime = false, productsOnly}: {
                         </Chip>
                     }
                 </> : null}
-            <Button className="filter-products !w-auto gap-1" onClick={() => {
-                setProductsOpen(true)
+            <Button className="filter-modes !w-auto gap-1" onClick={() => {
+                setModesOpen(true)
             }} rounded tonal>
-                <span>{productsFilter.size ? 'Verkehrsmittel:' : 'Verkehrsmittel'}</span>
-                {products.filter(product => productsFilter.has(product.id)).map(product =>
-                    <Product key={product.id} product={product}/>
-                )}
+                <span>{modesFilter.size ? `Verkehrsmittel (${modesFilter.size})` : 'Verkehrsmittel'}</span>
+            </Button>
+
+            <Button className="filter-groups !w-auto gap-1" onClick={() => {
+                setGroupsOpen(true)
+            }} rounded tonal>
+                <span>{groupsFilter.size ? `Kategorien (${groupsFilter.size})` : 'Kategorien'}</span>
             </Button>
         </Toolbar>
 
@@ -182,28 +203,56 @@ export default function Filter({products, showTime = false, productsOnly}: {
         <Popover
             className="w-72"
             onBackdropClick={() => {
-                setProductsOpen(false)
+                setModesOpen(false)
             }}
-            opened={productsOpen}
-            target=".filter-products"
+            opened={modesOpen}
+            target=".filter-modes"
         >
             <List nested>
-                {products.filter(mode => mode.filter).map(product => <ListItem
+                {modes.filter(mode => mode.filter).map(mode => <ListItem
                     after={
                         <Toggle
-                            checked={productsFilter.has(product.id)}
+                            checked={modesFilter.has(mode.id)}
                             className="-my-1"
                             onChange={() => {
-                                const newProductsFilter = new Set(productsFilter);
-                                newProductsFilter.has(product.id) ? newProductsFilter.delete(product.id) : newProductsFilter.add(product.id)
-                                applyProductsFilter(newProductsFilter)
+                                const newProductsFilter = new Set(modesFilter);
+                                newProductsFilter.has(mode.id) ? newProductsFilter.delete(mode.id) : newProductsFilter.add(mode.id)
+                                applyModesFilter(newProductsFilter)
                             }}
                         />
                     }
-                    key={product.id}
+                    key={mode.id}
                     label
-                    media={<Product product={product}/>}
-                    title={product.name}
+                    media={<Product product={mode}/>}
+                    title={mode.name}
+                />)}
+            </List>
+        </Popover>
+
+        <Popover
+            className="w-72"
+            onBackdropClick={() => {
+                setGroupsOpen(false)
+            }}
+            opened={groupsOpen}
+            target=".filter-groups"
+        >
+            <List nested>
+                {groups.map(group => <ListItem
+                    after={
+                        <Toggle
+                            checked={groupsFilter.has(group.id)}
+                            className="-my-1"
+                            onChange={() => {
+                                const newFilter = new Set(groupsFilter);
+                                newFilter.has(group.id) ? newFilter.delete(group.id) : newFilter.add(group.id)
+                                applyGroupsFilter(newFilter)
+                            }}
+                        />
+                    }
+                    key={group.id}
+                    label
+                    title={group.name}
                 />)}
             </List>
         </Popover>

@@ -6,15 +6,16 @@ import React from "react";
 import {ArrowClockwise} from "framework7-icons/react"
 import Filter from "../../../../../components/filter";
 import {useCurrentBreadcrumb} from "../../../../../hooks/use-breadcrumbs";
-import type {ClientCode, Mode} from "../../../../../client/client";
+import type {ClientCode, Mode, ProductGroup} from "../../../../../client/client";
 import type {StationHistoryItem} from "../../../../../store/history";
 import {ClientName} from "../../../../../components/client-name";
 import {useNavigation} from "../../../../../hooks/use-navigation";
 
-export default function StationNavbar({title, client, products}: {
+export default function StationNavbar({title, client, modes, groups}: {
     title: string,
     client: ClientCode
-    products: readonly Mode[]
+    modes: readonly Mode[]
+    groups: readonly ProductGroup[]
 }): React.JSX.Element {
     const segment = useSelectedLayoutSegment();
     const router = useRouter()
@@ -80,6 +81,6 @@ export default function StationNavbar({title, client, products}: {
         title={title}
         titleClassName="truncate w-1/2"
     />
-        <Filter products={products} productsOnly={segment === 'nearby'} showTime/>
+        <Filter groups={groups} modes={modes} modesOnly={segment === 'nearby'} showTime/>
     </>
 }

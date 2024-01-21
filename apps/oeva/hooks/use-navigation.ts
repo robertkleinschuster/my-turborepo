@@ -13,7 +13,7 @@ import {useSettings} from "../store/settings";
 interface Navigation {
     tripObj: (client: ClientCode, trip: Trip) => void,
     alternative: (client: ClientCode, alternative: Alternative) => void,
-    stationObj: (client: ClientCode, station: Station | Stop | Location, when?: string | null, products?: string[] | null) => void,
+    stationObj: (client: ClientCode, station: Station | Stop | Location, when?: string | null) => void,
     push: (item: HistoryItem) => void
     replace: (item: HistoryItem) => void
     push_breadcrumb: (item: HistoryItem) => void
@@ -52,10 +52,16 @@ export function addFilterParams(searchParams: URLSearchParams, params: HistoryIt
         searchParams.set('when', params.when)
     }
 
-    if (Array.isArray(params?.products)) {
-        searchParams.delete('products')
-        params.products.forEach(product => {
-            searchParams.append('products', product)
+    if (Array.isArray(params?.modes)) {
+        searchParams.delete('modes')
+        params.modes.forEach(mode => {
+            searchParams.append('modes', mode)
+        })
+    }
+    if (Array.isArray(params?.groups)) {
+        searchParams.delete('groups')
+        params.groups.forEach(group => {
+            searchParams.append('groups', group)
         })
     }
 }
@@ -294,11 +300,11 @@ function createNav(
                 router.push(href)
             }
         },
-        stationObj: (client: ClientCode, station: Station | Stop | Location, when: string | null = null, products: string[] | null = null) => {
+        stationObj: (client: ClientCode, station: Station | Stop | Location, when: string | null = null) => {
             if (!station.id) {
                 return;
             }
-            const item = historyPrepare('station', station.id, station.name ?? '', {when, products})
+            const item = historyPrepare('station', station.id, station.name ?? '', {when})
             item.client = client
             item.info = {
                 distance: station.distance?.toString() ?? null,

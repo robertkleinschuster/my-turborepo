@@ -13,7 +13,7 @@ export default function Layout({children, params}: {
 
     return <>
         <NavSearchbar client={client.code} title="Fahrten"/>
-        <Filter products={client.modes}/>
+        <Filter groups={client.productGroups} modes={client.modes}/>
         <Scroll>
             {children}
         </Scroll>

@@ -1,17 +1,17 @@
 import React from 'react';
 import {endOfDay, parseISO, startOfDay} from 'date-fns';
 import Trips from '../../../../../components/trips';
-import type {ClientCodeParameter, Mode} from '../../../../../client/client';
+import type {ClientCodeParameter, ModesParameter, ProductGroupsParameter} from '../../../../../client/client';
 import {getClient} from '../../../../../client/client';
-import {buildProductsFilter} from '../../../../../client/products-filter';
 import {TripHistory} from "../../../../../components/trip-history";
+import {validateProductsFilter} from "../../../../../client/products-filter";
 
 export const fetchCache = 'default-cache'
 export const revalidate = 60
 
 export default async function Stations({params, searchParams}: {
     params: { client: ClientCodeParameter },
-    searchParams: { query: string, when?: string, products?: Mode['id'][] }
+    searchParams: { query: string, when?: string, modes: ModesParameter, groups: ProductGroupsParameter}
 }): Promise<React.JSX.Element> {
     if (!searchParams.query) {
         return <TripHistory/>
@@ -19,17 +19,21 @@ export default async function Stations({params, searchParams}: {
 
     const client = getClient(params.client)
 
+    const products = client.buildProductsFilter(searchParams.modes, searchParams.groups)
+
     const from = startOfDay(searchParams.when ? parseISO(searchParams.when) : new Date())
 
     const to = endOfDay(searchParams.when ? parseISO(searchParams.when) : new Date())
 
-    if (searchParams.products && searchParams.query) {
+    const hasProductsSelection = validateProductsFilter(products)
+
+    if (hasProductsSelection && searchParams.query) {
         try {
             const trips = await client.tripsByName(searchParams.query, {
                 onlyCurrentlyRunning: false,
                 fromWhen: from,
                 untilWhen: to,
-                products: buildProductsFilter(client.profile.products, searchParams.products),
+                products,
             })
             return <Trips client={client.code} products={client.modes} trips={trips.trips}/>
         } catch (e) {
@@ -38,7 +42,7 @@ export default async function Stations({params, searchParams}: {
     }
 
     return <Trips client={client.code}
-                  error={!searchParams.products?.length ? 'Kein Verkehrsmittel gewählt' : undefined}
+                  error={!hasProductsSelection ? 'Filter in dieser Datenquelle nicht möglich.' : undefined}
                   products={client.modes}
                   trips={[]}/>
 }

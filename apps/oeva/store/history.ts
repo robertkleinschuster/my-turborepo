@@ -49,7 +49,9 @@ export interface TripSearchHistoryItem extends BaseHistoryItem {
     params: {
         query: string | null,
         when: string | null,
-        products: string[] | null
+        products: string[] | null,
+        modes: string[] | null,
+        groups: string[] | null
     }
 }
 
@@ -58,7 +60,9 @@ export interface StationHistoryItem extends BaseHistoryItem {
     params: {
         mode: 'arrivals' | 'departures' | 'nearby'
         when: string | null,
-        products: string[] | null
+        products: string[] | null,
+        modes: string[] | null,
+        groups: string[] | null
     },
     info: {
         distance: string | null,

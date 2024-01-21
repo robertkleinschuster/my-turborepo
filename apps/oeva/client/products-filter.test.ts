@@ -1,6 +1,6 @@
 import {describe, expect, it} from "@jest/globals";
-import type {ProductType} from "hafas-client";
-import {buildProductsFilter} from "./products-filter";
+import type {Products, ProductType} from "hafas-client";
+import {buildProductsForMode, mergeProducts} from "./products-filter";
 
 describe('buildProductsFilter', () => {
     it('should transform a list of strings to object with boolean properties', () => {
@@ -20,7 +20,7 @@ describe('buildProductsFilter', () => {
                 mode: 'train',
                 default: false,
                 bitmasks: []
-            },   {
+            }, {
                 id: 'bus',
                 name: 'Bus',
                 short: 'Bus',
@@ -29,7 +29,8 @@ describe('buildProductsFilter', () => {
                 bitmasks: []
             }
         ];
-        const filter = buildProductsFilter(available, ['train']);
+
+        const filter = buildProductsForMode(available, 'train');
 
         expect(filter).toEqual({
             tram: true,
@@ -37,28 +38,64 @@ describe('buildProductsFilter', () => {
             bus: false,
         })
     })
-    it('should return empty object for null or empty list', () => {
-        const available: ProductType[] = [
+    it('should merge products objects by keeping keys true that are true all objects', () => {
+        const products: Products[] = [
             {
-                id: 'tram',
-                name: 'Tram',
-                short: 'tram',
-                mode: 'train',
-                default: false,
-                bitmasks: []
+                tram: true,
+                train: false,
+                bus: false,
             },
             {
-                id: 'train',
-                name: 'Train',
-                short: 'Train',
-                mode: 'train',
-                default: false,
-                bitmasks: []
-            }
-        ];
+                tram: true,
+                train: true,
+                bus: true,
+            },
+            {
+                tram: true,
+                train: false,
+                bus: true,
+            },
+            {
+                tram: true,
+                subway: false
+            },
+        ]
 
-        expect(buildProductsFilter(available, [])).toEqual({})
-        expect(buildProductsFilter(available, null)).toEqual({})
+        expect(mergeProducts(products, true)).toEqual({
+            tram: true,
+            train: false,
+            bus: false,
+            subway: false,
+        })
+    })
+    it('should merge products objects by keeping keys true that are true in at least one object', () => {
+        const products: Products[] = [
+            {
+                tram: true,
+                train: false,
+                bus: false,
+            },
+            {
+                tram: true,
+                train: true,
+                bus: true,
+            },
+            {
+                tram: true,
+                train: false,
+                bus: true,
+            },
+            {
+                tram: true,
+                subway: false
+            },
+        ]
 
+        expect(mergeProducts(products)).toEqual({
+            tram: true,
+            train: true,
+            bus: true,
+            subway: false,
+        })
     })
 })

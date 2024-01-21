@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- needed to normalize hafas client */
-import type {HafasClient, ProductType, Profile} from "hafas-client";
+import type {HafasClient, Products, ProductType, Profile} from "hafas-client";
 import {createClient} from "hafas-client"
 import {profile as oebb} from "hafas-client/p/oebb/index"
 import {profile as db} from "hafas-client/p/db/index"
 import {profile as stv} from "hafas-client/p/stv/index"
-import type { ClientCodeParameter} from "./client-code";
+import type {ClientCodeParameter} from "./client-code";
 import {ClientCode, ClientCodeDefault} from "./client-code";
+import {buildProductsForMode, mergeProducts, validateProductsFilter} from "./products-filter";
 
 const userAgent = 'OeVA';
 
@@ -17,16 +18,27 @@ export interface Client {
 
     get modes(): Mode[]
 
-    locations: HafasClient['locations']
-    stop: HafasClient['stop']
-    departures: HafasClient['departures']
+    get productGroups(): ProductGroup[]
+
+    productsByGroup: (id: ProductGroup['id']) => Products;
+
+    buildProductsFilter: (modes: ModesParameter, groups: ProductGroupsParameter) => Products
+    validateFilter: (modes: ModesParameter, groups: ProductGroupsParameter) => boolean
+
     arrivals: HafasClient['arrivals']
-    tripsByName: Exclude<HafasClient['tripsByName'], undefined>
-    trip: Exclude<HafasClient['trip'], undefined>
-    remarks: Exclude<HafasClient['remarks'], undefined>
+    departures: HafasClient['departures']
     journeys: HafasClient['journeys']
+    refreshJourney: Exclude<HafasClient['refreshJourney'], undefined>
+    journeysFromTrip: Exclude<HafasClient['journeysFromTrip'], undefined>
+    locations: HafasClient['locations']
+    lines: Exclude<HafasClient['lines'], undefined>
+    stop: HafasClient['stop']
+    trip: Exclude<HafasClient['trip'], undefined>
+    tripsByName: Exclude<HafasClient['tripsByName'], undefined>
+    remarks: Exclude<HafasClient['remarks'], undefined>
     nearby: HafasClient['nearby']
     reachableFrom: Exclude<HafasClient['reachableFrom'], undefined>
+    serverInfo: HafasClient['serverInfo']
 }
 
 export class InvalidHafasClientError extends Error {
@@ -42,6 +54,51 @@ abstract class BaseClient implements Client {
     abstract code: ClientCode
 
     abstract get profile(): Profile
+
+    get productGroups(): ProductGroup[] {
+        return productGroups
+    }
+
+    abstract productsByGroup(id: ProductGroup['id']): Products
+
+    validateFilter(modes: ModesParameter, groups: ProductGroupsParameter): boolean {
+        return validateProductsFilter(this.buildProductsFilter(modes, groups))
+    }
+
+    productsByMode(id: Mode['id']): Products {
+        return buildProductsForMode(this.profile.products, id)
+    }
+
+    buildProductsFilter(modes: ModesParameter, groups: ProductGroupsParameter): Products {
+        let modesArray: Mode['id'][] = []
+        if (Array.isArray(modes)) {
+            modesArray = modes
+        }
+        if (typeof modes === 'string') {
+            modesArray = [modes]
+        }
+
+        let groupsArray: ProductGroup['id'][] = []
+        if (Array.isArray(groups)) {
+            groupsArray = groups
+        }
+        if (typeof groups === 'string') {
+            groupsArray = [groups]
+        }
+
+        const products = mergeProducts([
+            mergeProducts(modesArray.map(mode => this.productsByMode(mode))),
+            mergeProducts(groupsArray.map(group => this.productsByGroup(group))),
+        ], true)
+
+        if (Object.keys(products).length === 0) {
+            for (const product of this.profile.products) {
+                products[product.id] = true
+            }
+        }
+
+        return products
+    }
 
     get modes(): Mode[] {
         const available = this.profile.products.map(product => product.mode)
@@ -73,14 +130,48 @@ abstract class BaseClient implements Client {
     journeys = this.hafas.journeys
     nearby = this.hafas.nearby
     reachableFrom = this.hafas.reachableFrom!
+    lines = this.hafas.lines!
+    serverInfo = this.hafas.serverInfo
+    journeysFromTrip = this.hafas.journeysFromTrip!
+    refreshJourney = this.hafas.refreshJourney!
 }
 
 export class OebbScotty extends BaseClient {
     readonly name: string = 'ÖBB Scotty'
     readonly code: ClientCode = ClientCode.OEBB
 
-    get profile(): Profile {
-        return oebb;
+    get profile(): Profile & {auth: object, client: object, ext: string, ver: string} {
+        return {
+            ...oebb,
+            auth: {
+                "type": "AID",
+                "aid": "5vHavmuWPWIfetEe"
+            },
+            client: {
+                "id": "OEBB",
+                "type": "WEB",
+                "name": "webapp",
+                "l": "vs_webapp",
+                "v": "20230821"
+            },
+            ext: "OEBB.13",
+            ver: "1.57",
+        };
+    }
+
+    productsByGroup(id: ProductGroup['id']): Products {
+        return {
+            nationalExpress: id === 'long-distance',
+            national: id === 'long-distance' || id === 'regional',
+            interregional: id === 'long-distance' || id === 'regional',
+            regional: id === 'regional',
+            suburban: id === 'city' || id === 'regional',
+            bus: id === 'other' || id === 'city' || id === 'regional',
+            ferry: id === 'other',
+            subway: id === 'city',
+            tram: id === 'city',
+            onCall: id === 'other',
+        }
     }
 }
 
@@ -91,6 +182,21 @@ export class DbNavigator extends BaseClient {
     get profile(): Profile {
         return db;
     }
+
+    productsByGroup(id: ProductGroup['id']): Products {
+        return {
+            nationalExpress: id === 'long-distance',
+            national: id === 'long-distance' || id === 'regional',
+            regionalExpress: id === 'regional',
+            regional: id === 'regional',
+            suburban: id === 'city' || id === 'regional',
+            bus: id === 'city' || id === 'regional' || id === 'other',
+            ferry: id === 'other',
+            subway: id === 'city',
+            tram: id === 'city',
+            taxi: id === 'other',
+        }
+    }
 }
 
 export class BusBahnBim extends BaseClient {
@@ -99,6 +205,21 @@ export class BusBahnBim extends BaseClient {
 
     get profile(): Profile {
         return stv;
+    }
+
+    productsByGroup(id: ProductGroup['id']): Products {
+        return {
+            'train-and-s-bahn': id === 'long-distance' || id === 'regional',
+            'u-bahn': id === 'city',
+            tram: id === 'city',
+            'city-bus': id === 'city',
+            'regional-bus': id === 'regional',
+            'long-distance-bus': id === 'long-distance',
+            'other-bus': id === 'other',
+            'aerial-lift': id === 'other',
+            ferry: id === 'other',
+            'on-call': id === 'other'
+        }
     }
 }
 
@@ -114,6 +235,33 @@ export interface Mode {
     name: string,
     filter: boolean
 }
+
+export type ModesParameter = Mode['id'] | Mode['id'][] | null | undefined
+export type ProductGroupsParameter = ProductGroup['id'] | ProductGroup['id'][] | null | undefined
+
+export interface ProductGroup {
+    id: 'city' | 'regional' | 'long-distance' | 'other',
+    name: string,
+}
+
+const productGroups: ProductGroup[] = [
+    {
+        id: 'city',
+        name: 'Stadtverkehr',
+    },
+    {
+        id: 'regional',
+        name: 'Regionalverkehr',
+    },
+    {
+        id: 'long-distance',
+        name: 'Fernverkehr',
+    },
+    {
+        id: 'other',
+        name: 'Andere',
+    }
+]
 
 const modes: Mode[] = [
     {
@@ -135,6 +283,11 @@ const modes: Mode[] = [
         id: 'gondola',
         name: 'Gondel',
         filter: true,
+    },
+    {
+        id: 'taxi',
+        name: 'AST',
+        filter: false,
     },
     {
         id: 'aircraft',
@@ -160,7 +313,7 @@ const modes: Mode[] = [
 
 const defaultClient = ClientCode.STV
 
-export function getClient(code: ClientCodeParameter|null|undefined = null): Client {
+export function getClient(code: ClientCodeParameter | null | undefined = null): Client {
     const client = clients.get(code && code !== ClientCodeDefault.DEFAULT ? code : defaultClient);
     if (!client) {
         throw new Error(`No client with code: ${code}`);

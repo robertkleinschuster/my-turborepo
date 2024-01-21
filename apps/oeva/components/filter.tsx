@@ -106,7 +106,7 @@ export default function Filter({modes, groups, showTime = false, modesOnly}: {
                     {showTime ?
                         <Button className="filter-when !w-auto" onClick={() => {
                             setWhenOpen(true)
-                        }} rounded tonal>
+                        }} rounded small tonal={when >= startOfMinute(new Date()) && when <= startOfMinute(addMinutes(new Date(), 5))}>
                             <Icon ios={<Clock/>}/>&nbsp;<Time time={when}/>
                         </Button>
                         :
@@ -130,13 +130,13 @@ export default function Filter({modes, groups, showTime = false, modesOnly}: {
                 </> : null}
             <Button className="filter-modes !w-auto gap-1" onClick={() => {
                 setModesOpen(true)
-            }} rounded tonal>
+            }} rounded small tonal={!modesFilter.size}>
                 <span>{modesFilter.size ? `Verkehrsmittel (${modesFilter.size})` : 'Verkehrsmittel'}</span>
             </Button>
 
             <Button className="filter-groups !w-auto gap-1" onClick={() => {
                 setGroupsOpen(true)
-            }} rounded tonal>
+            }} rounded small tonal={!groupsFilter.size}>
                 <span>{groupsFilter.size ? `Kategorien (${groupsFilter.size})` : 'Kategorien'}</span>
             </Button>
         </Toolbar>

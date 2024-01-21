@@ -33,15 +33,8 @@ export default async function Departures({params, searchParams}: {
 
     const departures = await fetchCachedDepartures(decodeURIComponent(params.id), client.code, formatISO(startOfMinute(when)), searchParams.products)
 
-    const parseTime = (time: string | undefined): Date | null => {
-        return time ? new Date(time) : null;
-    }
-
-    const whenEnd = departures.departures.length > 1 ?
-        parseTime(departures.departures[departures.departures.length - 1].when) ?? addMinutes(when, 60) : addMinutes(when, 60)
-
     return <>
         <Alternatives alternatives={departures.departures} client={client.code} modes={client.modes}/>
-        <FilterWhenRelative time={whenEnd} title={<>Fahrten ab <Time time={whenEnd}/> anzeigen</>}/>
+        <FilterWhenRelative alternatives={departures.departures}/>
     </>
 }

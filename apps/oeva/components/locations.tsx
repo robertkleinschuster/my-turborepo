@@ -14,7 +14,7 @@ export default function Locations({locations, client, products, when = null}: {
     locations: readonly (Location | Stop | Station)[],
     client: ClientCode
     products: readonly Mode[],
-    when?: string|null
+    when?: string | null
 }): React.JSX.Element {
     const nav = useNavigation()
 
@@ -32,7 +32,8 @@ export default function Locations({locations, client, products, when = null}: {
                 onClick={() => {
                     nav.stationObj(client, location, when)
                 }}
-                subtitle={location.distance ? <span className="flex gap-1 items-center"><Icon ios={<LocationIcon/>}/>{location.distance} m, ~ {Math.round(location.distance / 75)} min</span> : undefined}
+                subtitle={location.distance ? <span className="flex gap-1 items-center"><Icon ios={
+                    <LocationIcon/>}/>{location.distance} m, {Math.round(location.distance / 75) > 0 ? <>~ {Math.round(location.distance / 75)}</> : '< 1'} min</span> : undefined}
                 title={<LocationTitle client={client} location={location}/>}
             />
         })}

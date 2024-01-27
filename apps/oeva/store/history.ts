@@ -13,7 +13,7 @@ export interface History {
     clear: () => void,
 }
 
-interface BaseHistoryItem {
+export interface BaseHistoryItem {
     id: string,
     root: number,
     sequence: number,
@@ -62,7 +62,8 @@ export interface StationHistoryItem extends BaseHistoryItem {
         when: string | null,
         products: string[] | null,
         modes: string[] | null,
-        groups: string[] | null
+        groups: string[] | null,
+        lines: string[] | null,
     },
     info: {
         distance: string | null,

@@ -12,7 +12,7 @@ export const revalidate = 3600
 const fetchCachedLocations = unstable_cache(async (query: string, clientCode: ClientCode) => {
     const client = getClient(clientCode)
     return client.locations(query, {
-        results: 20,
+        results: 10,
         linesOfStops: false,
         subStops: false,
         fuzzy: true,
@@ -38,5 +38,5 @@ export default async function Stations({params, searchParams}: {
 
     return <Locations client={client.code}
                       locations={locations.filter(location => location.type === 'station' || location.type === 'stop')}
-                      products={client.modes}/>
+                      modes={client.modes}/>
 }

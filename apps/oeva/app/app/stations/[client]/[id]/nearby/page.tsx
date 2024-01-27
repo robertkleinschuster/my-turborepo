@@ -23,11 +23,12 @@ const fetchCachedNearby = unstable_cache(async (id: string, clientCode: ClientCo
         location.type === 'location' ? location : location.location!
         , {
             products: client.buildProductsFilter(modes, groups),
+            linesOfStops: true
         })
 }, ['nearby'], {revalidate: false})
 
 
-export default async function Departures({params, searchParams}: {
+export default async function Nearby({params, searchParams}: {
     params: { id: string, client: ClientCodeParameter },
     searchParams: { when?: string, modes: ModesParameter, groups: ProductGroupsParameter}
 }): Promise<React.JSX.Element> {
@@ -38,5 +39,5 @@ export default async function Departures({params, searchParams}: {
     }
 
     const locations = await fetchCachedNearby(decodeURIComponent(params.id), client.code, searchParams.modes, searchParams.groups)
-    return <Locations client={client.code} locations={locations} products={client.modes} when={searchParams.when}/>
+    return <Locations client={client.code} locations={locations} modes={client.modes} when={searchParams.when}/>
 }

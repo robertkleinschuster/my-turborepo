@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- needed to normalize hafas client */
-import type {HafasClient, Products, ProductType, Profile} from "hafas-client";
+import type {HafasClient, Line, Products, ProductType, Profile} from "hafas-client";
 import {createClient} from "hafas-client"
 import {profile as oebb} from "hafas-client/p/oebb/index"
 import {profile as db} from "hafas-client/p/db/index"
@@ -23,6 +23,7 @@ export interface Client {
     productsByGroup: (id: ProductGroup['id']) => Products;
 
     buildProductsFilter: (modes: ModesParameter, groups: ProductGroupsParameter) => Products
+    buildLinesFilter: (lines: LinesParameter) => string|undefined
     validateFilter: (modes: ModesParameter, groups: ProductGroupsParameter) => boolean
 
     arrivals: HafasClient['arrivals']
@@ -98,6 +99,22 @@ abstract class BaseClient implements Client {
         }
 
         return products
+    }
+
+    buildLinesFilter(lines: LinesParameter): string|undefined {
+        let linesArray: Line['id'][] = []
+        if (Array.isArray(lines)) {
+            linesArray = lines
+        }
+        if (typeof lines === 'string') {
+            linesArray = [lines]
+        }
+
+        if (linesArray.length === 0) {
+            return undefined;
+        }
+
+        return linesArray.join(',')
     }
 
     get modes(): Mode[] {
@@ -238,6 +255,7 @@ export interface Mode {
 
 export type ModesParameter = Mode['id'] | Mode['id'][] | null | undefined
 export type ProductGroupsParameter = ProductGroup['id'] | ProductGroup['id'][] | null | undefined
+export type LinesParameter = Line['id'] | Line['id'][] | null | undefined
 
 export interface ProductGroup {
     id: 'city' | 'regional' | 'long-distance' | 'other',

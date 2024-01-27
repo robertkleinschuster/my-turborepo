@@ -5,14 +5,14 @@ import {unstable_cache} from "next/cache";
 import Scroll from "../../../../../components/scroll"
 import type {ClientCodeParameter} from "../../../../../client/client";
 import {getClient} from "../../../../../client/client";
-import StationNavbarData from "./navbar-data"
+import StationNavbar from "./navbar";
 
 export const fetchCache = 'default-cache'
 export const revalidate = 3600
 
 const fetchCachedStop = unstable_cache(async (id: string, clientCode: ClientCodeParameter) => {
     const client = getClient(clientCode)
-    return client.stop(id, {linesOfStops: false, subStops: false, entrances: false})
+    return client.stop(id, {linesOfStops: true})
 }, ['stop'], {revalidate: false})
 
 export async function generateMetadata(
@@ -25,12 +25,15 @@ export async function generateMetadata(
     }
 }
 
-export default function Layout({children, params}: {
+export default async function Layout({children, params}: {
     children: React.ReactNode,
     params: { id: string, client: ClientCodeParameter },
-}): React.JSX.Element {
+}): Promise<React.JSX.Element> {
+    const client = getClient(params.client)
+    const station = await fetchCachedStop(decodeURIComponent(params.id), client.code)
+
     return <>
-        <StationNavbarData clientCode={params.client} id={decodeURIComponent(params.id)}/>
+        <StationNavbar client={client.code} groups={client.productGroups} modes={client.modes} station={station}/>
         <Scroll>
             {children}
         </Scroll>

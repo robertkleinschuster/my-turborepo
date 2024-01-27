@@ -1,19 +1,19 @@
 "use client"
 
-import {Icon, List, ListItem} from "konsta/react"
+import {Chip, Icon, List, ListItem} from "konsta/react"
 import type {Location, Station, Stop} from "hafas-client"
 import React from "react"
 import {Location as LocationIcon} from "framework7-icons/react"
 import {useNavigation} from "../hooks/use-navigation";
 import type {ClientCode, Mode} from "../client/client";
-import StopProducts from "./stop-products"
 import {LocationTitle} from "./location-title";
 import {Message} from "./message";
+import Line from "./line";
 
-export default function Locations({locations, client, products, when = null}: {
+export default function Locations({locations, client, modes, when = null}: {
     locations: readonly (Location | Stop | Station)[],
     client: ClientCode
-    products: readonly Mode[],
+    modes: readonly Mode[],
     when?: string | null
 }): React.JSX.Element {
     const nav = useNavigation()
@@ -25,8 +25,12 @@ export default function Locations({locations, client, products, when = null}: {
     return <List inset strong>
         {locations.map(location => {
             return <ListItem
-                after={location.type === 'stop' || location.type === 'station' ?
-                    <StopProducts products={products} stop={location}/> : null}
+                footer={
+                    location.type === 'stop' || location.type === 'station' ?
+                        <span className="flex flex-wrap gap-1 items-center">{location.lines?.map(line => <Chip
+                            className="flex gap-1 items-center" key={line.id}><Line line={line}
+                                                                                    modes={modes}/></Chip>)}</span> : null
+                }
                 key={location.name}
                 link
                 onClick={() => {

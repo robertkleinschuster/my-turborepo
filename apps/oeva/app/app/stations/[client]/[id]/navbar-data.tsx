@@ -17,6 +17,6 @@ export default async function StationNavbarData({id, clientCode}: {
     const client = getClient(clientCode)
     const station = await fetchCachedStop(id, client.code)
 
-    return <StationNavbar client={client.code} groups={client.productGroups} modes={client.modes} title={station.name ?? id}/>
+    return <StationNavbar client={client.code} groups={client.productGroups} modes={client.modes} station={station}/>
 
 }

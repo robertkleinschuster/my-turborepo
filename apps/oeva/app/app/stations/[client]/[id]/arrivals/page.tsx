@@ -1,7 +1,12 @@
 import React from 'react'
 import {parseISO, startOfMinute} from "date-fns";
 import Alternatives from '../../../../../../components/alternatives'
-import type {ClientCodeParameter, ModesParameter, ProductGroupsParameter} from '../../../../../../client/client';
+import type {
+    ClientCodeParameter,
+    LinesParameter,
+    ModesParameter,
+    ProductGroupsParameter
+} from '../../../../../../client/client';
 import {getClient} from '../../../../../../client/client'
 import {FilterWhenRelative} from "../../../../../../components/filter-when-relative";
 import {Message} from "../../../../../../components/message";
@@ -11,7 +16,7 @@ export const revalidate = 60
 
 export default async function Arrivals({params, searchParams}: {
     params: { id: string, client: ClientCodeParameter },
-    searchParams: { when?: string, modes: ModesParameter, groups: ProductGroupsParameter }
+    searchParams: { when?: string, modes: ModesParameter, groups: ProductGroupsParameter, lines: LinesParameter }
 }): Promise<React.JSX.Element> {
     const when = searchParams.when ? parseISO(decodeURIComponent(searchParams.when)) : new Date()
     const client = getClient(params.client)
@@ -24,6 +29,7 @@ export default async function Arrivals({params, searchParams}: {
         duration: 60,
         when: startOfMinute(when),
         products: client.buildProductsFilter(searchParams.modes, searchParams.groups),
+        line: client.buildLinesFilter(searchParams.lines),
         remarks: true
     })
 

@@ -3,7 +3,7 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import type {Alternative, Location, Station, Stop, Trip} from "hafas-client";
 import type {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {useEffect, useState} from "react";
-import type {HistoryItem, History} from "../store/history";
+import type {HistoryItem, History, BaseHistoryItem} from "../store/history";
 import {useHistory} from "../store/history";
 import {useAppId} from "../store/app-id";
 import type {ClientCode} from "../client/client-code";
@@ -47,7 +47,7 @@ export function buildSearchParams(item: HistoryItem): URLSearchParams {
     return searchParams;
 }
 
-export function addFilterParams(searchParams: URLSearchParams, params: HistoryItem['params']): void {
+export function addFilterParams(searchParams: URLSearchParams, params: BaseHistoryItem['params']): void {
     if (typeof params?.when === 'string') {
         searchParams.set('when', params.when)
     }
@@ -62,6 +62,13 @@ export function addFilterParams(searchParams: URLSearchParams, params: HistoryIt
         searchParams.delete('groups')
         params.groups.forEach(group => {
             searchParams.append('groups', group)
+        })
+    }
+
+    if (Array.isArray(params?.lines)) {
+        searchParams.delete('lines')
+        params.lines.forEach(line => {
+            searchParams.append('lines', line)
         })
     }
 }

@@ -5,7 +5,7 @@ import {formatISO, parseISO, startOfMinute} from "date-fns";
 import Alternatives from '../../../../../../components/alternatives'
 import type {
     ClientCode,
-    ClientCodeParameter,
+    ClientCodeParameter, LinesParameter,
     ModesParameter, ProductGroupsParameter
 } from '../../../../../../client/client';
 import {getClient} from '../../../../../../client/client'
@@ -16,13 +16,14 @@ export const fetchCache = 'default-cache'
 export const revalidate = 60
 
 
-const fetchCachedDepartures = unstable_cache(async (id: string, clientCode: ClientCode, when: string, modes: ModesParameter, groups: ProductGroupsParameter) => {
+const fetchCachedDepartures = unstable_cache(async (id: string, clientCode: ClientCode, when: string, modes: ModesParameter, groups: ProductGroupsParameter, lines: LinesParameter) => {
     const client = getClient(clientCode)
 
     return client.departures(id, {
         duration: 60,
         when: parseISO(when),
         products: client.buildProductsFilter(modes, groups),
+        line: client.buildLinesFilter(lines),
         remarks: true
     })
 }, ['departures1'], {revalidate: false})
@@ -30,7 +31,7 @@ const fetchCachedDepartures = unstable_cache(async (id: string, clientCode: Clie
 
 export default async function Departures({params, searchParams}: {
     params: { id: string, client: ClientCodeParameter },
-    searchParams: { when?: string, modes: ModesParameter, groups: ProductGroupsParameter }
+    searchParams: { when?: string, modes: ModesParameter, groups: ProductGroupsParameter, lines: LinesParameter }
 }): Promise<React.JSX.Element> {
     const when = searchParams.when ? parseISO(decodeURIComponent(searchParams.when)) : new Date()
     const client = getClient(params.client)
@@ -39,7 +40,7 @@ export default async function Departures({params, searchParams}: {
         return <Message>Filter in dieser Datenquelle nicht möglich.</Message>
     }
 
-    const departures = await fetchCachedDepartures(decodeURIComponent(params.id), client.code, formatISO(startOfMinute(when)), searchParams.modes, searchParams.groups)
+    const departures = await fetchCachedDepartures(decodeURIComponent(params.id), client.code, formatISO(startOfMinute(when)), searchParams.modes, searchParams.groups, searchParams.lines)
 
     return <>
         <Alternatives alternatives={departures.departures} client={client.code} modes={client.modes}/>

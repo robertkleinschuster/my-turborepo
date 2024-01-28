@@ -63,8 +63,9 @@ export default function Line({ line, modes }: { line: Line, modes: readonly Mode
             return <><span className="class-a-r" /> {line.name}</>
         }
 
-        if (line.name?.startsWith('S')) {
-            return <><span className="class-a-sbahn" /> {line.name.substring(1)}</>
+        const matchSuburban = line.name?.match(/^S\s*(?<number>\d+)$/)
+        if (matchSuburban?.length) {
+            return <><span className="class-a-sbahn" /> {matchSuburban.at(1)}</>
         }
     }
 

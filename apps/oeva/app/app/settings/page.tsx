@@ -51,6 +51,14 @@ function Settings(): JSX.Element {
         <BlockTitle>Datenquelle</BlockTitle>
         <List inset strong>
             <ListItem label media={<Radio
+                checked={client === ClientCode.VAO}
+                component="div"
+                onChange={() => {
+                    setClient(ClientCode.VAO)
+                }}
+                value={ClientCode.VAO}
+            />} title="Verkehrsauskunft Österreich (VAO)"/>
+            <ListItem label media={<Radio
                 checked={client === ClientCode.OEBB}
                 component="div"
                 onChange={() => {
@@ -58,14 +66,6 @@ function Settings(): JSX.Element {
                 }}
                 value={ClientCode.OEBB}
             />} title="ÖBB Scotty"/>
-            <ListItem label media={<Radio
-                checked={client === ClientCode.STV}
-                component="div"
-                onChange={() => {
-                    setClient(ClientCode.STV)
-                }}
-                value={ClientCode.STV}
-            />} title="BusBahnBim"/>
             <ListItem label media={<Radio
                 checked={client === ClientCode.DB}
                 component="div"

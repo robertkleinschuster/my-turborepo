@@ -70,7 +70,7 @@ importers:
         version: 5.0.5
       hafas-client:
         specifier: github:robertkleinschuster/hafas-client
-        version: github.com/robertkleinschuster/hafas-client/fdd4fbcc8355902c637175d60c862910f8115a36(encoding@0.1.13)
+        version: github.com/robertkleinschuster/hafas-client/f3a757fe3ca5d95f7329a5f476c301e370eb5ad9(encoding@0.1.13)
       konsta:
         specifier: ^3.1.2
         version: 3.1.2
@@ -12718,9 +12718,9 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  github.com/robertkleinschuster/hafas-client/fdd4fbcc8355902c637175d60c862910f8115a36(encoding@0.1.13):
-    resolution: {tarball: https://codeload.github.com/robertkleinschuster/hafas-client/tar.gz/fdd4fbcc8355902c637175d60c862910f8115a36}
-    id: github.com/robertkleinschuster/hafas-client/fdd4fbcc8355902c637175d60c862910f8115a36
+  github.com/robertkleinschuster/hafas-client/f3a757fe3ca5d95f7329a5f476c301e370eb5ad9(encoding@0.1.13):
+    resolution: {tarball: https://codeload.github.com/robertkleinschuster/hafas-client/tar.gz/f3a757fe3ca5d95f7329a5f476c301e370eb5ad9}
+    id: github.com/robertkleinschuster/hafas-client/f3a757fe3ca5d95f7329a5f476c301e370eb5ad9
     name: hafas-client
     version: 6.2.0
     engines: {node: '>=16'}

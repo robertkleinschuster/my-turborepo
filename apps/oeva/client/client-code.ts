@@ -1,7 +1,8 @@
 export enum ClientCode {
     OEBB = 'oebb',
     DB = 'db',
-    STV = 'stv'
+    STV = 'stv',
+    VAO = 'vao'
 }
 
 export enum ClientCodeDefault {

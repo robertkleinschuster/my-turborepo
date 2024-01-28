@@ -51,6 +51,8 @@ export default function Filter({modes, groups, lines, showTime = false, modesOnl
     const [groupsOpen, setGroupsOpen] = useState(false)
     const [linesOpen, setLinesOpen] = useState(false)
 
+    const filterableLines = lines?.filter(line => line.filter);
+
     useEffect(() => {
         if (searchParams.get('when')) {
             setWhen(new Date(decodeURIComponent(searchParams.get('when') ?? '')))
@@ -165,11 +167,11 @@ export default function Filter({modes, groups, lines, showTime = false, modesOnl
                 <span>{groupsFilter.size ? `Kategorien (${groupsFilter.size})` : 'Kategorien'}</span>
             </Button>
 
-            {lines && !modesOnly ?
+            {filterableLines?.length && !modesOnly ?
                 <Button className="filter-lines !w-auto gap-1" onClick={() => {
                     setLinesOpen(true)
                 }} rounded small tonal={!linesFilter.size}>
-                    <span className="flex gap-1 items-center">{linesFilter.size ? <>Linie ({lines
+                    <span className="flex gap-1 items-center">{linesFilter.size ? <>Linie ({filterableLines
                         .filter(line => linesFilter.has(line.id ?? ''))
                         .map(line => <Line key={line.id} line={line} modes={modes}/>)})</> : 'Linie'}</span>
                 </Button>
@@ -291,7 +293,7 @@ export default function Filter({modes, groups, lines, showTime = false, modesOnl
                 />)}
             </List>
         </Popover>
-        {lines && !modesOnly ?
+        {filterableLines?.length && !modesOnly ?
             <Popover
                 className="w-72"
                 onBackdropClick={() => {
@@ -302,19 +304,28 @@ export default function Filter({modes, groups, lines, showTime = false, modesOnl
             >
                 <Scroll className="max-h-[50vh]">
                     <List nested>
-                        {lines.filter(line => line.id).map(line => <ListItem
+                        <ListItem
+                            after={
+                                <Radio
+                                    checked={!linesFilter.size}
+                                    className="-my-1"
+                                    onChange={() => {
+                                        applyLinesFilter(new Set<string>())
+                                    }}
+                                />
+                            }
+                            label
+                            title="Alle"
+                        />
+                        {filterableLines.map(line => <ListItem
                             after={
                                 <Radio
                                     checked={linesFilter.has(line.id ?? '')}
                                     className="-my-1"
-                                    onClick={() => {
-                                        if (linesFilter.has(line.id ?? '')) {
-                                            applyLinesFilter(new Set<string>())
-                                        } else {
-                                            const newFilter = new Set<string>();
-                                            newFilter.add(line.id ?? '')
-                                            applyLinesFilter(newFilter)
-                                        }
+                                    onChange={() => {
+                                        const newFilter = new Set<string>();
+                                        newFilter.add(line.id ?? '')
+                                        applyLinesFilter(newFilter)
                                     }}
                                 />
                             }

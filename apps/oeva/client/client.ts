@@ -3,7 +3,7 @@ import type {HafasClient, Line, Products, ProductType, Profile} from "hafas-clie
 import {createClient} from "hafas-client"
 import {profile as oebb} from "hafas-client/p/oebb/index"
 import {profile as db} from "hafas-client/p/db/index"
-import {profile as stv} from "hafas-client/p/stv/index"
+import {profile as vao} from "hafas-client/p/vao/index"
 import type {ClientCodeParameter} from "./client-code";
 import {ClientCode, ClientCodeDefault} from "./client-code";
 import {buildProductsForMode, mergeProducts, validateProductsFilter} from "./products-filter";
@@ -216,17 +216,18 @@ export class DbNavigator extends BaseClient {
     }
 }
 
-export class BusBahnBim extends BaseClient {
-    readonly name: string = 'BusBahnBim'
-    readonly code: ClientCode = ClientCode.STV
+export class VAO extends BaseClient {
+    readonly name: string = 'VAO'
+    readonly code: ClientCode = ClientCode.VAO
 
     get profile(): Profile {
-        return stv;
+        return vao;
     }
 
     productsByGroup(id: ProductGroup['id']): Products {
         return {
-            'train-and-s-bahn': id === 'long-distance' || id === 'regional',
+            train: id === 'long-distance' || id === 'regional',
+            'suburban-train': id === 'city' || id === 'regional',
             'u-bahn': id === 'city',
             tram: id === 'city',
             'city-bus': id === 'city',
@@ -244,7 +245,7 @@ export class BusBahnBim extends BaseClient {
 export const clients = new Map<ClientCode, Client>([
     [ClientCode.OEBB, new OebbScotty()],
     [ClientCode.DB, new DbNavigator()],
-    [ClientCode.STV, new BusBahnBim()]
+    [ClientCode.VAO, new VAO()]
 ])
 
 export interface Mode {
@@ -329,10 +330,10 @@ const modes: Mode[] = [
     },
 ]
 
-const defaultClient = ClientCode.STV
+const defaultClient = ClientCode.VAO
 
 export function getClient(code: ClientCodeParameter | null | undefined = null): Client {
-    const client = clients.get(code && code !== ClientCodeDefault.DEFAULT ? code : defaultClient);
+    const client = clients.get(code && code !== ClientCodeDefault.DEFAULT ? code : defaultClient) ?? clients.get(defaultClient);
     if (!client) {
         throw new Error(`No client with code: ${code}`);
     }

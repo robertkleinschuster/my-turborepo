@@ -7,6 +7,6 @@ export function ClientName({clientCode}: { clientCode: ClientCode | null | undef
     if (clientCode === ClientCode.DB) {
         return 'DB Navigator'
     }
-    return 'BusBahnBim'
+    return 'VAO'
 
 }

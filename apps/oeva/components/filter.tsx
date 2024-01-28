@@ -81,7 +81,7 @@ export default function Filter({modes, groups, lines, showTime = false, modesOnl
             mode: segment,
         }
         applyFilter(params)
-    }, [applyFilter, groupsFilter, modesFilter, searchParams, segment])
+    }, [applyFilter, groupsFilter, linesFilter, modesFilter, searchParams, segment])
 
     const applyModesFilter = useCallback((filter: Set<string>) => {
         setModesFilter(filter)

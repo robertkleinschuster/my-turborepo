@@ -77,6 +77,7 @@ export default function Filter({modes, groups, lines, showTime = false, modesOnl
             when: formatISO(startOfMinute(w)),
             modes: Array.from(modesFilter),
             groups: Array.from(groupsFilter),
+            lines: Array.from(linesFilter),
             mode: segment,
         }
         applyFilter(params)

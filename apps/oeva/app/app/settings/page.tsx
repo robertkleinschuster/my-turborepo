@@ -6,7 +6,7 @@ import {BlockTitle, List, ListItem, Radio} from "konsta/react";
 import {useSettings} from "../../../store/settings";
 import {ClientCode} from "../../../client/client-code";
 
-function History(): JSX.Element {
+function Settings(): JSX.Element {
     const startpage = useSettings(state => state.startpage)
     const setStartpage = useSettings(state => state.setStartpage)
     const client = useSettings(state => state.client)
@@ -78,4 +78,4 @@ function History(): JSX.Element {
     </>
 }
 
-export default dynamic(() => Promise.resolve(History), {ssr: false})
+export default dynamic(() => Promise.resolve(Settings), {ssr: false})

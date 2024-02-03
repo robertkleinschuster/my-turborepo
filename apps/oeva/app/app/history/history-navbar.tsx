@@ -1,6 +1,7 @@
 "use client"
 
-import {Button, Navbar, NavbarBackLink} from "konsta/react";
+import {Button, Icon, Navbar, NavbarBackLink} from "konsta/react";
+import {DocOnClipboard} from "framework7-icons/react"
 import type {JSX} from "react";
 import React from "react";
 import {useSearchParams} from "next/navigation";
@@ -40,7 +41,7 @@ export function HistoryNavbar(): JSX.Element {
                 }
             }} text="Zurück"/>
         }
-        right={searchParams.get('filterRoot') ? <Button onClick={save}>Kopieren</Button> : <HistorySelectionToggle/>}
+        right={searchParams.get('filterRoot') ? <Button onClick={save}><Icon ios={<DocOnClipboard/>}/></Button> : <HistorySelectionToggle/>}
         subtitle={parent ? <HistoryItemTitle item={parent}/> : null}
         title="Zuletzt verwendet"
     />
